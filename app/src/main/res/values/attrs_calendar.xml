@@ -6,6 +6,8 @@
     </declare-styleable>
     <declare-styleable name="CalendarItemDay">
         <attr name="is_today" format="boolean" />
-        <attr name="number" format="integer" />
+        <attr name="month" format="integer" />
+        <attr name="day" format="integer" />
     </declare-styleable>
+    <declare-styleable name="PlanItem" />
 </resources>

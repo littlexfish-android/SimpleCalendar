@@ -6,13 +6,83 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <view
-        android:id="@+id/view"
-        class="org.lf.calendar.view.Calendar"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/main_tab_container"
+        android:name="org.lf.calendar.tabs.List"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/main_bottom_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_tool_bar" />
+
+    <ImageView
+        android:id="@+id/main_tool_bar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/main_tool_bar_height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@color/purple_200" />
+
+    <ImageView
+        android:id="@+id/main_option_list"
+        android:layout_width="@dimen/main_tool_bar_height"
+        android:layout_height="@dimen/main_tool_bar_height"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="@+id/main_tool_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_option_list" />
+
+    <TextView
+        android:id="@+id/main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#DDDDDD"
+        app:layout_constraintBottom_toBottomOf="@+id/main_tool_bar"
+        app:layout_constraintStart_toEndOf="@+id/main_option_list"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/main_bottom_bar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/main_bottom_bar_height"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:srcCompat="@color/purple_200" />
+
+    <ImageView
+        android:id="@+id/main_list_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/main_bottom_bar_height"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/main_calendar_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_list" />
+
+    <ImageView
+        android:id="@+id/main_calendar_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/main_bottom_bar_height"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/main_profile_button"
+        app:layout_constraintStart_toEndOf="@id/main_list_button"
+        app:srcCompat="@drawable/ic_calendar" />
+
+    <ImageView
+        android:id="@+id/main_profile_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/main_bottom_bar_height"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/main_bottom_bar"
+        app:layout_constraintStart_toEndOf="@id/main_calendar_button"
+        app:srcCompat="@drawable/ic_profile" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <org.lf.calendar.view.CalendarItemDay
+            <org.lf.calendar.calendar.CalendarItemDay
                 android:id="@+id/day_0_0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

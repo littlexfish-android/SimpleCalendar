@@ -1,4 +1,4 @@
-package org.lf.calendar.view
+package org.lf.calendar.calendar
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,6 +7,8 @@ import org.lf.calendar.R
 
 class CalendarItemDay : ConstraintLayout {
 
+    var month = 0
+    var day = 0
     var isToday = false
 
     constructor(context: Context) : super(context) {
@@ -25,13 +27,20 @@ class CalendarItemDay : ConstraintLayout {
         // Load attributes
         val a = context.obtainStyledAttributes(attrs, R.styleable.CalendarItemDay, defStyle, 0)
 
-        isToday = a.getBoolean(R.styleable.Calendar_year, false)
+        isToday = a.getBoolean(R.styleable.CalendarItemDay_is_today, false)
+        month = a.getInt(R.styleable.CalendarItemDay_month, 0)
+        day = a.getInt(R.styleable.CalendarItemDay_day, 0)
 
         a.recycle()
 
         inflate(context, R.layout.view_calendar_item_day, this)
 
+    }
 
+    fun setDay(month: Int, day: Int, isToday: Boolean) {
+        this.month = month
+        this.day = day
+        this.isToday = isToday
     }
 
 }

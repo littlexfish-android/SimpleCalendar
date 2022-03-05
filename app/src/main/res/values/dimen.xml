@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  main activity  -->
+    <dimen name="main_bottom_bar_height">40dp</dimen>
+    <dimen name="main_tool_bar_height">50dp</dimen>
+
+
+</resources>
