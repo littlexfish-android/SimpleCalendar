@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/activity_main.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/sample_calendar.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_calendar.xml" value="0.47327502429543244" />
+        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_calendar_item_day.xml" value="0.264" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
