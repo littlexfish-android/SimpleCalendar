@@ -84,11 +84,11 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		}
 	}
 
-	class ListProcessor(db: SQLiteDatabase) {
+	class ListProcessor {
 
 		private val list = HashMap<String, ArrayList<SqlList>>()
-
-		init {
+		
+		constructor(db: SQLiteDatabase) {
 			val c: Cursor = db.rawQuery("SELECT * FROM $databaseTableListName", null)
 			c.moveToFirst()
 			for(i in 0..c.count) {
@@ -105,16 +105,22 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			}
 			c.close()
 		}
+		
+		constructor(processor: ListProcessor) {
+			for(item in processor.list) {
+				list[item.key] = ArrayList(item.value)
+			}
+		}
 
 		fun getList() = list
 
 	}
 
-	class CalendarProcessor(db: SQLiteDatabase) {
+	class CalendarProcessor {
 
 		private val calendar = ArrayList<SqlCalendar>()
-
-		init {
+	
+		constructor(db: SQLiteDatabase) {
 			val c: Cursor = db.rawQuery("SELECT * FROM Calendar", null)
 			c.moveToFirst()
 			for(i in 0..c.count) {
@@ -129,6 +135,12 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 				calendar.add(SqlCalendar(id, type, content, time, isComplete, createTime, completeTime))
 			}
 			c.close()
+		}
+
+		constructor(processor: CalendarProcessor) {
+			for(item in processor.calendar) {
+				calendar.add(item)
+			}
 		}
 
 		fun getCalendar() = calendar

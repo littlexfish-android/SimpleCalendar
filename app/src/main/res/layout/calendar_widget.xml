@@ -1,0 +1,340 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.SimpleCalendar.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.SimpleCalendar.AppWidgetContainer">
+
+    <GridLayout
+        android:id="@+id/calendar_widget_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:columnCount="7"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/calendar_widget_0_0"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_0_1"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_0_2"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_0_3"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_0_4"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_0_5"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_0_6"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_1_0"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_1_1"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_1_2"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_1_3"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_1_4"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_1_5"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_1_6"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_2_0"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_2_1"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_2_2"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_2_3"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_2_4"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_2_5"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_2_6"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_3_0"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_3_1"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_3_2"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_3_3"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_3_4"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_3_5"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_3_6"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_4_0"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_4_1"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_4_2"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_4_3"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_4_4"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_4_5"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_4_6"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_5_0"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_5_1"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_5_2"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_5_3"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_5_4"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_5_5"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/calendar_widget_5_6"
+            android:layout_width="@dimen/widget_calendar_item_size"
+            android:layout_height="@dimen/widget_calendar_item_size"
+            android:background="@color/none"
+            android:text="0" />
+    </GridLayout>
+
+    <LinearLayout
+        android:id="@+id/calendar_widget_plan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
+        tools:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/calendar_widget_plan_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/calendar_widget_plan_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="TextView"
+            android:textSize="15dp" />
+    </LinearLayout>
+
+</RelativeLayout>

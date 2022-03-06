@@ -5,15 +5,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentContainerView
 import org.lf.calendar.R
+import org.lf.calendar.calendar.CalendarView
+import org.lf.calendar.calendar.CalenderPlanList
 import java.time.Instant
 import java.util.*
 
-private const val PARAM_YEAR = "calendar.year"
-private const val PARAM_MONTH = "calendar.month"
-private const val PARAM_DAY = "calendar.day"
-
 class Calendar : Fragment() {
+
+	lateinit var calendar: CalendarView
+	lateinit var calendarPlans: CalenderPlanList
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -28,13 +30,32 @@ class Calendar : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		val manager = parentFragmentManager
+		calendar = manager.findFragmentById(R.id.calendar_calendar) as CalendarView
+		calendarPlans = manager.findFragmentById(R.id.calendar_list) as CalenderPlanList
+
+		if(savedInstanceState == null) {
 
 
+
+
+		}
+
+
+
+	}
+	
+	fun setDay(year: Int, month: Int, day: Int) {
+		calendar.changeDays(year, month, day)
+	}
+	
+	override fun onSaveInstanceState(outState: Bundle) {
+		super.onSaveInstanceState(outState)
 	}
 
 	companion object {
 		@JvmStatic
-		fun newInstance(year: Int, month: Int, day: Int) =
+		fun newInstance() =
 			Calendar().apply {
 				arguments = Bundle().apply { }
 			}

@@ -5,13 +5,14 @@
       <map>
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/drawable/ic_option_list.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/calendar_widget.xml" value="0.264" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_calendar.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_calender_plan_list.xml" value="0.23052536231884058" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_list.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_list_item.xml" value="0.2" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_profile.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/sample_calendar.xml" value="0.25364583333333335" />
-        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_calendar.xml" value="0.47327502429543244" />
+        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_calendar.xml" value="0.264" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_calendar_item_day.xml" value="0.264" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_plan_item.xml" value="0.4" />
       </map>

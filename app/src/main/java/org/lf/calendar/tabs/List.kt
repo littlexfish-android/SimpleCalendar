@@ -28,7 +28,7 @@ class List : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             List().apply {
                 arguments = Bundle().apply { }
             }

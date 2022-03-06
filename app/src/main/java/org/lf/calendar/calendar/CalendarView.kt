@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TableLayout
+import android.widget.TableRow
 import androidx.fragment.app.Fragment
 import org.lf.calendar.R
 import java.util.*
@@ -20,64 +22,125 @@ private const val PARAM_MONTH = "calendar.month"
 private const val PARAM_DAY = "calendar.day"
 
 class CalendarView : Fragment() {
+	
+	var today = Calendar.getInstance().also { it.time = Date() }
+	var selectDate = Calendar.getInstance().also { it.time = Date() }
+	var month = 0
+	var year = 0
+	private val daysArray = Array<Calendar>(7 * WEEK_TO_SHOW) { Calendar.getInstance() }
 
-    var day = 0
-    var month = 0
-    var year = 0
-    private val daysArray = Array<Calendar>(7 * WEEK_TO_SHOW) { Calendar.getInstance() }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            year = it.getInt(PARAM_YEAR)
-            month = it.getInt(PARAM_MONTH)
-            day = it.getInt(PARAM_DAY)
-        }
-        initDays()
-    }
+		if(savedInstanceState == null) {
+			today = Calendar.getInstance().also { it.time = Date() }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.view_calendar, container, false)
-    }
+			val year = today.get(Calendar.YEAR)
+			val month = today.get(Calendar.MONTH)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+			this.month = month
+			this.year = year
+		}
+		else {
+			year = savedInstanceState.getInt("year")
+			month = savedInstanceState.getInt("month")
+		}
 
-    }
+		arguments?.let {
+			year = it.getInt(PARAM_YEAR)
+			month = it.getInt(PARAM_MONTH)
+		}
 
-    /**
-     * Initial days array
-     * @param year - the year of the days
-     * @param month - the month of the days, 1 to 12
-     */
-    private fun initDays() {
-        val date = Calendar.getInstance()
-        date.set(year, month - 1, 0)
-        val day = date.get(Calendar.DAY_OF_WEEK) // 1 for Sunday...
+		initDays(year, month)
+	}
 
-        // check the first date of the calendar needed
-        val firstDay = Calendar.getInstance().also { it.time = Date(date.time.time - MilliOfDay * (7 + day - 1)) }
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+		// Inflate the layout for this fragment
+		return inflater.inflate(R.layout.view_calendar, container, false)
+	}
 
-        var lastDay = firstDay.time.time
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		
+		val table = view.findViewById<TableLayout>(R.id.calender_table)
+		
+		var count = 0
+		var nowRow = TableRow(requireContext())
+		
+		for(day in daysArray) {
+			if(count == 0) {
+				nowRow = TableRow(requireContext())
+				table.addView(nowRow)
+			}
+			
+			val calendarItem = CalendarItemDay(requireContext())
+			calendarItem.setDay(day, isToday(day), isCurrentMonth(day))
+			if(dateEquals(day, selectDate)) {
+				calendarItem.isSelect = true
+			}
+			nowRow.addView(calendarItem)
+			
+			count++
+			if(count == 7) {
+				count = 0
+			}
+		}
 
-        for(i in 0..(7 * WEEK_TO_SHOW)) {
-            daysArray[i].time = Date(lastDay)
-            lastDay += MilliOfDay
-        }
+	}
+	
+	private fun isToday(theDay: Calendar) = dateEquals(theDay, today)
+	
+	private fun isCurrentMonth(theDay: Calendar) = monthEqual(theDay, today)
+	
+	private fun dateEquals(day1: Calendar, day2: Calendar) = monthEqual(day1, day2) &&
+			day1.get(Calendar.MONTH) == day2.get(Calendar.MONTH)
+	
+	private fun monthEqual(day1: Calendar, day2: Calendar) = day1.get(Calendar.YEAR) == day2.get(Calendar.YEAR) &&
+			day1.get(Calendar.MONTH) == day2.get(Calendar.MONTH)
+	
+	override fun onSaveInstanceState(outState: Bundle) {
+		super.onSaveInstanceState(outState)
+		outState.putInt("year", year)
+		outState.putInt("month", month)
+	}
+	/**
+	 * @param year - the year of the days
+	 * @param month - the month of the days, 1 to 12
+	 */
+	fun changeDays(year: Int, month: Int, day: Int) {
+		selectDate.clear()
+		selectDate.set(year, month - 1, day)
+		initDays(year, month)
+	}
 
-    }
+	/**
+	 * Initial days array
+	 */
+	private fun initDays(year: Int, month: Int) {
+		val date = Calendar.getInstance().also { it.set(year, month - 1, 0) }
+		val dayWeek = date.get(Calendar.DAY_OF_WEEK) // 1 for Sunday...
 
-    companion object {
-        @JvmStatic
-        fun newInstance(year: Int = 2022, month: Int = 0, day: Int = 0) =
-            org.lf.calendar.tabs.List().apply {
-                arguments = Bundle().apply {
-                    putInt(PARAM_YEAR, year)
-                    putInt(PARAM_MONTH, month)
-                    putInt(PARAM_DAY, day)
-                }
-            }
-    }
+		// check the first date of the calendar needed
+		val firstDay = Calendar.getInstance().also { it.time = Date(date.time.time - MilliOfDay * (dayWeek - 1)) }
+
+		var lastDay = firstDay.time.time
+
+		for(i in 0..(7 * WEEK_TO_SHOW)) {
+			daysArray[i].time = Date(lastDay)
+			lastDay += MilliOfDay
+		}
+
+	}
+
+	companion object {
+		@JvmStatic
+		fun newInstance(year: Int = 2022, month: Int = 0) =
+			org.lf.calendar.tabs.List().apply {
+				arguments = Bundle().apply {
+					putInt(PARAM_YEAR, year)
+					putInt(PARAM_MONTH, month)
+				}
+			}
+	}
 
 }
