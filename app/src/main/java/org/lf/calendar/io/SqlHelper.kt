@@ -11,6 +11,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+// TODO: find sql lite "select top n"
+
 private const val dataBaseName = "simple_calendar"
 private const val dataBaseVersion = 1
 private const val databaseTableListName = "List"
