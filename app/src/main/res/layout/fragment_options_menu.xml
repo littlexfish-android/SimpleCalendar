@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OptionsMenu">
+
+    <ImageView
+        android:id="@+id/options_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="onCloseOptionMenu"
+        tools:src="@color/none" />
+
+    <ImageView
+        android:id="@+id/options_background"
+        android:layout_width="@dimen/options_width"
+        android:layout_height="match_parent"
+        tools:src="@color/default_theme_color" />
+
+    <ImageView
+        android:id="@+id/options_close"
+        android:layout_width="@dimen/main_tool_bar_height"
+        android:layout_height="@dimen/main_tool_bar_height"
+        android:onClick="onCloseOptionMenu"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_close" />
+
+    <LinearLayout
+        android:id="@+id/options_list"
+        android:layout_width="@dimen/options_width"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/main_tool_bar_height"
+        android:orientation="vertical">
+
+    </LinearLayout>
+</FrameLayout>

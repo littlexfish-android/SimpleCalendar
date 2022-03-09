@@ -29,6 +29,7 @@
         android:id="@+id/main_option_list"
         android:layout_width="@dimen/main_tool_bar_height"
         android:layout_height="@dimen/main_tool_bar_height"
+        android:onClick="onOptionsMenuOpen"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="@+id/main_tool_bar"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,6 +60,7 @@
         android:id="@+id/main_list_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/main_bottom_bar_height"
+        android:onClick="onListButtonPressed"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/main_calendar_button"
@@ -69,6 +71,7 @@
         android:id="@+id/main_calendar_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/main_bottom_bar_height"
+        android:onClick="onCalendarButtonPressed"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/main_profile_button"
@@ -79,10 +82,32 @@
         android:id="@+id/main_profile_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/main_bottom_bar_height"
+        android:onClick="onProfileButtonPressed"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/main_bottom_bar"
         app:layout_constraintStart_toEndOf="@id/main_calendar_button"
         app:srcCompat="@drawable/ic_profile" />
+
+    <ImageView
+        android:id="@+id/main_options_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@color/black_overlay" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/main_options_menu"
+        android:name="org.lf.calendar.OptionsMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

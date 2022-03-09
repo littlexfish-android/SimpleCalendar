@@ -61,13 +61,10 @@ private object CalendarWidgetInternal {
 	val daysArrayForWidget = HashMap<Int, Array<Calendar>>()
 	
 	fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-		val info = appWidgetManager.getAppWidgetInfo(appWidgetId)
 		// Construct the RemoteViews object
 		val views = RemoteViews(context.packageName, R.layout.calendar_widget)
 		
 		initDays(appWidgetId)
-		
-		val size = 250 / 7.0f
 		
 		val daysArray = daysArrayForWidget[appWidgetId]!!
 		

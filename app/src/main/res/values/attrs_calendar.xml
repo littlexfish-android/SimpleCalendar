@@ -2,4 +2,5 @@
     <declare-styleable name="CalendarView" />
     <declare-styleable name="CalendarItemDay" />
     <declare-styleable name="PlanItem" />
+    <declare-styleable name="ListItem" />
 </resources>
