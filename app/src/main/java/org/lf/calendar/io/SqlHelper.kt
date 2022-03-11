@@ -20,7 +20,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 	SQLiteOpenHelper(context, dataBaseName, factory, dataBaseVersion) {
 
 	companion object {
-		lateinit var sql: SqlHelper
+		private lateinit var sql: SqlHelper
 
 		fun getInstance(context: Context): SqlHelper {
 			if(!::sql.isInitialized) {

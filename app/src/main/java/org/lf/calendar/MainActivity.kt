@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 	private lateinit var fragmentList: List
 	private lateinit var fragmentCalendar: Calendar
 	private lateinit var fragmentProfile: Profile
-	private var nowFrag: Fragment = fragmentList
+	private var nowFrag: Fragment? = null
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
