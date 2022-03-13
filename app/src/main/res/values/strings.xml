@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SimpleCalendar</string>
     <string name="calendar_widget_description">A simple calendar</string>
+
+    <string name="calendarYearMonth">%1$d年%2$d月</string>
+
 </resources>

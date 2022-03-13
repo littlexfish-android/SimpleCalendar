@@ -8,9 +8,19 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import org.lf.calendar.R
 
+/**
+ * The class contains all of plans in the day
+ */
 class CalenderPlanList : Fragment() {
-
+	
+	/**
+	 * List view of the class
+	 */
 	lateinit var list: LinearLayout
+	
+	/**
+	 * Plan item of the day
+	 */
 	var planArray = ArrayList<PlanItem>()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,9 +39,11 @@ class CalenderPlanList : Fragment() {
 		list = view.findViewById(R.id.plan_list)
 
 	}
-
+	
+	/**
+	 * Add plan item into list
+	 */
 	fun addPlan(time: Long, content: String) {
-		// TODO: init plan item and add to linear layout
 		if(context == null) return
 		val plan = PlanItem(requireContext())
 		plan.setContent(time, content)
@@ -39,7 +51,10 @@ class CalenderPlanList : Fragment() {
 		sortArray()
 		refreshList()
 	}
-
+	
+	/**
+	 * Sort the array by time
+	 */
 	private fun sortArray() {
 		planArray.sortWith { o1, o2 ->
 			when {
@@ -49,7 +64,10 @@ class CalenderPlanList : Fragment() {
 			}
 		}
 	}
-
+	
+	/**
+	 * Refresh the list, detach the views from list and re-add into the list order by the array
+	 */
 	private fun refreshList() {
 		list.removeAllViews()
 		for(item in planArray) {

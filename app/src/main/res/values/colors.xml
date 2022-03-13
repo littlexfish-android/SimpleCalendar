@@ -16,6 +16,7 @@
     <color name="light_blue_900">#FF01579B</color>
 
     <color name="default_theme_color">#FFBB86FC</color>
+    <color name="default_theme_color_dark">#FF9964DA</color>
     <color name="none">#00000000</color>
     <color name="black_overlay">#55000000</color>
 

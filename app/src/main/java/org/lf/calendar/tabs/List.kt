@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import org.lf.calendar.R
 
+/**
+ * The class is tab of main activity
+ */
 class List : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

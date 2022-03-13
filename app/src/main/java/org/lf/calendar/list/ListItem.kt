@@ -7,15 +7,35 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import org.lf.calendar.R
 
+/**
+ * The class use to show on {@link org.lf.calendar.list.ListList}
+ */
 class ListItem : LinearLayout {
 	
+	/**
+	 * The name of group
+	 */
 	var groupName = ""
 		set(value) {
 			field = value
 			refreshItems(false)
 		}
+	
+	/**
+	 * The items of group
+	 */
 	private val items = ArrayList<String>()
+	
+	/* view */
+	
+	/**
+	 * The view of group
+	 */
 	private lateinit var group: TextView
+	
+	/**
+	 * The list of group view
+	 */
 	private lateinit var listGroup: LinearLayout
 	
 	constructor(context: Context) : super(context) {
@@ -30,6 +50,9 @@ class ListItem : LinearLayout {
 		init(attrs, defStyle)
 	}
 	
+	/**
+	 * Initial the view and refresh them
+	 */
 	private fun init(attrs: AttributeSet?, defStyle: Int) {
 		// Load attributes
 		val a = context.obtainStyledAttributes(attrs, R.styleable.ListItem, defStyle, 0)
@@ -44,12 +67,19 @@ class ListItem : LinearLayout {
 		
 	}
 	
+	/**
+	 * Add the list item into this group
+	 */
 	fun addItem(str: String, index: Int = -1) {
 		if(index == -1) items.add(str) else items.add(index, str)
 		addItemView(str, index)
 		refreshItems(false)
 	}
 	
+	/**
+	 * Refresh the group
+	 * @param force - {@code true} to force it refresh, or {@code false} will refresh when it has been change
+	 */
 	private fun refreshItems(force: Boolean) {
 		if(force || listGroup.childCount != items.size || group.text != groupName) {
 			// clear children view
@@ -66,6 +96,9 @@ class ListItem : LinearLayout {
 		
 	}
 	
+	/**
+	 * Add item view into list
+	 */
 	private fun addItemView(str: String, index: Int = -1) {
 		val checkbox = CheckBox(context)
 		checkbox.text = str

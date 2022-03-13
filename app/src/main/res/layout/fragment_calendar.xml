@@ -7,21 +7,72 @@
     tools:context=".tabs.Calendar">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/calendar_calendar"
+        android:id="@+id/calendarCalendar"
         android:name="org.lf.calendar.calendar.CalendarView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/calendarPostMonth" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/calendar_list"
+        android:id="@+id/calendarList"
         android:name="org.lf.calendar.calendar.CalenderPlanList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_calendar" />
+        app:layout_constraintTop_toBottomOf="@+id/calendarCalendar" />
+
+    <TextView
+        android:id="@+id/calendarYearMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/calendarPostMonth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/calendarPostMonth" />
+
+    <ImageButton
+        android:id="@+id/calendarPreMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/none"
+        android:onClick="onArrowButtonClick"
+        android:src="@drawable/ic_pre_arrow"
+        app:layout_constraintEnd_toStartOf="@+id/calendarYearMonth"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/calendarPostMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/none"
+        android:onClick="onArrowButtonClick"
+        android:src="@drawable/ic_post_arrow"
+        app:layout_constraintStart_toEndOf="@+id/calendarYearMonth"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/calendarPreYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/none"
+        android:onClick="onArrowButtonClick"
+        android:src="@drawable/ic_pre_arrow_d"
+        app:layout_constraintEnd_toStartOf="@+id/calendarPreMonth"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/calendarPostYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/none"
+        android:onClick="onArrowButtonClick"
+        android:src="@drawable/ic_post_arrow_d"
+        app:layout_constraintStart_toEndOf="@+id/calendarPostMonth"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

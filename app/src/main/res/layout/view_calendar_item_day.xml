@@ -6,6 +6,22 @@
     android:layout_height="70dp">
 
     <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/calendarItemSelected"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:srcCompat="@non" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:cardCornerRadius="50dp"
@@ -15,13 +31,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/calendar_item_background"
+            android:id="@+id/calendarItemBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:srcCompat="@color/purple_200" />
+            tools:srcCompat="@color/none" />
 
         <TextView
-            android:id="@+id/calendar_item_num"
+            android:id="@+id/calendarItemNum"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="1"

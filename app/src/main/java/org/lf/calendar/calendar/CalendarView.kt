@@ -10,25 +10,95 @@ import androidx.fragment.app.Fragment
 import org.lf.calendar.R
 import java.util.*
 
+/**
+ * How amount of weeks show on this calendar
+ */
 private const val WEEK_TO_SHOW = 6
 
+/**
+ * The milli-seconds of a second
+ */
 private const val MilliOfSecond = 1000
+/**
+ * The milli-second of a minute
+ */
 private const val MilliOfMinute = MilliOfSecond * 60
+/**
+ * The milli-second of an hour
+ */
 private const val MilliOfHour = MilliOfMinute * 60
+/**
+ * The milli-second of a day
+ */
 private const val MilliOfDay = MilliOfHour * 24
 
+/**
+ * Parameter of year
+ */
 private const val PARAM_YEAR = "calendar.year"
+/**
+ * Parameter of month
+ */
 private const val PARAM_MONTH = "calendar.month"
+/**
+ * Parameter of day
+ */
 private const val PARAM_DAY = "calendar.day"
+/**
+ * Parameter of date
+ */
+private const val PARAM_SELECTED_DATE = "calendar.date"
 
+/**
+ * The class is use to construct a calendar view use fragment
+ */
 class CalendarView : Fragment() {
 	
-	var today = Calendar.getInstance().also { it.time = Date() }
-	var selectDate = Calendar.getInstance().also { it.time = Date() }
-	var month = 0
-	var year = 0
+	/* calendar */
+	
+	/**
+	 * The day of today
+	 */
+	private var today: Calendar = Calendar.getInstance().also { it.time = Date() }
+	
+	/**
+	 * The day of user selected
+	 */
+	private var selectDate: Calendar = Calendar.getInstance().also { it.time = Date() }
+	
+	/* now month */
+	
+	/**
+	 * The month user look
+	 */
+	var month = today[Calendar.MONTH]
+	
+	/**
+	 * The year user look
+	 */
+	var year = today[Calendar.YEAR]
+	
+	/* day data */
+	/**
+	 * A array contains the calendar's day on show
+	 */
 	private val daysArray = Array<Calendar>(7 * WEEK_TO_SHOW) { Calendar.getInstance() }
-
+	
+	/**
+	 * A array contains the {@link org.lf.calendar.calendar.CalendarItemDay} on show
+	 */
+	private val dayViews = Array<CalendarItemDay?>(7 * WEEK_TO_SHOW) { null }
+	
+	/* view */
+	
+	/**
+	 * The layout use to line up the item
+	 */
+	private lateinit var table: TableLayout
+	
+	/**
+	 * Call when view on create, initial the year and month been selected and init days after initial
+	 */
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
@@ -42,8 +112,9 @@ class CalendarView : Fragment() {
 			this.year = year
 		}
 		else {
-			year = savedInstanceState.getInt("year")
-			month = savedInstanceState.getInt("month")
+			year = savedInstanceState.getInt(PARAM_YEAR)
+			month = savedInstanceState.getInt(PARAM_MONTH)
+			selectDate.time.time = savedInstanceState.getLong(PARAM_SELECTED_DATE)
 		}
 
 		arguments?.let {
@@ -58,59 +129,99 @@ class CalendarView : Fragment() {
 		// Inflate the layout for this fragment
 		return inflater.inflate(R.layout.view_calendar, container, false)
 	}
-
+	
+	/**
+	 * Call on view been created, create the day item and show them
+	 */
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		
-		val table = view.findViewById<TableLayout>(R.id.calender_table)
+		table = view.findViewById(R.id.calenderTable)
 		
-		var count = 0
-		var nowRow = TableRow(requireContext())
-		
-		for(day in daysArray) {
-			if(count == 0) {
-				nowRow = TableRow(requireContext())
-				table.addView(nowRow)
-			}
-			
-			val calendarItem = CalendarItemDay(requireContext())
-			calendarItem.setDay(day, isToday(day), isCurrentMonth(day))
-			if(dateEquals(day, selectDate)) {
-				calendarItem.isSelect = true
-			}
-			nowRow.addView(calendarItem)
-			
-			count++
-			if(count == 7) {
-				count = 0
-			}
-		}
+		createCalendarItem(false)
 
 	}
 	
+	/**
+	 * Check us today
+	 */
 	private fun isToday(theDay: Calendar) = dateEquals(theDay, today)
 	
+	/**
+	 * Check is current month
+	 */
 	private fun isCurrentMonth(theDay: Calendar) = monthEqual(theDay, today)
 	
+	/**
+	 * Check the day is equals
+	 */
 	private fun dateEquals(day1: Calendar, day2: Calendar) = monthEqual(day1, day2) &&
 			day1.get(Calendar.MONTH) == day2.get(Calendar.MONTH)
 	
+	/**
+	 * Check the month is equals
+	 */
 	private fun monthEqual(day1: Calendar, day2: Calendar) = day1.get(Calendar.YEAR) == day2.get(Calendar.YEAR) &&
 			day1.get(Calendar.MONTH) == day2.get(Calendar.MONTH)
 	
+	/**
+	 * Save the data
+	 */
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
-		outState.putInt("year", year)
-		outState.putInt("month", month)
+		outState.putInt(PARAM_YEAR, year)
+		outState.putInt(PARAM_MONTH, month)
+		outState.putLong(PARAM_SELECTED_DATE, selectDate.time.time)
 	}
+	
 	/**
+	 * Change the day
 	 * @param year - the year of the days
 	 * @param month - the month of the days, 1 to 12
 	 */
-	fun changeDays(year: Int, month: Int, day: Int) {
+	fun changeDays(year: Int, month: Int, day: Int = selectDate[Calendar.DAY_OF_MONTH]) {
 		selectDate.clear()
 		selectDate.set(year, month - 1, day)
-		initDays(year, month)
+		if(this.year != year || this.month != month) {
+			this.year = year
+			this.month = month
+			initDays(year, month)
+			createCalendarItem(false)
+		}
+		else {
+			createCalendarItem(true)
+		}
+	}
+	
+	/**
+	 * Create item view or change selected day
+	 */
+	private fun createCalendarItem(justChangeSelect: Boolean) {
+		if(!justChangeSelect) {
+			var nowRow = TableRow(requireContext())
+			
+			for((viewIndex, day) in daysArray.withIndex()) {
+				if(viewIndex % 7 == 0) {
+					nowRow = TableRow(requireContext())
+					table.addView(nowRow)
+				}
+				
+				val calendarItem = CalendarItemDay(requireContext())
+				calendarItem.setDay(day, isToday(day), isCurrentMonth(day))
+				if(dateEquals(day, selectDate)) {
+					calendarItem.isSelect = true
+				}
+				nowRow.addView(calendarItem)
+				dayViews[viewIndex] = calendarItem
+				
+			}
+		}
+		for(dayIndex in 0..daysArray.size) {
+			val day = daysArray[dayIndex]
+			val view = dayViews[dayIndex]!! // must not null
+			
+			view.isSelect = dateEquals(day, selectDate)
+		}
 	}
 
 	/**

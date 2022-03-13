@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
+/**
+ * The class is fragment of options menu
+ */
 class OptionsMenu : Fragment() {
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,9 +22,12 @@ class OptionsMenu : Fragment() {
 		return inflater.inflate(R.layout.fragment_options_menu, container, false)
 	}
 	
+	/**
+	 * Call on out of menu space been touch
+	 */
 	fun onCloseOptionMenu(v: View?) {
-		if(activity != null) {
-			if(activity is MainActivity) {
+		if(activity != null) { // activity is null, means this not attach on any view
+			if(activity is MainActivity) { // activity not main, activity must main activity
 				(activity as MainActivity).moveOptionsMenu(false)
 			}
 		}

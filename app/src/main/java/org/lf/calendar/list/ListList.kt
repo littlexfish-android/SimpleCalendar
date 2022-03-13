@@ -8,11 +8,25 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import org.lf.calendar.R
 
+/**
+ * The list use to show list item
+ */
 class ListList : Fragment() {
 	
-	lateinit var list: LinearLayout
+	/**
+	 * The map holds group name and list item
+	 */
 	private val groups = HashMap<String, ListItem>()
+	
+	/**
+	 * The list holds group order
+	 */
 	private val groupOrder = ArrayList<String>()
+	
+	/**
+	 * List item list
+	 */
+	lateinit var list: LinearLayout
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -25,6 +39,9 @@ class ListList : Fragment() {
 		return inflater.inflate(R.layout.fragment_list_list, container, false)
 	}
 	
+	/**
+	 * Initial views and refresh list
+	 */
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		
@@ -33,6 +50,9 @@ class ListList : Fragment() {
 		refreshList(true)
 	}
 	
+	/**
+	 * Add group into list
+	 */
 	fun addListItem(groupName: String, index: Int = -1) {
 		if(groupOrder.contains(groupName)) return
 		val item = ListItem(requireContext())
@@ -43,6 +63,9 @@ class ListList : Fragment() {
 		refreshList(false)
 	}
 	
+	/**
+	 * Add item into group
+	 */
 	fun addItem(group: String, item: String, index: Int = -1) {
 		var listItem = groups[group]
 		if(listItem == null) {
@@ -53,14 +76,24 @@ class ListList : Fragment() {
 		refreshList(false)
 	}
 	
+	/**
+	 * Remove item from group
+	 */
 	fun removeItem(group: String, item: String) {
 		//TODO
 	}
 	
-	fun removeItem(group: String, index: Int) {
+	/**
+	 * Remove group from list
+	 */
+	fun removeGroup(group: String) {
 		//TODO
 	}
 	
+	/**
+	 * Refresh the list
+	 * @param force - {@code true} to force refresh, or {@code false} will refresh when it has been changed
+	 */
 	private fun refreshList(force: Boolean) {
 		if(force || (groupOrder.size != groups.size || groups.size != list.childCount)) {
 			

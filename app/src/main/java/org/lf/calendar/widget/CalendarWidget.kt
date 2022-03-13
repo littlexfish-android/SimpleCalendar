@@ -4,23 +4,41 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.content.Intent
-import android.util.TypedValue
-import android.widget.Button
-import android.widget.GridLayout
 import android.widget.RemoteViews
 import org.lf.calendar.R
 import java.util.*
 import kotlin.collections.HashMap
 
+/**
+ * How amount of weeks show on this calendar
+ */
 private const val WEEK_TO_SHOW = 6
 
+/**
+ * The milli-seconds of a second
+ */
 private const val MilliOfSecond = 1000
+/**
+ * The milli-second of a minute
+ */
 private const val MilliOfMinute = MilliOfSecond * 60
+/**
+ * The milli-second of an hour
+ */
 private const val MilliOfHour = MilliOfMinute * 60
+/**
+ * The milli-second of a day
+ */
 private const val MilliOfDay = MilliOfHour * 24
 
+/**
+ * The calendar use to show on the device home screen
+ */
 class CalendarWidget : AppWidgetProvider() {
+	
+	/**
+	 * On widget update view
+	 */
 	override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
 		// There may be multiple widgets active, so update all of them
 		for (appWidgetId in appWidgetIds) {
@@ -28,6 +46,9 @@ class CalendarWidget : AppWidgetProvider() {
 		}
 	}
 	
+	/**
+	 * On delete any widget
+	 */
 	override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
 		super.onDeleted(context, appWidgetIds)
 		if(appWidgetIds != null) {
@@ -37,39 +58,75 @@ class CalendarWidget : AppWidgetProvider() {
 		}
 	}
 	
+	/**
+	 * On widget id changed
+	 */
 	override fun onRestored(context: Context?, oldWidgetIds: IntArray?, newWidgetIds: IntArray?) {
 		super.onRestored(context, oldWidgetIds, newWidgetIds)
 		CalendarWidgetInternal.onIdChange(oldWidgetIds, newWidgetIds)
 	}
 	
+	/**
+	 * On first widget insert into home screen
+	 */
 	override fun onEnabled(context: Context) {
 		// Enter relevant functionality for when the first widget is created
 	}
 	
+	/**
+	 * On last widget remove from home screen
+	 */
 	override fun onDisabled(context: Context) {
 		// Enter relevant functionality for when the last widget is disabled
 		CalendarWidgetInternal.onDeleteAll()
 	}
 }
 
+/**
+ * The main function of the calendar widget
+ */
 private object CalendarWidgetInternal {
 	
+	/**
+	 * The day of today
+	 */
 	var today: Calendar = Calendar.getInstance().also { it.time = Date() }
+	
+	/**
+	 * The days of each widget
+	 */
 	val calendarItemIdsForWidget = HashMap<Int, IntArray>()
+	
+	/**
+	 * The year of each widget
+	 */
 	val yearForWidget = HashMap<Int, Int>()
+	
+	/**
+	 * The month of each widget
+	 */
 	val monthForWidget = HashMap<Int, Int>()
+	
+	/**
+	 * The calendars of each widget
+	 */
 	val daysArrayForWidget = HashMap<Int, Array<Calendar>>()
 	
+	/**
+	 * On each widget update
+	 */
 	fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
 		// Construct the RemoteViews object
 		val views = RemoteViews(context.packageName, R.layout.calendar_widget)
 		
+		// init days array
 		initDays(appWidgetId)
 		
 		val daysArray = daysArrayForWidget[appWidgetId]!!
 		
 		val list = calendarItemIdsForWidget[appWidgetId] ?: IntArray(7 * WEEK_TO_SHOW).also { calendarItemIdsForWidget[appWidgetId] = it }
 		
+		// get the views
 		list[0] = R.id.calendar_widget_0_0
 		list[1] = R.id.calendar_widget_0_1
 		list[2] = R.id.calendar_widget_0_2
@@ -114,7 +171,7 @@ private object CalendarWidgetInternal {
 		list[41] = R.id.calendar_widget_5_6
 		
 		
-		
+		// set button to open the activity
 		for(i in 0..(7 * WEEK_TO_SHOW)) {
 			views.setTextViewText(list[i], "${daysArray[i]}")
 			val intentToStart = context.packageManager.getLaunchIntentForPackage("org.lf.calendar")
@@ -129,22 +186,37 @@ private object CalendarWidgetInternal {
 		appWidgetManager.updateAppWidget(appWidgetId, views)
 	}
 	
+	/**
+	 * Check is today
+	 */
 	fun isToday(theDay: Calendar) = isCurrentMonth(theDay) &&
 			theDay.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)
 	
+	/**
+	 * Check is current month
+	 */
 	fun isCurrentMonth(theDay: Calendar) = theDay.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
 			theDay.get(Calendar.MONTH) == today.get(Calendar.MONTH)
 	
+	/**
+	 * On each widget been remove
+	 */
 	fun onWidgetDelete(appWidgetId: Int) {
 		daysArrayForWidget.remove(appWidgetId)
 	}
 	
+	/**
+	 * Remove all widget and its data
+	 */
 	fun onDeleteAll() {
 		yearForWidget.clear()
 		monthForWidget.clear()
 		daysArrayForWidget.clear()
 	}
 	
+	/**
+	 * On id been changed, remap to new id
+	 */
 	fun onIdChange(oldWidgetIds: IntArray?, newWidgetIds: IntArray?) {
 		if(oldWidgetIds != null && newWidgetIds != null) {
 			val yearClone = HashMap<Int, Int>(yearForWidget)
@@ -167,6 +239,7 @@ private object CalendarWidgetInternal {
 	}
 	
 	/**
+	 * Change the day
 	 * @param year - the year of the days
 	 * @param month - the month of the days, 1 to 12
 	 */
