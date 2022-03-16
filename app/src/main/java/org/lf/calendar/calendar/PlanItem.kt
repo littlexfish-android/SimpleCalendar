@@ -26,7 +26,7 @@ class PlanItem : ConstraintLayout {
 	/**
 	 * The time of the plan
 	 */
-	private val time: Calendar = Calendar.getInstance().also { it.time = Date() }
+	val time: Calendar = Calendar.getInstance().also { it.time = Date() }
 	
 	/**
 	 * The content of the plan

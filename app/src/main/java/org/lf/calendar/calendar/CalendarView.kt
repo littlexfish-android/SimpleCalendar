@@ -156,7 +156,7 @@ class CalendarView : Fragment() {
 	 * Check the day is equals
 	 */
 	private fun dateEquals(day1: Calendar, day2: Calendar) = monthEqual(day1, day2) &&
-			day1.get(Calendar.MONTH) == day2.get(Calendar.MONTH)
+			day1.get(Calendar.DAY_OF_MONTH) == day2.get(Calendar.DAY_OF_MONTH)
 	
 	/**
 	 * Check the month is equals
@@ -177,11 +177,11 @@ class CalendarView : Fragment() {
 	/**
 	 * Change the day
 	 * @param year - the year of the days
-	 * @param month - the month of the days, 1 to 12
+	 * @param month - the month of the days, 0 to 11
 	 */
 	fun changeDays(year: Int, month: Int, day: Int = selectDate[Calendar.DAY_OF_MONTH]) {
 		selectDate.clear()
-		selectDate.set(year, month - 1, day)
+		selectDate.set(year, month, day)
 		if(this.year != year || this.month != month) {
 			this.year = year
 			this.month = month
@@ -198,6 +198,11 @@ class CalendarView : Fragment() {
 	 */
 	private fun createCalendarItem(justChangeSelect: Boolean) {
 		if(!justChangeSelect) {
+			val d = Calendar.getInstance().also { it.set(year, month, 1) }
+			val c = OnItemSelected(this)
+			
+			table.removeAllViews()
+			
 			var nowRow = TableRow(requireContext())
 			
 			for((viewIndex, day) in daysArray.withIndex()) {
@@ -207,16 +212,17 @@ class CalendarView : Fragment() {
 				}
 				
 				val calendarItem = CalendarItemDay(requireContext())
-				calendarItem.setDay(day, isToday(day), isCurrentMonth(day))
+				calendarItem.setDay(day, isToday(day), monthEqual(day, d))
 				if(dateEquals(day, selectDate)) {
 					calendarItem.isSelect = true
 				}
+				calendarItem.setOnClickListener(c)
 				nowRow.addView(calendarItem)
 				dayViews[viewIndex] = calendarItem
 				
 			}
 		}
-		for(dayIndex in 0..daysArray.size) {
+		for(dayIndex in daysArray.indices) {
 			val day = daysArray[dayIndex]
 			val view = dayViews[dayIndex]!! // must not null
 			
@@ -228,7 +234,7 @@ class CalendarView : Fragment() {
 	 * Initial days array
 	 */
 	private fun initDays(year: Int, month: Int) {
-		val date = Calendar.getInstance().also { it.set(year, month - 1, 0) }
+		val date = Calendar.getInstance().also { it.set(year, month, 0) }
 		val dayWeek = date.get(Calendar.DAY_OF_WEEK) // 1 for Sunday...
 
 		// check the first date of the calendar needed
@@ -236,7 +242,7 @@ class CalendarView : Fragment() {
 
 		var lastDay = firstDay.time.time
 
-		for(i in 0..(7 * WEEK_TO_SHOW)) {
+		for(i in 0 until (7 * WEEK_TO_SHOW)) {
 			daysArray[i].time = Date(lastDay)
 			lastDay += MilliOfDay
 		}
@@ -253,5 +259,22 @@ class CalendarView : Fragment() {
 				}
 			}
 	}
-
+	
+	class OnItemSelected(private val c: CalendarView) : View.OnClickListener {
+		
+		override fun onClick(v: View?) { // v always calendar item day
+			v?.let {
+				val cal = (it as CalendarItemDay).day
+				c.parentFragment?.let { calit ->
+					(calit as org.lf.calendar.tabs.Calendar).setDay(
+					cal[Calendar.YEAR],
+					cal[Calendar.MONTH],
+					cal[Calendar.DAY_OF_MONTH]
+				)
+				}
+			}
+		}
+		
+	}
+	
 }

@@ -38,40 +38,38 @@
 
     <ImageButton
         android:id="@+id/calendarPreMonth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/calendar_arrow"
+        android:layout_height="@dimen/calendar_arrow"
+        android:layout_marginEnd="16dp"
         android:background="@color/none"
-        android:onClick="onArrowButtonClick"
         android:src="@drawable/ic_pre_arrow"
         app:layout_constraintEnd_toStartOf="@+id/calendarYearMonth"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/calendarPostMonth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/calendar_arrow"
+        android:layout_height="@dimen/calendar_arrow"
+        android:layout_marginStart="16dp"
         android:background="@color/none"
-        android:onClick="onArrowButtonClick"
         android:src="@drawable/ic_post_arrow"
         app:layout_constraintStart_toEndOf="@+id/calendarYearMonth"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/calendarPreYear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/calendar_arrow"
+        android:layout_height="@dimen/calendar_arrow"
         android:background="@color/none"
-        android:onClick="onArrowButtonClick"
         android:src="@drawable/ic_pre_arrow_d"
         app:layout_constraintEnd_toStartOf="@+id/calendarPreMonth"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/calendarPostYear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/calendar_arrow"
+        android:layout_height="@dimen/calendar_arrow"
         android:background="@color/none"
-        android:onClick="onArrowButtonClick"
         android:src="@drawable/ic_post_arrow_d"
         app:layout_constraintStart_toEndOf="@+id/calendarPostMonth"
         app:layout_constraintTop_toTopOf="parent" />

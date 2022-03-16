@@ -20,10 +20,11 @@
         android:id="@+id/main_tool_bar"
         android:layout_width="0dp"
         android:layout_height="@dimen/main_tool_bar_height"
+        android:background="@color/default_theme_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@color/purple_200" />
+        tools:srcCompat="@color/default_theme_color" />
 
     <ImageView
         android:id="@+id/main_option_list"
@@ -50,11 +51,12 @@
         android:id="@+id/main_bottom_bar"
         android:layout_width="0dp"
         android:layout_height="@dimen/main_bottom_bar_height"
+        android:background="@color/default_theme_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:srcCompat="@color/purple_200" />
+        tools:srcCompat="@color/default_theme_color" />
 
     <ImageView
         android:id="@+id/main_list_button"

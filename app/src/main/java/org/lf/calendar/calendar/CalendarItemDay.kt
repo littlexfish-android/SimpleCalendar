@@ -17,7 +17,7 @@ class CalendarItemDay : ConstraintLayout {
     /**
      * The days this item hold
      */
-    private var day: Calendar = Calendar.getInstance()
+    var day: Calendar = Calendar.getInstance()
         set(value) {
             field = value
             num.text = value[Calendar.DAY_OF_MONTH].toString()
@@ -92,6 +92,10 @@ class CalendarItemDay : ConstraintLayout {
         background = findViewById(R.id.calendarItemBackground)
         selectFrame = findViewById(R.id.calendarItemSelected)
         
+        val size = resources.displayMetrics.widthPixels / 7.0
+        
+        findViewById<ConstraintLayout>(R.id.calendarItemDay).layoutParams = LayoutParams(size.toInt(), size.toInt())
+        num.textSize = size.toFloat() / 10
     }
     
     /**

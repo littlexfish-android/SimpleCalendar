@@ -10,20 +10,19 @@
         android:id="@+id/options_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:onClick="onCloseOptionMenu"
         tools:src="@color/none" />
 
     <ImageView
         android:id="@+id/options_background"
         android:layout_width="@dimen/options_width"
         android:layout_height="match_parent"
+        android:background="@color/default_theme_color"
         tools:src="@color/default_theme_color" />
 
     <ImageView
         android:id="@+id/options_close"
         android:layout_width="@dimen/main_tool_bar_height"
         android:layout_height="@dimen/main_tool_bar_height"
-        android:onClick="onCloseOptionMenu"
         android:scaleType="centerInside"
         android:src="@drawable/ic_close" />
 

@@ -36,7 +36,7 @@ class CalenderPlanList : Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		list = view.findViewById(R.id.plan_list)
+		list = view.findViewById(R.id.planList)
 
 	}
 	
@@ -58,8 +58,8 @@ class CalenderPlanList : Fragment() {
 	private fun sortArray() {
 		planArray.sortWith { o1, o2 ->
 			when {
-				o1.time > o2.time -> 1
-				o1.time == o2.time -> 0
+				o1.time.timeInMillis > o2.time.timeInMillis -> 1
+				o1.time.timeInMillis == o2.time.timeInMillis -> 0
 				else -> -1
 			}
 		}

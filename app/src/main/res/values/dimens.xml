@@ -9,6 +9,10 @@
 
     <dimen name="options_width">260dp</dimen>
 
+    <!--  calendar fragment  -->
+
+    <dimen name="calendar_arrow">40dp</dimen>
+
     <!--  calendar widget margin  -->
     <dimen name="widget_margin">0dp</dimen>
 

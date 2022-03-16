@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentContainerView
 import org.lf.calendar.R
 import org.lf.calendar.calendar.CalendarView
 import org.lf.calendar.calendar.CalenderPlanList
@@ -46,13 +48,17 @@ class Calendar : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		
-		val manager = parentFragmentManager
+		val manager = childFragmentManager
 		calendar = manager.findFragmentById(R.id.calendarCalendar) as CalendarView
 		calendarPlans = manager.findFragmentById(R.id.calendarList) as CalenderPlanList
-		
 		yearMonth = view.findViewById<TextView>(R.id.calendarYearMonth).also {
-			it.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month)
+			it.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
 		}
+		
+		view.findViewById<ImageView>(R.id.calendarPreMonth).setOnClickListener { onArrowButtonClick(it) }
+		view.findViewById<ImageView>(R.id.calendarPreYear).setOnClickListener { onArrowButtonClick(it) }
+		view.findViewById<ImageView>(R.id.calendarPostMonth).setOnClickListener { onArrowButtonClick(it) }
+		view.findViewById<ImageView>(R.id.calendarPostYear).setOnClickListener { onArrowButtonClick(it) }
 		
 		if(savedInstanceState == null) {
 
@@ -70,7 +76,7 @@ class Calendar : Fragment() {
 	 */
 	fun setDay(year: Int, month: Int, day: Int) {
 		calendar.changeDays(year, month, day)
-		yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month)
+		yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
 		// TODO: change calendar plans
 	}
 	
@@ -81,7 +87,7 @@ class Calendar : Fragment() {
 	/**
 	 * Call when button has been click
 	 */
-	fun onArrowButtonClick(v: View) {
+	private fun onArrowButtonClick(v: View) {
 		var year = calendar.year
 		var month = calendar.month
 		when(v.id) {
@@ -107,6 +113,7 @@ class Calendar : Fragment() {
 			}
 		}
 		calendar.changeDays(year, month)
+		yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
 	}
 	
 	companion object {
