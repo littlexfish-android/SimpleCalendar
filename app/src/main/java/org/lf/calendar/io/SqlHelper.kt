@@ -106,9 +106,8 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 */
 		constructor(db: SQLiteDatabase, limit: Int? = null, increase: Boolean = true, orderBy: String = "_id") {
 			val c: Cursor = if(limit != null) db.rawQuery("SELECT * FROM $databaseTableListName order by $orderBy ${if(increase) "ASC" else "DESC"} limit $limit", null) else db.rawQuery("SELECT * FROM $databaseTableListName order by $orderBy ${if(increase) "ASC" else "DESC"}", null)
-			if(c.count <= 0) return
 			c.moveToFirst()
-			for(i in 0..c.count) {
+			for(i in 0 until c.count) {
 				val id = c.getInt(0)
 				val category = c.getString(1)
 				val content = c.getString(2)
@@ -226,9 +225,8 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 */
 		constructor(db: SQLiteDatabase, limit: Int? = null, increase: Boolean = true, orderBy: String = "_id") {
 			val c: Cursor = if(limit != null) db.rawQuery("SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"} limit $limit", null) else db.rawQuery("SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"}", null)
-			if(c.count <= 0) return
 			c.moveToFirst()
-			for(i in 0..c.count) {
+			for(i in 0 until c.count) {
 				val id = c.getInt(0)
 				val type = c.getString(1)
 				val content = c.getString(2)

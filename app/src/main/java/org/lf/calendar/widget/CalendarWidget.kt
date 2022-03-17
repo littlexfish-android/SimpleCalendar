@@ -172,8 +172,8 @@ private object CalendarWidgetInternal {
 		
 		
 		// set button to open the activity
-		for(i in 0..(7 * WEEK_TO_SHOW)) {
-			views.setTextViewText(list[i], "${daysArray[i]}")
+		for(i in 0 until (7 * WEEK_TO_SHOW)) {
+			views.setTextViewText(list[i], "${daysArray[i][Calendar.DAY_OF_MONTH]}")
 			val intentToStart = context.packageManager.getLaunchIntentForPackage("org.lf.calendar")
 			if(intentToStart != null) {
 				intentToStart.putExtra("event", "selectCalendar")
@@ -225,7 +225,7 @@ private object CalendarWidgetInternal {
 			
 			onDeleteAll()
 			
-			for(i in 0..oldWidgetIds.size) {
+			for(i in oldWidgetIds.indices) {
 				val oldId = oldWidgetIds[i]
 				val newId = newWidgetIds[i]
 				
@@ -253,7 +253,7 @@ private object CalendarWidgetInternal {
 	 * Initial days array
 	 */
 	private fun initDays(appWidgetId: Int) {
-		val daysArray = daysArrayForWidget[appWidgetId] ?: Array<Calendar>(6 * WEEK_TO_SHOW) { Calendar.getInstance() }.also { daysArrayForWidget[appWidgetId] = it }
+		val daysArray = daysArrayForWidget[appWidgetId] ?: Array<Calendar>(7 * WEEK_TO_SHOW) { Calendar.getInstance() }.also { daysArrayForWidget[appWidgetId] = it }
 		val date = Calendar.getInstance()
 		date.set(yearForWidget[appWidgetId] ?: today[Calendar.YEAR].also { yearForWidget[appWidgetId] = it },
 			(monthForWidget[appWidgetId] ?: today[Calendar.MONTH].also { monthForWidget[appWidgetId] = it }) - 1, 0)
@@ -264,7 +264,7 @@ private object CalendarWidgetInternal {
 		
 		var lastDay = firstDay.time.time
 		
-		for(i in 0..(7 * WEEK_TO_SHOW)) {
+		for(i in 0 until (7 * WEEK_TO_SHOW)) {
 			daysArray[i].clear()
 			daysArray[i].time = Date(lastDay)
 			lastDay += MilliOfDay
