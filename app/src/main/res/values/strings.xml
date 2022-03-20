@@ -4,4 +4,12 @@
 
     <string name="calendarYearMonth">%1$d年%2$d月</string>
 
+    <!--  list editor  -->
+    <string name="listEditorGroup">名稱</string>
+    <string name="listEditorAddItem">新增項目</string>
+    <string name="listEditorRemoveItem">刪除所選</string>
+    <string name="listEditorConfirm">確定</string>
+    <string name="listEditorCancel">取消</string>
+
+
 </resources>

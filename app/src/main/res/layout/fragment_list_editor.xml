@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".list.ListEditor">
+
+    <TextView
+        android:id="@+id/listEditorGroupLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="@string/listEditorGroup"
+        app:layout_constraintBottom_toBottomOf="@+id/listEditorGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/listEditorGroup" />
+
+    <EditText
+        android:id="@+id/listEditorGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/listEditorGroupLabel"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/listEditorAddItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listEditorGroup">
+
+        <LinearLayout
+            android:id="@+id/listEditorItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/listEditorAddItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/listEditorAddItem"
+        app:layout_constraintBottom_toTopOf="@+id/listEditorComfirm"
+        app:layout_constraintEnd_toStartOf="@+id/listEditorRemoveItem"
+        app:layout_constraintStart_toStartOf="@+id/scrollView2" />
+
+    <Button
+        android:id="@+id/listEditorRemoveItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/listEditorRemoveItem"
+        app:layout_constraintEnd_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/listEditorAddItem"
+        app:layout_constraintTop_toTopOf="@+id/listEditorAddItem" />
+
+    <Button
+        android:id="@+id/listEditorComfirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/listEditorConfirm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/listEditorCancel"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/listEditorCancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/listEditorCancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/listEditorComfirm" />
+</androidx.constraintlayout.widget.ConstraintLayout>

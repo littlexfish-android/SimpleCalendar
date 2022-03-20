@@ -2,6 +2,7 @@ package org.lf.calendar
 
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -204,12 +205,12 @@ class MainActivity : AppCompatActivity() {
 	/**
 	 * Get calendar data
 	 */
-	fun getCalendar() = SqlHelper.CalendarProcessor(calendar)
+	fun getCalendar() = calendar
 	
 	/**
 	 * Get list data
 	 */
-	fun getList() = SqlHelper.ListProcessor(list)
+	fun getList() = list
 	
 	/**
 	 * On activity been destroy, need close database
@@ -220,5 +221,22 @@ class MainActivity : AppCompatActivity() {
 			lastDataBase.close()
 		}
 	}
-
+	
+	class SaveTimer(private val calendar: SqlHelper.CalendarProcessor, private val list: SqlHelper.ListProcessor) : CountDownTimer(30 * 1000L, 30 * 1000L) {
+		override fun onTick(millisUntilFinished: Long) {
+			// do nothing
+		}
+		
+		override fun onFinish() {
+			val db = SqlHelper.getInstance(null).writableDatabase
+			if(calendar.hasChange) {
+				calendar.saveSql(db)
+			}
+			if(list.hasChange) {
+				list.saveSql(db)
+			}
+			this.start()
+		}
+	}
+	
 }

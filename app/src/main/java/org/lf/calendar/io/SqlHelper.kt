@@ -43,7 +43,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * Only can create a sqlite, prevent too many helper
 		 */
-		fun getInstance(context: Context): SqlHelper {
+		fun getInstance(context: Context?): SqlHelper {
 			if(!::sql.isInitialized) {
 				sql = SqlHelper(context, null)
 			}
@@ -101,6 +101,9 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 */
 		private val deleteList = ArrayList<SqlList>()
 		
+		@Volatile
+		var hasChange = false
+		
 		/**
 		 * Construct by database
 		 */
@@ -155,6 +158,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			else {
 				appendList.add(data)
 			}
+			hasChange = true
 		}
 		
 		/**
@@ -165,6 +169,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			if(r != null && r) {
 				deleteList.add(data)
 			}
+			hasChange = true
 		}
 		
 		/**
@@ -195,6 +200,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 				arr.add(data)
 			}
 			appendList.clear()
+			hasChange = false
 			
 		}
 		
@@ -219,6 +225,9 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 * The item need delete from database
 		 */
 		private val deleteCalendar = ArrayList<SqlCalendar>()
+		
+		@Volatile
+		var hasChange = false
 		
 		/**
 		 * Construct by database
@@ -273,6 +282,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			else {
 				appendCalendar.add(data)
 			}
+			hasChange = true
 		}
 		
 		/**
@@ -282,6 +292,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			if(calendar.remove(data)) {
 				deleteCalendar.add(data)
 			}
+			hasChange = true
 		}
 		
 		/**
@@ -306,6 +317,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			// add append list into list
 			calendar.addAll(appendCalendar)
 			appendCalendar.clear()
+			hasChange = false
 			
 		}
 		

@@ -31,12 +31,14 @@ class ListItem : LinearLayout {
 	/**
 	 * The view of group
 	 */
-	private lateinit var group: TextView
+	private lateinit var group: CheckBox
 	
 	/**
 	 * The list of group view
 	 */
 	private lateinit var listGroup: LinearLayout
+	
+	private val itemViews = HashMap<String, Boolean>()
 	
 	constructor(context: Context) : super(context) {
 		init(null, 0)
@@ -82,6 +84,7 @@ class ListItem : LinearLayout {
 	 */
 	private fun refreshItems(force: Boolean) {
 		if(force || listGroup.childCount != items.size || group.text != groupName) {
+			
 			// clear children view
 			listGroup.removeAllViews()
 			
@@ -103,6 +106,7 @@ class ListItem : LinearLayout {
 		val checkbox = CheckBox(context)
 		checkbox.text = str
 		listGroup.addView(checkbox, index)
+		checkbox.isChecked = itemViews[str] ?: false.also { itemViews[str] = it }
 	}
 	
 }
