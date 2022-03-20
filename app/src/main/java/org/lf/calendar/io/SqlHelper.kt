@@ -1,12 +1,14 @@
 package org.lf.calendar.io
 
-import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.Nullable
 import androidx.core.database.getLongOrNull
+import org.intellij.lang.annotations.Language
+import org.lf.calendar.io.sqlitem.calendar.*
+import org.lf.calendar.io.sqlitem.list.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -55,8 +57,25 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 	 * On sqlite create, use to create table
 	 */
 	override fun onCreate(db: SQLiteDatabase?) {
-		db?.execSQL("CREATE TABLE IF NOT EXISTS $databaseTableListName (_id INTEGER PRIMARY KEY AUTOINCREMENT,category TEXT NOT NULL,content TEXT NOT NULL,isComplete INTEGER NOT NULL DEFAULT 0,createTime INTEGER NOT NULL,completeTime INTEGER)")
-		db?.execSQL("CREATE TABLE IF NOT EXISTS $databaseTableCalendarName (_id INTEGER PRIMARY KEY AUTOINCREMENT,type TEXT NOT NULL,content TEXT NOT NULL,time INTEGER NOT NULL,isComplete INTEGER NOT NULL DEFAULT 0,createTime INTEGER NOT NULL,completeTime INTEGER)")
+		@Language("SQL")
+		val listSql = "CREATE TABLE IF NOT EXISTS $databaseTableListName (" +
+				"_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				"groupName TEXT NOT NULL," +
+				"content TEXT NOT NULL," +
+				"isComplete INTEGER NOT NULL DEFAULT 0," +
+				"createTime INTEGER NOT NULL," +
+				"completeTime INTEGER)"
+		db?.execSQL(listSql)
+		@Language("SQL")
+		val calendarSql = "CREATE TABLE IF NOT EXISTS $databaseTableCalendarName (" +
+				"_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				"content TEXT NOT NULL, " +
+				"remark TEXT," +
+				"time INTEGER NOT NULL," +
+				"isComplete INTEGER NOT NULL DEFAULT 0," +
+				"createTime INTEGER NOT NULL," +
+				"completeTime INTEGER)"
+		db?.execSQL(calendarSql)
 	}
 	
 	/**
@@ -89,17 +108,17 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * The list from database
 		 */
-		private val list = HashMap<String, ArrayList<SqlList>>()
+		private val list = HashMap<String, ArrayList<SqlList1>>()
 		
 		/**
 		 * The list item need to insert into database
 		 */
-		private val appendList = ArrayList<SqlList>()
+		private val appendList = ArrayList<SqlList1>()
 		
 		/**
 		 * The list item need to delete from database
 		 */
-		private val deleteList = ArrayList<SqlList>()
+		private val deleteList = ArrayList<SqlList1>()
 		
 		@Volatile
 		var hasChange = false
@@ -111,15 +130,10 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			val c: Cursor = if(limit != null) db.rawQuery("SELECT * FROM $databaseTableListName order by $orderBy ${if(increase) "ASC" else "DESC"} limit $limit", null) else db.rawQuery("SELECT * FROM $databaseTableListName order by $orderBy ${if(increase) "ASC" else "DESC"}", null)
 			c.moveToFirst()
 			for(i in 0 until c.count) {
-				val id = c.getInt(0)
-				val category = c.getString(1)
-				val content = c.getString(2)
-				val isComplete = c.getInt(3) != 0
-				val createTime = Date(c.getLong(4))
-				val tmpTime = c.getLongOrNull(5)
-				val completeTime: Date? = if(tmpTime == null) null else Date(tmpTime)
-				if(!list.containsKey(category)) list[category] = ArrayList()
-				list[category]!!.add(SqlList(id, category, content, isComplete, createTime, completeTime))
+				val l = SqlList1()
+				l.initFromDataBase(c)
+				if(!list.containsKey(l.groupName)) list[l.groupName] = ArrayList()
+				list[l.groupName]!!.add(l)
 				c.moveToNext()
 			}
 			c.close()
@@ -150,10 +164,10 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * Add list item into database
 		 */
-		fun addListItem(data: SqlList) {
-			if(list.containsKey(data.category) && list[data.category]!!.contains(data)) {
-				list[data.category]!!.remove(data)
-				list[data.category]!!.add(data)
+		fun addListItem(data: SqlList1) {
+			if(list.containsKey(data.groupName) && list[data.groupName]!!.contains(data)) {
+				list[data.groupName]!!.remove(data)
+				list[data.groupName]!!.add(data)
 			}
 			else {
 				appendList.add(data)
@@ -164,8 +178,8 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * Delete list item from database
 		 */
-		fun deleteListItem(data: SqlList) {
-			val r = list[data.category]?.remove(data)
+		fun deleteListItem(data: SqlList1) {
+			val r = list[data.groupName]?.remove(data)
 			if(r != null && r) {
 				deleteList.add(data)
 			}
@@ -195,7 +209,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			
 			// add append list into map
 			for(data in appendList) {
-				val arr = list[data.category] ?: ArrayList<SqlList>().also { list[data.category] = it }
+				val arr = list[data.groupName] ?: ArrayList<SqlList1>().also { list[data.groupName] = it }
 				
 				arr.add(data)
 			}
@@ -214,17 +228,17 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * The item from database
 		 */
-		private val calendar = ArrayList<SqlCalendar>()
+		private val calendar = ArrayList<SqlCalendar1>()
 		
 		/**
 		 * The item need insert into database
 		 */
-		private val appendCalendar = ArrayList<SqlCalendar>()
+		private val appendCalendar = ArrayList<SqlCalendar1>()
 		
 		/**
 		 * The item need delete from database
 		 */
-		private val deleteCalendar = ArrayList<SqlCalendar>()
+		private val deleteCalendar = ArrayList<SqlCalendar1>()
 		
 		@Volatile
 		var hasChange = false
@@ -233,18 +247,17 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 * Construct by database
 		 */
 		constructor(db: SQLiteDatabase, limit: Int? = null, increase: Boolean = true, orderBy: String = "_id") {
-			val c: Cursor = if(limit != null) db.rawQuery("SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"} limit $limit", null) else db.rawQuery("SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"}", null)
+			@Language("SQL")
+			val selectLimit = "SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"} limit $limit"
+			@Language("SQL")
+			val selectNoLimit = "SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"}"
+			val c: Cursor = db.rawQuery(if(limit != null) selectLimit else selectNoLimit, null)
 			c.moveToFirst()
 			for(i in 0 until c.count) {
-				val id = c.getInt(0)
-				val type = c.getString(1)
-				val content = c.getString(2)
-				val time = Date(c.getLong(3))
-				val isComplete = c.getInt(4) != 0
-				val createTime = Date(c.getLong(5))
-				val tmpTime = c.getLongOrNull(6)
-				val completeTime: Date? = if(tmpTime == null) null else Date(tmpTime)
-				calendar.add(SqlCalendar(id, type, content, time, isComplete, createTime, completeTime))
+				val ca = SqlCalendar1()
+				ca.initFromDataBase(c)
+				calendar.add(ca)
+				c.moveToNext()
 			}
 			c.close()
 		}
@@ -274,7 +287,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * Add calendar plan into database
 		 */
-		fun addCalendarPlan(data: SqlCalendar) {
+		fun addCalendarPlan(data: SqlCalendar1) {
 			if(calendar.contains(data)) {
 				calendar.remove(data)
 				calendar.add(data)
@@ -288,7 +301,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * Delete calendar plan from database
 		 */
-		fun deleteCalendarPlan(data: SqlCalendar) {
+		fun deleteCalendarPlan(data: SqlCalendar1) {
 			if(calendar.remove(data)) {
 				deleteCalendar.add(data)
 			}
@@ -319,80 +332,6 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			appendCalendar.clear()
 			hasChange = false
 			
-		}
-		
-	}
-	
-	/**
-	 * List item from sqlite
-	 */
-	data class SqlList(var _id: Int, val category: String, val content: String, val isComplete: Boolean, val createTime: Date, val completeTime: Date?) {
-		
-		/**
-		 * To content values
-		 */
-		fun getContentValues(): ContentValues {
-			val contentValue = ContentValues()
-			contentValue.put("category", category)
-			contentValue.put("content", content)
-			contentValue.put("isComplete", if(isComplete) 1 else 0)
-			contentValue.put("createTime", createTime.time)
-			completeTime?.let {
-				contentValue.put("completeTime", it.time)
-			}
-			return contentValue
-		}
-		
-		override fun equals(other: Any?): Boolean {
-			return other == this || (other is SqlList && (other.category == category && other.content == content))
-		}
-		
-		override fun hashCode(): Int {
-			var result = _id
-			result = 31 * result + category.hashCode()
-			result = 31 * result + content.hashCode()
-			result = 31 * result + isComplete.hashCode()
-			result = 31 * result + createTime.hashCode()
-			result = 31 * result + (completeTime?.hashCode() ?: 0)
-			return result
-		}
-		
-	}
-	
-	/**
-	 * Calendar plan from sqlite
-	 */
-	data class SqlCalendar(val _id: Int, val type: String, val content: String, val time: Date, val isComplete: Boolean, val createTime: Date, val completeTime: Date?) {
-		
-		/**
-		 * To content value
-		 */
-		fun getContentValues(): ContentValues {
-			val contentValue = ContentValues()
-			contentValue.put("type", type)
-			contentValue.put("content", content)
-			contentValue.put("time", time.time)
-			contentValue.put("isComplete", if(isComplete) 1 else 0)
-			contentValue.put("createTime", createTime.time)
-			completeTime?.let {
-				contentValue.put("completeTime", it.time)
-			}
-			return contentValue
-		}
-		
-		override fun equals(other: Any?): Boolean {
-			return other == this || (other is SqlCalendar && (other.type == type && other.content == content))
-		}
-		
-		override fun hashCode(): Int {
-			var result = _id
-			result = 31 * result + type.hashCode()
-			result = 31 * result + content.hashCode()
-			result = 31 * result + time.hashCode()
-			result = 31 * result + isComplete.hashCode()
-			result = 31 * result + createTime.hashCode()
-			result = 31 * result + (completeTime?.hashCode() ?: 0)
-			return result
 		}
 		
 	}

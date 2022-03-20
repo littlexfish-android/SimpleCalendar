@@ -12,6 +12,7 @@
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/calendar_widget.xml" value="0.264" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_calendar.xml" value="0.4" />
+        <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_calendar_editor.xml" value="0.21784420289855072" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_calender_plan_list.xml" value="0.23052536231884058" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_list.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/fragment_list_editor.xml" value="0.264" />
@@ -23,6 +24,7 @@
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_calendar_item_day.xml" value="1.2" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_list_item.xml" value="0.4457831325301205" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/layout/view_plan_item.xml" value="0.4" />
+        <entry key="..\:/Users/lan/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_spinner_item.xml" value="0.21784420289855072" />
       </map>
     </option>
   </component>

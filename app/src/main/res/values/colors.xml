@@ -19,5 +19,6 @@
     <color name="default_theme_color_dark">#FF9964DA</color>
     <color name="none">#00000000</color>
     <color name="black_overlay">#55000000</color>
+    <color name="list_editor_selected">#FFCCCCCC</color>
 
 </resources>

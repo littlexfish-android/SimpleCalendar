@@ -119,18 +119,21 @@ class MainActivity : AppCompatActivity() {
 	/**
 	 * Switch fragment to fragment of list
 	 */
-	private fun setFragmentToList() {
+	fun setFragmentToList(refresh: Boolean = false) {
 		val t = supportFragmentManager.beginTransaction()
 		t.replace(R.id.main_tab_container, fragmentList)
 		t.setCustomAnimations(R.anim.mv_left_frag_cutin, R.anim.mv_left_frag_cutout)
 		t.commit()
 		nowFrag = fragmentList
+		if(refresh) {
+		
+		}
 	}
 	
 	/**
 	 * Switch fragment to fragment of calendar
 	 */
-	private fun setFragmentToCalendar(fromLeft: Boolean = true) {
+	fun setFragmentToCalendar(fromLeft: Boolean = true) {
 		val t = supportFragmentManager.beginTransaction()
 		t.replace(R.id.main_tab_container, fragmentCalendar)
 		if(fromLeft) {
@@ -143,15 +146,29 @@ class MainActivity : AppCompatActivity() {
 		nowFrag = fragmentCalendar
 	}
 	
+	fun setCalendarDay(year: Int, month: Int, day: Int) {
+		if(nowFrag == fragmentCalendar) {
+			fragmentCalendar.setDay(year, month, day)
+		}
+	}
+	
 	/**
 	 * Switch fragment to fragment of profile
 	 */
-	private fun setFragmentToProfile() {
+	fun setFragmentToProfile() {
 		val t = supportFragmentManager.beginTransaction()
 		t.replace(R.id.main_tab_container, fragmentProfile)
 		t.setCustomAnimations(R.anim.mv_right_frag_cutin, R.anim.mv_right_frag_cutout)
 		t.commit()
 		nowFrag = fragmentProfile
+	}
+	
+	fun setFragmentToOther(frag: Fragment) {
+		val t = supportFragmentManager.beginTransaction()
+		t.replace(R.id.main_tab_container, frag)
+		t.setCustomAnimations(R.anim.frag_fade_in, R.anim.frag_fade_out)
+		t.commit()
+		nowFrag = frag
 	}
 	
 	/**

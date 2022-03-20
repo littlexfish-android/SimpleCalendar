@@ -11,5 +11,6 @@
     <string name="listEditorConfirm">確定</string>
     <string name="listEditorCancel">取消</string>
 
+    <string-array name="emptyArray" />
 
 </resources>

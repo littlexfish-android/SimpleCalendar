@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:text="@string/listEditorAddItem"
-        app:layout_constraintBottom_toTopOf="@+id/listEditorComfirm"
+        app:layout_constraintBottom_toTopOf="@+id/listEditorConfirm"
         app:layout_constraintEnd_toStartOf="@+id/listEditorRemoveItem"
         app:layout_constraintStart_toStartOf="@+id/scrollView2" />
 
@@ -69,7 +69,7 @@
         app:layout_constraintTop_toTopOf="@+id/listEditorAddItem" />
 
     <Button
-        android:id="@+id/listEditorComfirm"
+        android:id="@+id/listEditorConfirm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/listEditorConfirm"
@@ -84,5 +84,6 @@
         android:text="@string/listEditorCancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/listEditorComfirm" />
+        app:layout_constraintStart_toEndOf="@+id/listEditorConfirm" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

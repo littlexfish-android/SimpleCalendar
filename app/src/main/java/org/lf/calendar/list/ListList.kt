@@ -94,7 +94,7 @@ class ListList : Fragment() {
 	 * Refresh the list
 	 * @param force - {@code true} to force refresh, or {@code false} will refresh when it has been changed
 	 */
-	private fun refreshList(force: Boolean) {
+	fun refreshList(force: Boolean) {
 		if(force || (groupOrder.size != groups.size || groups.size != list.childCount)) {
 			
 			// remove all list children
