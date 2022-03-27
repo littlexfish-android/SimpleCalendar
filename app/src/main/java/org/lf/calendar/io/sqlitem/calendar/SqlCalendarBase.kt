@@ -1,7 +1,6 @@
 package org.lf.calendar.io.sqlitem.calendar
 
 import org.lf.calendar.io.sqlitem.Sqlable
-import java.lang.IllegalStateException
 
 abstract class SqlCalendarBase : Sqlable {
 	

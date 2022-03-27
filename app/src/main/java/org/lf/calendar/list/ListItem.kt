@@ -1,11 +1,9 @@
 package org.lf.calendar.list
 
 import android.content.Context
-import android.util.ArrayMap
 import android.util.AttributeSet
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import android.widget.TextView
 import org.lf.calendar.R
 
 /**
@@ -111,6 +109,7 @@ class ListItem : LinearLayout {
 		val checkbox = CheckBox(context)
 		checkbox.text = str
 		checkbox.isChecked = isChecked
+		checkbox.textSize = resources.getDimension(R.dimen.listItemItemSize)
 		listGroup.addView(checkbox, index)
 		checkbox.isChecked = itemViews[str] ?: false.also { itemViews[str] = it }
 	}

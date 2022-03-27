@@ -1,13 +1,14 @@
 package org.lf.calendar.tabs
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
+import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.list.ListEditor
 import org.lf.calendar.list.ListList
 
@@ -33,7 +34,7 @@ class List : Fragment() {
 		
 		list = childFragmentManager.findFragmentById(R.id.listListFragment) as ListList
 		
-		view.findViewById<FloatingActionButton>(R.id.list_add_group).setOnClickListener {
+		view.findViewById<FloatingActionButton>(R.id.listAddGroup).setOnClickListener {
 			if(activity != null && activity is MainActivity) {
 				(activity as MainActivity).setFragmentToOther(ListEditor.newInstance())
 			}
@@ -44,16 +45,14 @@ class List : Fragment() {
 	}
 	
 	fun reloadFromSql() {
-		val act = activity
-		if(act is MainActivity) {
-			val sqlList = act.getList().getList()
-			list.clearItems()
-			for(sqlKey in sqlList.keys) {
-				list.addListItem(sqlKey)
-				for(sqlValue in sqlList[sqlKey]!!) {
-					list.addItem(sqlValue.groupName, sqlValue.content, sqlValue.isComplete)
-					refreshList()
-				}
+		val sqlHelper = SqlHelper.getInstance(context)
+		val sqlList = sqlHelper.getList(sqlHelper.writableDatabase, 50, "createTime").getList()
+		list.clearItems()
+		for(sqlKey in sqlList.keys) {
+			list.addListItem(sqlKey)
+			for(sqlValue in sqlList[sqlKey]!!) {
+				list.addItem(sqlValue.groupName, sqlValue.content, sqlValue.isComplete)
+				refreshList()
 			}
 		}
 	}

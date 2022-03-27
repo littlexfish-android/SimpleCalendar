@@ -5,12 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
-import android.util.TypedValue
-import android.widget.Button
 import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import java.util.*

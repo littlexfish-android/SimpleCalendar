@@ -15,4 +15,9 @@ interface Sqlable {
 	 */
 	fun getContentValues(): ContentValues
 	
+	/**
+	 * Get string use to create sql table
+	 */
+	fun getOnCreateCommand(tableName: String): String
+	
 }

@@ -1,22 +1,18 @@
 package org.lf.calendar.list
 
 import android.os.Bundle
-import android.util.ArrayMap
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.list.SqlList1
-import java.util.*
-import kotlin.collections.ArrayList
 
 private const val PARAM_TYPE = "list.editor.type"
 private const val PARAM_GROUP = "list.editor.group"
@@ -76,6 +72,9 @@ class ListEditor : Fragment() {
 				for(str in tmpList!!) {
 					addItem(str)
 				}
+				if(tmpPos > 0 && tmpPos < tmpList!!.size) {
+					itemViews[tmpPos].requestFocus()
+				}
 			}
 		}
 		
@@ -94,7 +93,7 @@ class ListEditor : Fragment() {
 					
 					for(v in itemViews) {
 						val str = v.text.toString()
-						val item = SqlList1(groupName, str, Date())
+						val item = SqlList1(groupName, str)
 						sqlList.addListItem(item)
 					}
 					

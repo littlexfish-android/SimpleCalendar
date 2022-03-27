@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".calendar.ListItem">
+    tools:context=".calendar.PlanItem">
 
 
     <CheckBox
         android:id="@+id/list_item_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CheckBox" />
+        android:text="CheckBox"
+        android:textSize="30dp" />
 
     <LinearLayout
         android:id="@+id/list_item_items"

@@ -1,16 +1,19 @@
 package org.lf.calendar.tabs
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.Fragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.lf.calendar.MainActivity
 import org.lf.calendar.R
+import org.lf.calendar.calendar.CalendarEditor
 import org.lf.calendar.calendar.CalendarView
 import org.lf.calendar.calendar.CalenderPlanList
+import org.lf.calendar.io.SqlHelper
 
 /**
  * The class is a tab of main activity, use to show calendar
@@ -61,8 +64,12 @@ class Calendar : Fragment() {
 		view.findViewById<ImageView>(R.id.calendarPreYear).setOnClickListener { onArrowButtonClick(it) }
 		view.findViewById<ImageView>(R.id.calendarPostMonth).setOnClickListener { onArrowButtonClick(it) }
 		view.findViewById<ImageView>(R.id.calendarPostYear).setOnClickListener { onArrowButtonClick(it) }
-		//TODO: add long click on text view to switch to today
-		
+		view.findViewById<TextView>(R.id.calendarYearMonth).setOnLongClickListener {
+			calendar.changeToToday()
+			yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
+			true
+		}
+		view.findViewById<FloatingActionButton>(R.id.calendarAddPlan).setOnClickListener { onAddPlan() }
 		
 		if(savedInstanceState == null) {
 
@@ -88,7 +95,7 @@ class Calendar : Fragment() {
 		val t = {
 			calendar.changeDays(year, month, day)
 			yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
-			// TODO: change calendar plans
+			reloadFromSql(false)
 		}
 		if(this::calendar.isInitialized) {
 			t()
@@ -133,6 +140,35 @@ class Calendar : Fragment() {
 		calendar.changeDays(year, month)
 		yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
 	}
+	
+	private fun onAddPlan() {
+		if(activity is MainActivity) {
+			(activity as MainActivity).setFragmentToOther(CalendarEditor.newInstance())
+		}
+	}
+	
+	/**
+	 * Reload from sqlite using SqlHelper
+	 */
+	fun reloadFromSql(force: Boolean = false) {
+		if(force || !dateEquals(calendar.selectDate, calendarPlans.day)) {
+			val day = calendar.selectDate
+			val end = day.timeInMillis + (24*60*60*1000)
+			val sqlHelper = SqlHelper.getInstance(context)
+			val sqlCalendar = sqlHelper.getCalendar(sqlHelper.writableDatabase, orderBy = "time", timeMin = day.timeInMillis, timeMax = end).getCalendar()
+			calendarPlans.removeAllPlan()
+			for(sql in sqlCalendar) {
+				calendarPlans.addPlan(sql.time.time, sql.content, sqlItem = sql)
+			}
+			calendarPlans.refreshList()
+			calendarPlans.day.time = calendar.selectDate.time
+		}
+	}
+	
+	private fun dateEquals(day1: java.util.Calendar, day2: java.util.Calendar) =
+		day1.get(java.util.Calendar.YEAR) == day2.get(java.util.Calendar.YEAR) &&
+				day1.get(java.util.Calendar.MONTH) == day2.get(java.util.Calendar.MONTH)&&
+				day1.get(java.util.Calendar.DAY_OF_MONTH) == day2.get(java.util.Calendar.DAY_OF_MONTH)
 	
 	companion object {
 		@JvmStatic

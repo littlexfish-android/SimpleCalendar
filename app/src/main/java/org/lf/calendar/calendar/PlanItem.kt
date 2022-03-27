@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import org.lf.calendar.R
+import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,6 +38,8 @@ class PlanItem : ConstraintLayout {
 	 * The time format use to show
 	 */
 	var timeFormat = DATE_NORMAL24
+	
+	lateinit var sqlItem: SqlCalendar1
 
 	constructor(context: Context) : super(context) {
 		init(null, 0)
@@ -72,6 +75,10 @@ class PlanItem : ConstraintLayout {
 		this.time.time = Date(time)
 		this.content = content
 		updateContent()
+	}
+	
+	fun attachSqlItem(sql: SqlCalendar1) {
+		sqlItem = sql
 	}
 	
 	/**

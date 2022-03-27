@@ -3,7 +3,7 @@ package org.lf.calendar.io.sqlitem.list
 import android.content.ContentValues
 import android.database.Cursor
 import androidx.core.database.getLongOrNull
-import org.lf.calendar.io.sqlitem.Sqlable
+import org.intellij.lang.annotations.Language
 import java.util.*
 
 /**
@@ -27,10 +27,9 @@ class SqlList1 : SqlListBase {
 	
 	constructor() : super()
 	
-	constructor(groupName: String, content: String, createTime: Date) : super() {
+	constructor(groupName: String, content: String) : super() {
 		this.groupName = groupName
 		this.content = content
-		this.createTime = createTime
 	}
 	
 	override fun initFromDatabase(cursor: Cursor) {
@@ -58,6 +57,16 @@ class SqlList1 : SqlListBase {
 	override fun upgrade(version: Int): SqlListBase {
 		return this
 	}
+	
+	@Language("SQL")
+	override fun getOnCreateCommand(tableName: String): String =
+		"CREATE TABLE IF NOT EXISTS $tableName (" +
+			"_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+			"groupName TEXT NOT NULL," +
+			"content TEXT NOT NULL," +
+			"isComplete INTEGER NOT NULL DEFAULT 0," +
+			"createTime INTEGER NOT NULL," +
+			"completeTime INTEGER)"
 	
 	override fun equals(other: Any?): Boolean {
 		return other == this || (other is SqlList1 && (other.groupName == groupName && other.content == content))

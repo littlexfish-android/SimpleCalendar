@@ -1,17 +1,25 @@
 package org.lf.calendar.calendar
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import org.lf.calendar.R
+import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * The class contains all of plans in the day
  */
 class CalenderPlanList : Fragment() {
+	
+	/**
+	 * Day use to check
+	 */
+	val day: Calendar = Calendar.getInstance().also { it.time = Date() }
 	
 	/**
 	 * List view of the class
@@ -21,7 +29,7 @@ class CalenderPlanList : Fragment() {
 	/**
 	 * Plan item of the day
 	 */
-	var planArray = ArrayList<PlanItem>()
+	private var planArray = ArrayList<PlanItem>()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -43,13 +51,19 @@ class CalenderPlanList : Fragment() {
 	/**
 	 * Add plan item into list
 	 */
-	fun addPlan(time: Long, content: String) {
+	fun addPlan(time: Long, content: String, refresh: Boolean = false, sqlItem: SqlCalendar1? = null) {
+		addPlanItem(time, content, sqlItem)
+		
+		if(refresh) {
+			refreshList()
+		}
+	}
+	
+	private fun addPlanItem(time: Long, content: String, sqlItem: SqlCalendar1? = null) {
 		if(context == null) return
 		val plan = PlanItem(requireContext())
 		plan.setContent(time, content)
-
-		sortArray()
-		refreshList()
+		if(sqlItem != null) plan.attachSqlItem(sqlItem)
 	}
 	
 	/**
@@ -65,10 +79,16 @@ class CalenderPlanList : Fragment() {
 		}
 	}
 	
+	fun removeAllPlan() {
+		list.removeAllViews()
+		planArray.clear()
+	}
+	
 	/**
 	 * Refresh the list, detach the views from list and re-add into the list order by the array
 	 */
-	private fun refreshList() {
+	fun refreshList() {
+		sortArray()
 		list.removeAllViews()
 		for(item in planArray) {
 			list.addView(item)

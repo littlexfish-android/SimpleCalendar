@@ -3,7 +3,6 @@ package org.lf.calendar
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment

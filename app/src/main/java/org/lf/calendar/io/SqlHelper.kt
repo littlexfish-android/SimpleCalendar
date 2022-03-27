@@ -5,13 +5,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.Nullable
-import androidx.core.database.getLongOrNull
 import org.intellij.lang.annotations.Language
-import org.lf.calendar.io.sqlitem.calendar.*
-import org.lf.calendar.io.sqlitem.list.*
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
+import org.lf.calendar.io.sqlitem.list.SqlList1
 
 /**
  * The database name
@@ -22,6 +18,8 @@ private const val dataBaseName = "org.lf.simple_calendar"
  * The database version
  */
 private const val dataBaseVersion = 1
+private val defaultList = SqlList1()
+private val defaultCalendar = SqlCalendar1()
 
 /**
  * The database table name of list
@@ -57,25 +55,8 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 	 * On sqlite create, use to create table
 	 */
 	override fun onCreate(db: SQLiteDatabase?) {
-		@Language("SQL")
-		val listSql = "CREATE TABLE IF NOT EXISTS $databaseTableListName (" +
-				"_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-				"groupName TEXT NOT NULL," +
-				"content TEXT NOT NULL," +
-				"isComplete INTEGER NOT NULL DEFAULT 0," +
-				"createTime INTEGER NOT NULL," +
-				"completeTime INTEGER)"
-		db?.execSQL(listSql)
-		@Language("SQL")
-		val calendarSql = "CREATE TABLE IF NOT EXISTS $databaseTableCalendarName (" +
-				"_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-				"content TEXT NOT NULL, " +
-				"remark TEXT," +
-				"time INTEGER NOT NULL," +
-				"isComplete INTEGER NOT NULL DEFAULT 0," +
-				"createTime INTEGER NOT NULL," +
-				"completeTime INTEGER)"
-		db?.execSQL(calendarSql)
+		db?.execSQL(defaultList.getOnCreateCommand(databaseTableListName))
+		db?.execSQL(defaultCalendar.getOnCreateCommand(databaseTableCalendarName))
 	}
 	
 	/**
@@ -89,15 +70,15 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 	/**
 	 * Get list from database
 	 */
-	fun getList(db: SQLiteDatabase, limit: Int? = null, increase: Boolean = true, orderBy: String = "_id"): ListProcessor {
-		return ListProcessor(db, limit, increase, orderBy)
+	fun getList(db: SQLiteDatabase, limit: Int? = null, orderBy: String? = null, increase: Boolean = true): ListProcessor {
+		return ListProcessor(db, limit, orderBy, increase)
 	}
 	
 	/**
 	 * Get calendar from database
 	 */
-	fun getCalendar(db: SQLiteDatabase, limit: Int? = null, increase: Boolean = true, orderBy: String = "_id"): CalendarProcessor {
-		return CalendarProcessor(db, limit, increase, orderBy)
+	fun getCalendar(db: SQLiteDatabase, limit: Int? = null, orderBy: String? = null, increase: Boolean = true, timeMin: Long = -1, timeMax: Long = -1): CalendarProcessor {
+		return CalendarProcessor(db, limit, orderBy, increase, timeMin, timeMax)
 	}
 	
 	/**
@@ -126,8 +107,12 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * Construct by database
 		 */
-		constructor(db: SQLiteDatabase, limit: Int? = null, increase: Boolean = true, orderBy: String = "_id") {
-			val c: Cursor = if(limit != null) db.rawQuery("SELECT * FROM $databaseTableListName order by $orderBy ${if(increase) "ASC" else "DESC"} limit $limit", null) else db.rawQuery("SELECT * FROM $databaseTableListName order by $orderBy ${if(increase) "ASC" else "DESC"}", null)
+		constructor(db: SQLiteDatabase, limit: Int? = null, orderBy: String? = null, increase: Boolean = true) {
+			@Language("SQL")
+			var select = "SELECT * FROM $databaseTableListName"
+			if(orderBy != null) select += " order by $orderBy ${if(increase) "ASC" else "DESC"}"
+			if(limit != null) select += " limit $limit"
+			val c: Cursor = db.rawQuery(select, null)
 			c.moveToFirst()
 			for(i in 0 until c.count) {
 				val l = SqlList1()
@@ -246,12 +231,15 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * Construct by database
 		 */
-		constructor(db: SQLiteDatabase, limit: Int? = null, increase: Boolean = true, orderBy: String = "_id") {
+		constructor(db: SQLiteDatabase, limit: Int? = null, orderBy: String? = null, increase: Boolean = true, timeMin: Long = -1, timeMax: Long = -1) {
 			@Language("SQL")
-			val selectLimit = "SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"} limit $limit"
-			@Language("SQL")
-			val selectNoLimit = "SELECT * FROM $databaseTableCalendarName order by $orderBy ${if(increase) "ASC" else "DESC"}"
-			val c: Cursor = db.rawQuery(if(limit != null) selectLimit else selectNoLimit, null)
+			var select = "SELECT * FROM $databaseTableCalendarName"
+			if(orderBy != null) select += " order by $orderBy ${if(increase) "ASC" else "DESC"}"
+			if(limit != null) select += " limit $limit"
+			if(timeMin >= 0 && timeMax >= 0) select += " WHERE time BETWEEN $timeMin AND $timeMax";
+			else if(timeMin >= 0 && timeMax < 0) select += " WHERE time >= $timeMin"
+			else if(timeMin < 0 && timeMax >= 0) select += "WHERE time < $timeMax"
+			val c: Cursor = db.rawQuery(select, null)
 			c.moveToFirst()
 			for(i in 0 until c.count) {
 				val ca = SqlCalendar1()
@@ -261,8 +249,6 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			}
 			c.close()
 		}
-		
-		// TODO: add constructor that can construct this by database use time range
 		
 		/**
 		 * Construct by other same class

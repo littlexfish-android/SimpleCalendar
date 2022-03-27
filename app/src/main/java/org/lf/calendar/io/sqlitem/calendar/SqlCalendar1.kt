@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
+import org.intellij.lang.annotations.Language
 import java.util.*
 
 /**
@@ -31,11 +32,10 @@ class SqlCalendar1 : SqlCalendarBase {
 	
 	constructor() : super()
 	
-	constructor(content: String, remark: String?, time: Date, createTime: Date) : super() {
+	constructor(content: String, remark: String?, time: Date) : super() {
 		this.content = content
 		this.remark = remark
 		this.time = time
-		this.createTime = createTime
 	}
 	
 	override fun initFromDatabase(cursor: Cursor) {
@@ -65,6 +65,18 @@ class SqlCalendar1 : SqlCalendarBase {
 	override fun upgrade(version: Int): SqlCalendarBase {
 		return this
 	}
+	
+	@Language("SQL")
+	override fun getOnCreateCommand(tableName: String): String =
+		"CREATE TABLE IF NOT EXISTS $tableName (" +
+				"_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				"content TEXT NOT NULL, " +
+				"remark TEXT," +
+				"time INTEGER NOT NULL," +
+				"isComplete INTEGER NOT NULL DEFAULT 0," +
+				"createTime INTEGER NOT NULL," +
+				"completeTime INTEGER)"
+	
 	
 	override fun equals(other: Any?): Boolean {
 		return other == this || (other is SqlCalendar1 && (other.content == content && createTime == other.createTime))

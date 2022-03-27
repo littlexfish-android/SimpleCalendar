@@ -34,18 +34,6 @@ private const val MilliOfHour = MilliOfMinute * 60
 private const val MilliOfDay = MilliOfHour * 24
 
 /**
- * Parameter of year
- */
-private const val PARAM_YEAR = "calendar.year"
-/**
- * Parameter of month
- */
-private const val PARAM_MONTH = "calendar.month"
-/**
- * Parameter of day
- */
-private const val PARAM_DAY = "calendar.day"
-/**
  * Parameter of date
  */
 private const val PARAM_SELECTED_DATE = "calendar.date"
@@ -65,19 +53,10 @@ class CalendarView : Fragment() {
 	/**
 	 * The day of user selected
 	 */
-	private var selectDate: Calendar = Calendar.getInstance().also { it.time = Date() }
+	var selectDate: Calendar = Calendar.getInstance().also { it.time = Date() }
 	
-	/* now month */
-	
-	/**
-	 * The month user look
-	 */
-	var month = today[Calendar.MONTH]
-	
-	/**
-	 * The year user look
-	 */
-	var year = today[Calendar.YEAR]
+	val year get() = selectDate[Calendar.YEAR]
+	val month get() = selectDate[Calendar.MONTH]
 	
 	private val task = ArrayList<Runnable>()
 	
@@ -105,27 +84,16 @@ class CalendarView : Fragment() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		if(savedInstanceState == null) {
-			today = Calendar.getInstance().also { it.time = Date() }
-
-			val year = today.get(Calendar.YEAR)
-			val month = today.get(Calendar.MONTH)
-
-			this.month = month
-			this.year = year
-		}
-		else {
-			year = savedInstanceState.getInt(PARAM_YEAR)
-			month = savedInstanceState.getInt(PARAM_MONTH)
+		if(savedInstanceState != null) {
 			selectDate.time.time = savedInstanceState.getLong(PARAM_SELECTED_DATE)
 		}
-
-		arguments?.let {
-			year = it.getInt(PARAM_YEAR)
-			month = it.getInt(PARAM_MONTH)
+		else {
+			arguments?.let {
+			}
 		}
 
-		initDays(year, month)
+
+		initDays(selectDate[Calendar.YEAR], selectDate[Calendar.MONTH])
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -158,11 +126,6 @@ class CalendarView : Fragment() {
 	private fun isToday(theDay: Calendar) = dateEquals(theDay, today)
 	
 	/**
-	 * Check is current month
-	 */
-	private fun isCurrentMonth(theDay: Calendar) = monthEqual(theDay, today)
-	
-	/**
 	 * Check the day is equals
 	 */
 	private fun dateEquals(day1: Calendar, day2: Calendar) = monthEqual(day1, day2) &&
@@ -179,8 +142,6 @@ class CalendarView : Fragment() {
 	 */
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
-		outState.putInt(PARAM_YEAR, year)
-		outState.putInt(PARAM_MONTH, month)
 		outState.putLong(PARAM_SELECTED_DATE, selectDate.time.time)
 	}
 	
@@ -191,17 +152,15 @@ class CalendarView : Fragment() {
 	 */
 	fun changeDays(year: Int, month: Int, day: Int = selectDate[Calendar.DAY_OF_MONTH]) {
 		val t = {
-			selectDate.clear()
-			selectDate.set(year, month, day)
-			if(this.year != year || this.month != month) {
-				this.year = year
-				this.month = month
+			if(selectDate[Calendar.YEAR] != year || selectDate[Calendar.MONTH] != month) {
 				initDays(year, month)
 				createCalendarItem(false)
 			}
 			else {
 				createCalendarItem(true)
 			}
+			selectDate.clear()
+			selectDate.set(year, month, day)
 		}
 		if(this::table.isInitialized) {
 			t()
@@ -211,12 +170,16 @@ class CalendarView : Fragment() {
 		}
 	}
 	
+	fun changeToToday() {
+		changeDays(today[Calendar.YEAR], today[Calendar.MONTH], today[Calendar.DAY_OF_MONTH])
+	}
+	
 	/**
 	 * Create item view or change selected day
 	 */
 	private fun createCalendarItem(justChangeSelect: Boolean) {
 		if(!justChangeSelect) {
-			val d = Calendar.getInstance().also { it.set(year, month, 1) }
+			val d = Calendar.getInstance().also { it.set(selectDate[Calendar.YEAR], selectDate[Calendar.MONTH], 1) }
 			val c = OnItemSelected(this)
 			
 			table.removeAllViews()
@@ -269,11 +232,10 @@ class CalendarView : Fragment() {
 
 	companion object {
 		@JvmStatic
-		fun newInstance(year: Int = 2022, month: Int = 0) =
+		fun newInstance(time: Long) =
 			org.lf.calendar.tabs.List().apply {
 				arguments = Bundle().apply {
-					putInt(PARAM_YEAR, year)
-					putInt(PARAM_MONTH, month)
+					this.putLong(PARAM_SELECTED_DATE, time)
 				}
 			}
 	}
@@ -284,11 +246,10 @@ class CalendarView : Fragment() {
 			v?.let {
 				val cal = (it as CalendarItemDay).day
 				c.parentFragment?.let { calit ->
-					(calit as org.lf.calendar.tabs.Calendar).setDay(
-					cal[Calendar.YEAR],
-					cal[Calendar.MONTH],
-					cal[Calendar.DAY_OF_MONTH]
-				)
+					(calit as org.lf.calendar.tabs.Calendar)
+						.setDay(cal[Calendar.YEAR],
+							cal[Calendar.MONTH],
+							cal[Calendar.DAY_OF_MONTH])
 				}
 			}
 		}
