@@ -31,7 +31,9 @@ class Calendar : Fragment() {
 	 * The year month of calendar
 	 */
 	lateinit var yearMonth: TextView
-
+	
+	private val task = ArrayList<Runnable>()
+	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let { }
@@ -59,6 +61,8 @@ class Calendar : Fragment() {
 		view.findViewById<ImageView>(R.id.calendarPreYear).setOnClickListener { onArrowButtonClick(it) }
 		view.findViewById<ImageView>(R.id.calendarPostMonth).setOnClickListener { onArrowButtonClick(it) }
 		view.findViewById<ImageView>(R.id.calendarPostYear).setOnClickListener { onArrowButtonClick(it) }
+		//TODO: add long click on text view to switch to today
+		
 		
 		if(savedInstanceState == null) {
 
@@ -68,16 +72,30 @@ class Calendar : Fragment() {
 		}
 
 
-
+		if(task.isNotEmpty()) {
+			for(t in task) {
+				t.run()
+			}
+			task.clear()
+		}
+		
 	}
 	
 	/**
 	 * Set the day of calendar
 	 */
 	fun setDay(year: Int, month: Int, day: Int) {
-		calendar.changeDays(year, month, day)
-		yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
-		// TODO: change calendar plans
+		val t = {
+			calendar.changeDays(year, month, day)
+			yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
+			// TODO: change calendar plans
+		}
+		if(this::calendar.isInitialized) {
+			t()
+		}
+		else {
+			task.add(t)
+		}
 	}
 	
 	override fun onSaveInstanceState(outState: Bundle) {

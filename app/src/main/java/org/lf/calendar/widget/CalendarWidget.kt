@@ -4,7 +4,14 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import android.util.TypedValue
+import android.widget.Button
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
+import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import java.util.*
 import kotlin.collections.HashMap
@@ -174,12 +181,19 @@ private object CalendarWidgetInternal {
 		// set button to open the activity
 		for(i in 0 until (7 * WEEK_TO_SHOW)) {
 			views.setTextViewText(list[i], "${daysArray[i][Calendar.DAY_OF_MONTH]}")
-			val intentToStart = context.packageManager.getLaunchIntentForPackage("org.lf.calendar")
-			if(intentToStart != null) {
-				intentToStart.putExtra("event", "selectCalendar")
-				intentToStart.putExtra("time", daysArray[i].time.time)
-				views.setOnClickPendingIntent(list[i], PendingIntent.getActivity(context, 0, intentToStart, PendingIntent.FLAG_IMMUTABLE))
+			if(!isCurrentMonth(daysArray[i])) {
+				views.setTextColor(list[i], context.resources.getColor(R.color.calendar_not_current_month, null))
 			}
+			else if(isToday(daysArray[i])) {
+				views.setTextColor(list[i], context.resources.getColor(R.color.default_theme_color, null))
+			}
+			
+			val intentToStart = Intent(context, MainActivity::class.java)
+			intentToStart.putExtra("event", "selectCalendar")
+			intentToStart.putExtra("time", daysArray[i].time.time)
+			intentToStart.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+			val pi = PendingIntent.getActivity(context, 0, intentToStart, PendingIntent.FLAG_IMMUTABLE)
+			views.setOnClickPendingIntent(list[i], pi)
 		}
 		
 		// Instruct the widget manager to update the widget
@@ -256,7 +270,7 @@ private object CalendarWidgetInternal {
 		val daysArray = daysArrayForWidget[appWidgetId] ?: Array<Calendar>(7 * WEEK_TO_SHOW) { Calendar.getInstance() }.also { daysArrayForWidget[appWidgetId] = it }
 		val date = Calendar.getInstance()
 		date.set(yearForWidget[appWidgetId] ?: today[Calendar.YEAR].also { yearForWidget[appWidgetId] = it },
-			(monthForWidget[appWidgetId] ?: today[Calendar.MONTH].also { monthForWidget[appWidgetId] = it }) - 1, 0)
+			(monthForWidget[appWidgetId] ?: today[Calendar.MONTH].also { monthForWidget[appWidgetId] = it }), 0)
 		val day = date.get(Calendar.DAY_OF_WEEK) // 1 for Sunday...
 		
 		// check the first date of the calendar needed

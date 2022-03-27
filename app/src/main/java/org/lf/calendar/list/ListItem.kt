@@ -1,6 +1,7 @@
 package org.lf.calendar.list
 
 import android.content.Context
+import android.util.ArrayMap
 import android.util.AttributeSet
 import android.widget.CheckBox
 import android.widget.LinearLayout
@@ -24,7 +25,9 @@ class ListItem : LinearLayout {
 	/**
 	 * The items of group
 	 */
-	private val items = ArrayList<String>()
+	private val items = HashMap<String, Boolean>()
+	
+	private val itemsOrder = ArrayList<String>()
 	
 	/* view */
 	
@@ -72,9 +75,11 @@ class ListItem : LinearLayout {
 	/**
 	 * Add the list item into this group
 	 */
-	fun addItem(str: String, index: Int = -1) {
-		if(index == -1) items.add(str) else items.add(index, str)
-		addItemView(str, index)
+	fun addItem(str: String, isChecked: Boolean = false, index: Int = -1) {
+		if(items.containsKey(str)) return
+		if(index == -1) itemsOrder.add(str) else itemsOrder.add(index, str)
+		items[str] = isChecked
+		addItemView(str, isChecked, index)
 		refreshItems(false)
 	}
 	
@@ -89,8 +94,8 @@ class ListItem : LinearLayout {
 			listGroup.removeAllViews()
 			
 			// construct children
-			for(str in items) {
-				addItemView(str)
+			for((str, check) in items) {
+				addItemView(str, check)
 			}
 			
 			// refresh group name
@@ -102,9 +107,10 @@ class ListItem : LinearLayout {
 	/**
 	 * Add item view into list
 	 */
-	private fun addItemView(str: String, index: Int = -1) {
+	private fun addItemView(str: String, isChecked: Boolean = false, index: Int = -1) {
 		val checkbox = CheckBox(context)
 		checkbox.text = str
+		checkbox.isChecked = isChecked
 		listGroup.addView(checkbox, index)
 		checkbox.isChecked = itemViews[str] ?: false.also { itemViews[str] = it }
 	}

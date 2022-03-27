@@ -45,7 +45,7 @@ class SqlList1 : SqlListBase {
 	
 	override fun getContentValues(): ContentValues {
 		val contentValue = ContentValues()
-		contentValue.put("category", groupName)
+		contentValue.put("groupName", groupName)
 		contentValue.put("content", content)
 		contentValue.put("isComplete", if(isComplete) 1 else 0)
 		contentValue.put("createTime", createTime.time)

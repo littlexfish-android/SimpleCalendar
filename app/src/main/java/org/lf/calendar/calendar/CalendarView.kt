@@ -9,6 +9,7 @@ import android.widget.TableRow
 import androidx.fragment.app.Fragment
 import org.lf.calendar.R
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * How amount of weeks show on this calendar
@@ -78,6 +79,8 @@ class CalendarView : Fragment() {
 	 */
 	var year = today[Calendar.YEAR]
 	
+	private val task = ArrayList<Runnable>()
+	
 	/* day data */
 	/**
 	 * A array contains the calendar's day on show
@@ -139,7 +142,14 @@ class CalendarView : Fragment() {
 		table = view.findViewById(R.id.calenderTable)
 		
 		createCalendarItem(false)
-
+		
+		if(task.isNotEmpty()) {
+			for(t in task) {
+				t.run()
+			}
+			task.clear()
+		}
+		
 	}
 	
 	/**
@@ -180,16 +190,24 @@ class CalendarView : Fragment() {
 	 * @param month - the month of the days, 0 to 11
 	 */
 	fun changeDays(year: Int, month: Int, day: Int = selectDate[Calendar.DAY_OF_MONTH]) {
-		selectDate.clear()
-		selectDate.set(year, month, day)
-		if(this.year != year || this.month != month) {
-			this.year = year
-			this.month = month
-			initDays(year, month)
-			createCalendarItem(false)
+		val t = {
+			selectDate.clear()
+			selectDate.set(year, month, day)
+			if(this.year != year || this.month != month) {
+				this.year = year
+				this.month = month
+				initDays(year, month)
+				createCalendarItem(false)
+			}
+			else {
+				createCalendarItem(true)
+			}
+		}
+		if(this::table.isInitialized) {
+			t()
 		}
 		else {
-			createCalendarItem(true)
+			task.add(t)
 		}
 	}
 	

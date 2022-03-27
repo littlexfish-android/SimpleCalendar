@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
@@ -41,8 +42,6 @@ class ListEditor : Fragment() {
 	private lateinit var items: LinearLayout
 	
 	private val itemViews = ArrayList<EditText>()
-	
-	private var selectedItem: EditText? = null
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -77,25 +76,13 @@ class ListEditor : Fragment() {
 				for(str in tmpList!!) {
 					addItem(str)
 				}
-				if(tmpPos >= 0 && tmpPos < tmpList!!.size) {
-					focusItem(tmpPos, true)
-				}
 			}
 		}
 		
 		
-		view.findViewById<Button>(R.id.listEditorAddItem).setOnClickListener {
+		view.findViewById<FloatingActionButton>(R.id.listEditorAddItem).setOnClickListener {
 			// add item
 			addItem()
-		}
-		view.findViewById<Button>(R.id.listEditorRemoveItem).setOnClickListener {
-			if(selectedItem != null) {
-				// find the item and remove it
-				val pos = itemViews.indexOf(selectedItem)
-				items.removeViewAt(pos)
-				itemViews.removeAt(pos)
-				selectedItem = null
-			}
 		}
 		view.findViewById<Button>(R.id.listEditorConfirm).setOnClickListener {
 			if(activity != null) {
@@ -111,8 +98,11 @@ class ListEditor : Fragment() {
 						sqlList.addListItem(item)
 					}
 					
+					sqlList.saveSql(SqlHelper.getInstance(context).writableDatabase)
+					
 					// close editor
 					act.setFragmentToList(true)
+					act.fragmentList.reloadFromSql()
 				}
 			}
 		}
@@ -131,24 +121,15 @@ class ListEditor : Fragment() {
 		itemViews.add(text)
 		items.addView(text)
 		text.text.append(initString)
-		text.setOnClickListener {
-			selectedItem = it as EditText
-			for(et in itemViews) {
-				et.setBackgroundColor(resources.getColor(R.color.none, null))
-			}
-			focusItem(-1, false)
+		// long click to delete
+		text.setOnLongClickListener {
+			// find the item and remove it
+			val pos = itemViews.indexOf(it)
+			items.removeViewAt(pos)
+			itemViews.removeAt(pos)
+			true
 		}
 		text.requestFocus()
-	}
-	
-	private fun focusItem(index: Int, changeBG: Boolean = true) {
-		val i = if(index == -1) itemViews.size - 1 else index
-		selectedItem?.setBackgroundColor(resources.getColor(R.color.none, null))
-		selectedItem = itemViews[i]
-		if(changeBG) {
-			selectedItem?.setBackgroundColor(resources.getColor(R.color.list_editor_selected, null))
-		}
-		selectedItem?.requestFocus()
 	}
 	
 	companion object {

@@ -131,7 +131,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			c.moveToFirst()
 			for(i in 0 until c.count) {
 				val l = SqlList1()
-				l.initFromDataBase(c)
+				l.initFromDatabase(c)
 				if(!list.containsKey(l.groupName)) list[l.groupName] = ArrayList()
 				list[l.groupName]!!.add(l)
 				c.moveToNext()
@@ -204,7 +204,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			
 			// add
 			for(data in appendList) {
-				db.insert(databaseTableListName, null, data.getContentValues())
+				data._id = db.insert(databaseTableListName, null, data.getContentValues()).toInt()
 			}
 			
 			// add append list into map
@@ -255,7 +255,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			c.moveToFirst()
 			for(i in 0 until c.count) {
 				val ca = SqlCalendar1()
-				ca.initFromDataBase(c)
+				ca.initFromDatabase(c)
 				calendar.add(ca)
 				c.moveToNext()
 			}

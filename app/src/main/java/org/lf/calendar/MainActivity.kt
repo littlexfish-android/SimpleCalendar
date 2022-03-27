@@ -3,6 +3,7 @@ package org.lf.calendar
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -50,17 +51,17 @@ class MainActivity : AppCompatActivity() {
 	/**
 	 * The fragment of list
 	 */
-	private lateinit var fragmentList: List
+	lateinit var fragmentList: List
 	
 	/**
 	 * The fragment of calendar
 	 */
-	private lateinit var fragmentCalendar: Calendar
+	lateinit var fragmentCalendar: Calendar
 	
 	/**
 	 * The fragment of profile
 	 */
-	private lateinit var fragmentProfile: Profile
+	lateinit var fragmentProfile: Profile
 	
 	/**
 	 * The fragment of now shown
@@ -92,6 +93,11 @@ class MainActivity : AppCompatActivity() {
 		list = sql.getList(lastDataBase)
 		calendar = sql.getCalendar(lastDataBase)
 		
+		setFragmentToList()
+		// ensure options menu is close
+//		moveOptionsMenu(false)
+		binding.mainOptionsMenu.x = -resources.displayMetrics.widthPixels.toFloat();
+		
 		// process when extra not null
 		val extra = intent.extras
 		if(extra != null) { // call from other activity or my widget
@@ -99,8 +105,9 @@ class MainActivity : AppCompatActivity() {
 			if(event != null) {
 				if(event == "selectCalendar") { // select the date
 					val date = java.util.Calendar.getInstance().also { it.time = Date(extra.getLong("time")) }
-					fragmentCalendar.setDay(date[java.util.Calendar.YEAR], date[java.util.Calendar.MONTH] + 1, date[java.util.Calendar.DAY_OF_MONTH])
+//					error("acat ${extra.getLong("time")}")
 					setFragmentToCalendar()
+					fragmentCalendar.setDay(date[java.util.Calendar.YEAR], date[java.util.Calendar.MONTH] + 1, date[java.util.Calendar.DAY_OF_MONTH])
 				}
 				if(event == "addCalendarPlan") { // add calendar plan
 				
@@ -110,9 +117,6 @@ class MainActivity : AppCompatActivity() {
 				}
 			}
 		}
-		
-		// ensure options menu is close
-		moveOptionsMenu(false)
 		
 	}
 	

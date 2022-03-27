@@ -28,6 +28,8 @@ class ListList : Fragment() {
 	 */
 	lateinit var list: LinearLayout
 	
+	private val task = ArrayList<Runnable>()
+	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
@@ -47,33 +49,72 @@ class ListList : Fragment() {
 		
 		list = view.findViewById(R.id.list_list_items)
 		
+		if(task.isNotEmpty()) {
+			for(t in task) {
+				t.run()
+			}
+			task.clear()
+		}
+		
 		refreshList(true)
+		
 	}
 	
 	/**
 	 * Add group into list
 	 */
 	fun addListItem(groupName: String, index: Int = -1) {
-		if(groupOrder.contains(groupName)) return
-		val item = ListItem(requireContext())
-		item.groupName = groupName
-		if(index == -1) groupOrder.add(groupName) else groupOrder.add(index, groupName)
-		groups[groupName] = item
-		list.addView(item, index)
-		refreshList(false)
+		val t = {
+			if(!groupOrder.contains(groupName)) {
+				val item = ListItem(requireContext())
+				item.groupName = groupName
+				if(index == -1) groupOrder.add(groupName) else groupOrder.add(index, groupName)
+				groups[groupName] = item
+				list.addView(item, index)
+				refreshList(false)
+			}
+		}
+		if(this::list.isInitialized) {
+			t()
+		}
+		else {
+			task.add(t)
+		}
+	}
+	
+	fun clearItems() {
+		val t = {
+			groups.clear()
+			groupOrder.clear()
+			list.removeAllViews()
+		}
+		if(this::list.isInitialized) {
+			t()
+		}
+		else {
+			task.add(t)
+		}
 	}
 	
 	/**
 	 * Add item into group
 	 */
-	fun addItem(group: String, item: String, index: Int = -1) {
-		var listItem = groups[group]
-		if(listItem == null) {
-			addListItem(group)
-			listItem = groups[group]
+	fun addItem(group: String, item: String, isComplete: Boolean = false, index: Int = -1) {
+		val t = {
+			var listItem = groups[group]
+			if(listItem == null) {
+				addListItem(group)
+				listItem = groups[group]
+			}
+			listItem!!.addItem(item, isComplete, index)
+			refreshList(false)
 		}
-		listItem!!.addItem(item, index)
-		refreshList(false)
+		if(this::list.isInitialized) {
+			t()
+		}
+		else {
+			task.add(t)
+		}
 	}
 	
 	/**
@@ -95,15 +136,22 @@ class ListList : Fragment() {
 	 * @param force - {@code true} to force refresh, or {@code false} will refresh when it has been changed
 	 */
 	fun refreshList(force: Boolean) {
-		if(force || (groupOrder.size != groups.size || groups.size != list.childCount)) {
-			
-			// remove all list children
-			list.removeAllViews()
-			
-			// construct children
-			for(groupName in groupOrder) {
-				list.addView(groups[groupName])
+		val t = {
+			if(force || (groupOrder.size != groups.size || groups.size != list.childCount)) {
+				// remove all list children
+				list.removeAllViews()
+				
+				// construct children
+				for(groupName in groupOrder) {
+					list.addView(groups[groupName])
+				}
 			}
+		}
+		if(this::list.isInitialized) {
+			t()
+		}
+		else {
+			task.add(t)
 		}
 	}
 	
