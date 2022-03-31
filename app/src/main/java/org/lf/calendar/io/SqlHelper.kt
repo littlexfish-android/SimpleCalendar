@@ -234,11 +234,11 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		constructor(db: SQLiteDatabase, limit: Int? = null, orderBy: String? = null, increase: Boolean = true, timeMin: Long = -1, timeMax: Long = -1) {
 			@Language("SQL")
 			var select = "SELECT * FROM $databaseTableCalendarName"
-			if(orderBy != null) select += " order by $orderBy ${if(increase) "ASC" else "DESC"}"
-			if(limit != null) select += " limit $limit"
 			if(timeMin >= 0 && timeMax >= 0) select += " WHERE time BETWEEN $timeMin AND $timeMax";
 			else if(timeMin >= 0 && timeMax < 0) select += " WHERE time >= $timeMin"
 			else if(timeMin < 0 && timeMax >= 0) select += "WHERE time < $timeMax"
+			if(orderBy != null) select += " order by $orderBy ${if(increase) "ASC" else "DESC"}"
+			if(limit != null) select += " limit $limit"
 			val c: Cursor = db.rawQuery(select, null)
 			c.moveToFirst()
 			for(i in 0 until c.count) {
@@ -310,7 +310,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			
 			// add
 			for(data in appendCalendar) {
-				db.insert(databaseTableCalendarName, null, data.getContentValues())
+				data._id = db.insert(databaseTableCalendarName, null, data.getContentValues()).toInt()
 			}
 			
 			// add append list into list

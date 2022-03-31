@@ -69,7 +69,7 @@ class SqlList1 : SqlListBase {
 			"completeTime INTEGER)"
 	
 	override fun equals(other: Any?): Boolean {
-		return other == this || (other is SqlList1 && (other.groupName == groupName && other.content == content))
+		return other is SqlList1 && other._id == _id
 	}
 	
 	override fun hashCode(): Int {

@@ -85,8 +85,15 @@ class PlanItem : ConstraintLayout {
 	 * Update the plan
 	 */
 	private fun updateContent() {
-		findViewById<TextView>(R.id.plan_content).text = content
-		findViewById<TextView>(R.id.plan_time).text = SimpleDateFormat.getTimeInstance().format(time.time)
+		if(this::sqlItem.isInitialized) {
+			findViewById<TextView>(R.id.plan_content).text = sqlItem.content
+			findViewById<TextView>(R.id.plan_time).text = SimpleDateFormat.getTimeInstance().format(sqlItem.time)
+		}
+		else {
+			findViewById<TextView>(R.id.plan_content).text = content
+			findViewById<TextView>(R.id.plan_time).text = SimpleDateFormat.getTimeInstance().format(time.time)
+		}
+		
 	}
 
 }

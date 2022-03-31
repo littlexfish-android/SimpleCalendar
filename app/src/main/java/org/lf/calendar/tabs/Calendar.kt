@@ -1,6 +1,7 @@
 package org.lf.calendar.tabs
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -155,7 +156,8 @@ class Calendar : Fragment() {
 			val day = calendar.selectDate
 			val end = day.timeInMillis + (24*60*60*1000)
 			val sqlHelper = SqlHelper.getInstance(context)
-			val sqlCalendar = sqlHelper.getCalendar(sqlHelper.writableDatabase, orderBy = "time", timeMin = day.timeInMillis, timeMax = end).getCalendar()
+			val sqlCalendar = sqlHelper.getCalendar(sqlHelper.writableDatabase, orderBy = "time", timeMin = day.time.time, timeMax = end).getCalendar()
+			Log.e("TAG", sqlCalendar.joinToString(","))
 			calendarPlans.removeAllPlan()
 			for(sql in sqlCalendar) {
 				calendarPlans.addPlan(sql.time.time, sql.content, sqlItem = sql)

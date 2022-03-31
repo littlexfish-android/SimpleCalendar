@@ -64,6 +64,8 @@ class CalenderPlanList : Fragment() {
 		val plan = PlanItem(requireContext())
 		plan.setContent(time, content)
 		if(sqlItem != null) plan.attachSqlItem(sqlItem)
+		list.addView(plan)
+		planArray.add(plan)
 	}
 	
 	/**

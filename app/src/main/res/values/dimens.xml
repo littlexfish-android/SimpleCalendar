@@ -17,6 +17,6 @@
     <dimen name="widget_margin">0dp</dimen>
 
     <!--  list item  -->
-    <dimen name="listItemItemSize">20dp</dimen>
+    <dimen name="listItemItemSize">5dp</dimen>
 
 </resources>

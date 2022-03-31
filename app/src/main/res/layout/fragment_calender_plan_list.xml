@@ -10,9 +10,16 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/planList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/planList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"></LinearLayout>
+        </LinearLayout>
     </ScrollView>
 </FrameLayout>

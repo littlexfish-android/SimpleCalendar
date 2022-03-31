@@ -17,7 +17,7 @@
 
     <Spinner
         android:id="@+id/calendarEditorMonth"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/calendarEditorDay"
         app:layout_constraintStart_toEndOf="@+id/calendarEditorYear"
@@ -25,7 +25,7 @@
 
     <Spinner
         android:id="@+id/calendarEditorDay"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/calendarEditorContent"
         app:layout_constraintStart_toEndOf="@+id/calendarEditorMonth"

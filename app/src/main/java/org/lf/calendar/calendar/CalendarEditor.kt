@@ -13,7 +13,7 @@ import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
 import java.util.*
 
 private const val BEGIN_YEAR = 2000
-private const val END_YEAR = 2500
+private const val END_YEAR = 2200
 
 private const val PARAM_TIME = "calendar.editor.time"
 private const val PARAM_CONTENT = "calendar.editor.content"
@@ -107,7 +107,7 @@ class CalendarEditor : Fragment() {
 						sqlCalendar.saveSql(SqlHelper.getInstance(context).writableDatabase)
 						
 						act.setFragmentToCalendar()
-						act.fragmentCalendar.reloadFromSql()
+						act.fragmentCalendar.reloadFromSql(true)
 						
 					}
 				}
@@ -129,41 +129,30 @@ class CalendarEditor : Fragment() {
 	private fun initSpinner() {
 		val yearSelect = day[Calendar.YEAR] - BEGIN_YEAR
 		val monthSelect = day[Calendar.MONTH]
-		val daySelect = day[Calendar.DAY_OF_MONTH]
+		val daySelect = day[Calendar.DAY_OF_MONTH] - 1
 		val hourSelect = day[Calendar.HOUR_OF_DAY]
 		val minuteSelect = day[Calendar.MINUTE]
-		val yearArr = (BEGIN_YEAR..END_YEAR).toList().map { it.toString() }
+		val yearArr = (BEGIN_YEAR..END_YEAR).toList().toTypedArray()//.map { it.toString() }
 		val monthArr = (1..12).toList().map { it.toString() }
 		val dayArr = (1..day.getActualMaximum(Calendar.DAY_OF_MONTH)).toList().map { it.toString() }
 		val hourArr = (0..24).toList().map { it.toString() }
 		val minuteArr = (0..59).toList().map { it.toString() }
-		
-		spinnerYear.adapter = ArrayAdapter.createFromResource(requireContext(), R.array.emptyArray, android.R.layout.simple_spinner_item).also {
-			it.addAll(yearArr)
-		}
+		spinnerYear.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, yearArr)
 		spinnerYear.setSelection(yearSelect)
-		spinnerMonth.adapter = ArrayAdapter.createFromResource(requireContext(), R.array.emptyArray, android.R.layout.simple_spinner_item).also {
-			it.addAll(monthArr)
-		}
+		spinnerMonth.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, monthArr)
 		spinnerMonth.setSelection(monthSelect)
-		spinnerDay.adapter = ArrayAdapter.createFromResource(requireContext(), R.array.emptyArray, android.R.layout.simple_spinner_item).also {
-			it.addAll(dayArr)
-		}
+		spinnerDay.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, dayArr)
 		spinnerDay.setSelection(daySelect)
-		spinnerHour.adapter = ArrayAdapter.createFromResource(requireContext(), R.array.emptyArray, android.R.layout.simple_spinner_item).also {
-			it.addAll(hourArr)
-		}
+		spinnerHour.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, hourArr)
 		spinnerHour.setSelection(hourSelect)
-		spinnerMinute.adapter = ArrayAdapter.createFromResource(requireContext(), R.array.emptyArray, android.R.layout.simple_spinner_item).also {
-			it.addAll(minuteArr)
-		}
+		spinnerMinute.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, minuteArr)
 		spinnerMinute.setSelection(minuteSelect)
 		
 	}
 	
 	companion object {
 		@JvmStatic
-		fun newInstance(time: Long = System.currentTimeMillis(), initContent: String = "") =
+		fun newInstance(time: Long = Date().time, initContent: String = "") =
 			CalendarEditor().apply {
 				arguments = Bundle().apply {
 					this.putLong(PARAM_TIME, time)
@@ -179,10 +168,8 @@ class CalendarEditor : Fragment() {
 		 */
 		override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 			val dayMax = Calendar.getInstance().also { it.set(yearSpinner.selectedItem.toString().toInt(), position, 1) }.getActualMaximum(Calendar.DAY_OF_MONTH)
-			val arr = (1..dayMax).toList().map { it.toString() }
-			val adapter = ArrayAdapter.createFromResource(daySpinner.context, R.array.emptyArray, android.R.layout.simple_spinner_item)
-			adapter.addAll(arr)
-			daySpinner.adapter = adapter
+			val arr = (1..dayMax).toList().toTypedArray()
+			daySpinner.adapter = ArrayAdapter(daySpinner.context, android.R.layout.simple_spinner_item, arr)
 		}
 		
 		override fun onNothingSelected(parent: AdapterView<*>?) {

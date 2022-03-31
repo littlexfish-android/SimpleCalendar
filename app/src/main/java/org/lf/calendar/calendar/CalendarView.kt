@@ -153,14 +153,16 @@ class CalendarView : Fragment() {
 	fun changeDays(year: Int, month: Int, day: Int = selectDate[Calendar.DAY_OF_MONTH]) {
 		val t = {
 			if(selectDate[Calendar.YEAR] != year || selectDate[Calendar.MONTH] != month) {
+				selectDate.clear()
+				selectDate.set(year, month, day)
 				initDays(year, month)
 				createCalendarItem(false)
 			}
 			else {
+				selectDate.clear()
+				selectDate.set(year, month, day)
 				createCalendarItem(true)
 			}
-			selectDate.clear()
-			selectDate.set(year, month, day)
 		}
 		if(this::table.isInitialized) {
 			t()

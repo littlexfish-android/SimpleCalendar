@@ -79,7 +79,7 @@ class SqlCalendar1 : SqlCalendarBase {
 	
 	
 	override fun equals(other: Any?): Boolean {
-		return other == this || (other is SqlCalendar1 && (other.content == content && createTime == other.createTime))
+		return other is SqlCalendar1 && other._id == _id
 	}
 	
 	override fun hashCode(): Int {
