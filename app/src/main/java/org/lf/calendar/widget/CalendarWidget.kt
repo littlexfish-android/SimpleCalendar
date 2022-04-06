@@ -8,6 +8,7 @@ import android.content.Intent
 import android.widget.RemoteViews
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
+import org.lf.calendar.TestActivity
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -32,6 +33,11 @@ private const val MilliOfHour = MilliOfMinute * 60
  * The milli-second of a day
  */
 private const val MilliOfDay = MilliOfHour * 24
+
+private val WeekOfNames = arrayOf("S", "M", "T", "W", "T", "F", "S")
+
+private const val CalendarRequestCodeOffset = 100
+private const val ToolBarRequestCodeOffset = 0
 
 /**
  * The calendar use to show on the device home screen
@@ -82,6 +88,47 @@ class CalendarWidget : AppWidgetProvider() {
 		// Enter relevant functionality for when the last widget is disabled
 		CalendarWidgetInternal.onDeleteAll()
 	}
+	
+	override fun onReceive(context: Context?, intent: Intent?) {
+		super.onReceive(context, intent)
+		if(intent != null && intent.extras != null) {
+			val extra = intent.extras!!
+			when(extra.getString("event")) {
+				"preMonth" -> {
+					val id = extra.getInt("widgetId")
+					var year = CalendarWidgetInternal.yearForWidget[id]!!
+					var month = CalendarWidgetInternal.monthForWidget[id]!!
+					month--
+					if(month < 0) {
+						year--
+						month = 11
+					}
+					CalendarWidgetInternal.changeDays(id, year, month)
+					context?.let { CalendarWidgetInternal.updateAppWidget(context, AppWidgetManager.getInstance(context), id) }
+				}
+				"postMonth" -> {
+					val id = extra.getInt("widgetId")
+					var year = CalendarWidgetInternal.yearForWidget[id]!!
+					var month = CalendarWidgetInternal.monthForWidget[id]!!
+					month++
+					if(month > 11) {
+						year++
+						month = 0
+					}
+					CalendarWidgetInternal.changeDays(id, year, month)
+					context?.let { CalendarWidgetInternal.updateAppWidget(context, AppWidgetManager.getInstance(context), id) }
+				}
+			}
+		}
+	}
+	
+	fun openTest(context: Context?, str: String) {
+		val i = Intent(context, TestActivity::class.java)
+		i.putExtra("test", str)
+		i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+		context?.startActivity(i)
+	}
+	
 }
 
 /**
@@ -97,7 +144,7 @@ private object CalendarWidgetInternal {
 	/**
 	 * The days of each widget
 	 */
-	val calendarItemIdsForWidget = HashMap<Int, IntArray>()
+	val calendarItemsForWidget = HashMap<Int, Array<RemoteViews>>()
 	
 	/**
 	 * The year of each widget
@@ -120,76 +167,61 @@ private object CalendarWidgetInternal {
 	fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
 		// Construct the RemoteViews object
 		val views = RemoteViews(context.packageName, R.layout.calendar_widget)
+		views.removeAllViews(R.id.calendarWidgetWeek)
+		views.removeAllViews(R.id.calendarWidgetCalendar)
+		views.removeAllViews(R.id.calendarWidgetPlans)
+		
+		
+		// init week names
+		for(i in WeekOfNames) {
+			val v = RemoteViews(context.packageName, R.layout.widget_calendar_week_item)
+			v.setTextViewText(R.id.widgetCalendarWeekItemWeek, i)
+			views.addView(R.id.calendarWidgetWeek, v)
+		}
+		
 		
 		// init days array
 		initDays(appWidgetId)
-		
+
 		val daysArray = daysArrayForWidget[appWidgetId]!!
+
+		val list = calendarItemsForWidget[appWidgetId] ?: Array(7 * WEEK_TO_SHOW) { RemoteViews(context.packageName, R.layout.widget_calendar_view_item) }.also { calendarItemsForWidget[appWidgetId] = it }
+		val theDay = Calendar.getInstance().also { it.set(yearForWidget[appWidgetId]!!, monthForWidget[appWidgetId]!!, 1) }
+		views.setTextViewText(R.id.calendarWidgetYearMonth, context.resources.getString(R.string.calendarYearMonth, yearForWidget[appWidgetId]!!, monthForWidget[appWidgetId]!! + 1))
 		
-		val list = calendarItemIdsForWidget[appWidgetId] ?: IntArray(7 * WEEK_TO_SHOW).also { calendarItemIdsForWidget[appWidgetId] = it }
-		
-		// get the views
-		list[0] = R.id.calendar_widget_0_0
-		list[1] = R.id.calendar_widget_0_1
-		list[2] = R.id.calendar_widget_0_2
-		list[3] = R.id.calendar_widget_0_3
-		list[4] = R.id.calendar_widget_0_4
-		list[5] = R.id.calendar_widget_0_5
-		list[6] = R.id.calendar_widget_0_6
-		list[7] = R.id.calendar_widget_1_0
-		list[8] = R.id.calendar_widget_1_1
-		list[9] = R.id.calendar_widget_1_2
-		list[10] = R.id.calendar_widget_1_3
-		list[11] = R.id.calendar_widget_1_4
-		list[12] = R.id.calendar_widget_1_5
-		list[13] = R.id.calendar_widget_1_6
-		list[14] = R.id.calendar_widget_2_0
-		list[15] = R.id.calendar_widget_2_1
-		list[16] = R.id.calendar_widget_2_2
-		list[17] = R.id.calendar_widget_2_3
-		list[18] = R.id.calendar_widget_2_4
-		list[19] = R.id.calendar_widget_2_5
-		list[20] = R.id.calendar_widget_2_6
-		list[21] = R.id.calendar_widget_3_0
-		list[22] = R.id.calendar_widget_3_1
-		list[23] = R.id.calendar_widget_3_2
-		list[24] = R.id.calendar_widget_3_3
-		list[25] = R.id.calendar_widget_3_4
-		list[26] = R.id.calendar_widget_3_5
-		list[27] = R.id.calendar_widget_3_6
-		list[28] = R.id.calendar_widget_4_0
-		list[29] = R.id.calendar_widget_4_1
-		list[30] = R.id.calendar_widget_4_2
-		list[31] = R.id.calendar_widget_4_3
-		list[32] = R.id.calendar_widget_4_4
-		list[33] = R.id.calendar_widget_4_5
-		list[34] = R.id.calendar_widget_4_6
-		list[35] = R.id.calendar_widget_5_0
-		list[36] = R.id.calendar_widget_5_1
-		list[37] = R.id.calendar_widget_5_2
-		list[38] = R.id.calendar_widget_5_3
-		list[39] = R.id.calendar_widget_5_4
-		list[40] = R.id.calendar_widget_5_5
-		list[41] = R.id.calendar_widget_5_6
-		
-		
-		// set button to open the activity
-		for(i in 0 until (7 * WEEK_TO_SHOW)) {
-			views.setTextViewText(list[i], "${daysArray[i][Calendar.DAY_OF_MONTH]}")
-			if(!isCurrentMonth(daysArray[i])) {
-				views.setTextColor(list[i], context.resources.getColor(R.color.calendar_not_current_month, null))
+		for((i, it) in list.withIndex()) {
+			it.setTextViewText(R.id.widgetCalendarViewItemDay, "${daysArray[i][Calendar.DAY_OF_MONTH]}")
+			when {
+				isToday(daysArray[i]) -> {
+					it.setTextColor(R.id.widgetCalendarViewItemDay, context.resources.getColor(R.color.default_theme_color, null))
+				}
+				monthEqual(daysArray[i], theDay) -> {
+					it.setTextColor(R.id.widgetCalendarViewItemDay, context.resources.getColor(R.color.calendar_current_month_white, null))
+				}
+				else -> {
+					it.setTextColor(R.id.widgetCalendarViewItemDay, context.resources.getColor(R.color.calendar_not_current_month, null))
+				}
 			}
-			else if(isToday(daysArray[i])) {
-				views.setTextColor(list[i], context.resources.getColor(R.color.default_theme_color, null))
-			}
+			
+			views.addView(R.id.calendarWidgetCalendar, it)
 			
 			val intentToStart = Intent(context, MainActivity::class.java)
 			intentToStart.putExtra("event", "selectCalendar")
 			intentToStart.putExtra("time", daysArray[i].time.time)
-			intentToStart.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-			val pi = PendingIntent.getActivity(context, 0, intentToStart, PendingIntent.FLAG_IMMUTABLE)
-			views.setOnClickPendingIntent(list[i], pi)
+			it.setOnClickPendingIntent(R.id.widgetCalendarViewItemDay, PendingIntent.getActivity(context, CalendarRequestCodeOffset + i, intentToStart, PendingIntent.FLAG_IMMUTABLE))
 		}
+		
+		// register arrow button
+		val preArrowIntent = Intent(context, CalendarWidget::class.java)
+		preArrowIntent.putExtra("event", "preMonth")
+		preArrowIntent.putExtra("widgetId", appWidgetId)
+		views.setOnClickPendingIntent(R.id.calendarWidgetPreMonth, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + 1, preArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+		
+		val postArrowIntent = Intent(context, CalendarWidget::class.java)
+		postArrowIntent.putExtra("event", "postMonth")
+		postArrowIntent.putExtra("widgetId", appWidgetId)
+		views.setOnClickPendingIntent(R.id.calendarWidgetPostMonth, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + 2, postArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+		
 		
 		// Instruct the widget manager to update the widget
 		appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -198,14 +230,14 @@ private object CalendarWidgetInternal {
 	/**
 	 * Check is today
 	 */
-	fun isToday(theDay: Calendar) = isCurrentMonth(theDay) &&
+	private fun isToday(theDay: Calendar) = monthEqual(theDay, today) &&
 			theDay.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)
 	
 	/**
 	 * Check is current month
 	 */
-	fun isCurrentMonth(theDay: Calendar) = theDay.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
-			theDay.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+	private fun monthEqual(day1: Calendar, day2: Calendar) = day1.get(Calendar.YEAR) == day2.get(Calendar.YEAR) &&
+			day1.get(Calendar.MONTH) == day2.get(Calendar.MONTH)
 	
 	/**
 	 * On each widget been remove
@@ -263,18 +295,17 @@ private object CalendarWidgetInternal {
 	 */
 	private fun initDays(appWidgetId: Int) {
 		val daysArray = daysArrayForWidget[appWidgetId] ?: Array<Calendar>(7 * WEEK_TO_SHOW) { Calendar.getInstance() }.also { daysArrayForWidget[appWidgetId] = it }
-		val date = Calendar.getInstance()
-		date.set(yearForWidget[appWidgetId] ?: today[Calendar.YEAR].also { yearForWidget[appWidgetId] = it },
-			(monthForWidget[appWidgetId] ?: today[Calendar.MONTH].also { monthForWidget[appWidgetId] = it }), 0)
-		val day = date.get(Calendar.DAY_OF_WEEK) // 1 for Sunday...
+		
+		val date = Calendar.getInstance().also { it.set(yearForWidget[appWidgetId] ?: today[Calendar.YEAR].also { yearForWidget[appWidgetId] = it },
+			(monthForWidget[appWidgetId] ?: today[Calendar.MONTH].also { monthForWidget[appWidgetId] = it }), 0) }
+		val dayWeek = date.get(Calendar.DAY_OF_WEEK) // 1 for Sunday...
 		
 		// check the first date of the calendar needed
-		val firstDay = Calendar.getInstance().also { it.time = Date(date.time.time - MilliOfDay * (day - 1)) }
+		val firstDay = Calendar.getInstance().also { it.time = Date(date.time.time - MilliOfDay * (dayWeek - 1)) }
 		
 		var lastDay = firstDay.time.time
 		
 		for(i in 0 until (7 * WEEK_TO_SHOW)) {
-			daysArray[i].clear()
 			daysArray[i].time = Date(lastDay)
 			lastDay += MilliOfDay
 		}

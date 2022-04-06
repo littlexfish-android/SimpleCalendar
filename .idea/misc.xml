@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/calendar_widget.xml" value="0.33" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/round_rect.xml" value="0.1625" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/widget_calendar_day_background.xml" value="0.24947916666666667" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/activity_test.xml" value="0.23333333333333334" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/calendar_widget.xml" value="0.25" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_calendar.xml" value="0.322463768115942" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_calendar_editor.xml" value="0.67" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_calender_plan_list.xml" value="0.322463768115942" />
@@ -13,6 +16,13 @@
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/view_calendar.xml" value="0.322463768115942" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/view_list_item.xml" value="0.13576494427558258" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/view_plan_item.xml" value="0.322463768115942" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/widget_calendar.xml" value="0.13576494427558258" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/widget_calendar_plan_item.xml" value="0.10054347826086957" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/widget_calendar_view.xml" value="0.25" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/widget_calendar_view_item.xml" value="0.22" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/widget_calendar_weak.xml" value="0.10054347826086957" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/widget_calendar_week.xml" value="0.25" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/widget_calendar_week_item.xml" value="0.9" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/drawable/ic_code.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/drawable/ic_option_list.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/lan/AndroidStudioProjects/SimpleCalendar/app/src/main/res/drawable/ic_post_arrow.xml" value="0.26564102564102565" />

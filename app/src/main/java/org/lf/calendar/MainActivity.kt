@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
 					val date = java.util.Calendar.getInstance().also { it.time = Date(extra.getLong("time")) }
 //					error("acat ${extra.getLong("time")}")
 					setFragmentToCalendar()
-					fragmentCalendar.setDay(date[java.util.Calendar.YEAR], date[java.util.Calendar.MONTH] + 1, date[java.util.Calendar.DAY_OF_MONTH])
+					fragmentCalendar.setDay(date[java.util.Calendar.YEAR], date[java.util.Calendar.MONTH], date[java.util.Calendar.DAY_OF_MONTH])
 				}
 				if(event == "addCalendarPlan") { // add calendar plan
 				
