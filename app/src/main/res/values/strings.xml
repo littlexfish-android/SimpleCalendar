@@ -12,11 +12,41 @@
     <string name="listEditorGroup">名稱</string>
     <string name="listEditorAddItem">新增項目</string>
     <string name="listEditorRemoveItem">刪除所選</string>
+    <string name="listEditorColor">顏色</string>
 
     <!--  calendar editor  -->
     <string name="calendarEditorContent">內容</string>
     <string name="calendarEditorDate">日期</string>
     <string name="calendarEditorTime">時間</string>
     <string name="calendarEditorRemark">備註</string>
+    <string name="calendarEditorColor">顏色</string>
+
+
+
+    <string-array name="defaultColorStringArray">
+        <item>#000000</item>
+        <item>#FF0000</item>
+        <item>#FF7700</item>
+        <item>#FFFF00</item>
+        <item>#00FF00</item>
+        <item>#008800</item>
+        <item>#44EEFF</item>
+        <item>#0000FF</item>
+        <item>#FF00FF</item>
+        <item>#990099</item>
+    </string-array>
+
+    <string-array name="defaultColorNameArray">
+        <item>Black</item>
+        <item>Red</item>
+        <item>Orange</item>
+        <item>Yellow</item>
+        <item>Lime</item>
+        <item>Green</item>
+        <item>Cyan</item>
+        <item>Blue</item>
+        <item>Magenta</item>
+        <item>Purple</item>
+    </string-array>
 
 </resources>

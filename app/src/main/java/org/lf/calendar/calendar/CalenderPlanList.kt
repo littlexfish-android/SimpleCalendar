@@ -30,6 +30,8 @@ class CalenderPlanList : Fragment() {
 	 * Plan item of the day
 	 */
 	private var planArray = ArrayList<PlanItem>()
+	
+	private val task = ArrayList<Runnable>()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -45,7 +47,13 @@ class CalenderPlanList : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		list = view.findViewById(R.id.planList)
-
+		
+		if(task.isNotEmpty()) {
+			for(t in task) {
+				t.run()
+			}
+		}
+		
 	}
 	
 	/**
@@ -62,8 +70,8 @@ class CalenderPlanList : Fragment() {
 	private fun addPlanItem(time: Long, content: String, sqlItem: SqlCalendar1? = null) {
 		if(context == null) return
 		val plan = PlanItem(requireContext())
-		plan.setContent(time, content)
 		if(sqlItem != null) plan.attachSqlItem(sqlItem)
+		else plan.setContent(time, content)
 		list.addView(plan)
 		planArray.add(plan)
 	}
@@ -82,18 +90,28 @@ class CalenderPlanList : Fragment() {
 	}
 	
 	fun removeAllPlan() {
-		list.removeAllViews()
-		planArray.clear()
+		if(::list.isInitialized) {
+			list.removeAllViews()
+			planArray.clear()
+		}
 	}
 	
 	/**
 	 * Refresh the list, detach the views from list and re-add into the list order by the array
 	 */
 	fun refreshList() {
+		val t = {
+			for(item in planArray) {
+				list.addView(item)
+			}
+		}
 		sortArray()
-		list.removeAllViews()
-		for(item in planArray) {
-			list.addView(item)
+		if(::list.isInitialized) {
+			list.removeAllViews()
+			t()
+		}
+		else {
+			task.add(t)
 		}
 	}
 

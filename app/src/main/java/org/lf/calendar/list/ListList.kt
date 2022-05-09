@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import org.lf.calendar.R
+import org.lf.calendar.io.sqlitem.list.SqlList1
 
 /**
  * The list use to show list item
@@ -16,12 +17,7 @@ class ListList : Fragment() {
 	/**
 	 * The map holds group name and list item
 	 */
-	private val groups = HashMap<String, ListItem>()
-	
-	/**
-	 * The list holds group order
-	 */
-	private val groupOrder = ArrayList<String>()
+	private val groups = ArrayList<Pair<String, ListItem>>()
 	
 	/**
 	 * List item list
@@ -56,99 +52,50 @@ class ListList : Fragment() {
 			task.clear()
 		}
 		
-		refreshList(true)
+//		refreshList(true)
 		
 	}
 	
-	/**
-	 * Add group into list
-	 */
-	fun addListItem(groupName: String, index: Int = -1) {
-		val t = {
-			if(!groupOrder.contains(groupName)) {
-				val item = ListItem(requireContext())
-				item.groupName = groupName
-				if(index == -1) groupOrder.add(groupName) else groupOrder.add(index, groupName)
-				groups[groupName] = item
-				list.addView(item, index)
-				refreshList(false)
-			}
-		}
-		if(this::list.isInitialized) {
-			t()
-		}
-		else {
-			task.add(t)
-		}
-	}
-	
-	fun clearItems() {
+	fun reset() {
 		val t = {
 			groups.clear()
-			groupOrder.clear()
 			list.removeAllViews()
 		}
 		if(this::list.isInitialized) {
-			t()
+			list.post(t)
 		}
 		else {
 			task.add(t)
 		}
 	}
 	
-	/**
-	 * Add item into group
-	 */
-	fun addItem(group: String, item: String, isComplete: Boolean = false, index: Int = -1) {
-		val t = {
-			var listItem = groups[group]
-			if(listItem == null) {
-				addListItem(group)
-				listItem = groups[group]
-			}
-			listItem!!.addItem(item, isComplete, index)
-			refreshList(false)
+	fun constructListItem(group: String, list: ArrayList<SqlList1>) {
+		task.add {
+			val item = ListItem(requireContext())
+			item.groupName = group
+			item.constructItems(list)
+			groups.add(Pair(group, item))
+			this.list.addView(item)
+			item.color = list[0].color
+			refreshList()
 		}
-		if(this::list.isInitialized) {
-			t()
-		}
-		else {
-			task.add(t)
-		}
-	}
-	
-	/**
-	 * Remove item from group
-	 */
-	fun removeItem(group: String, item: String) {
-		//TODO
-	}
-	
-	/**
-	 * Remove group from list
-	 */
-	fun removeGroup(group: String) {
-		//TODO
 	}
 	
 	/**
 	 * Refresh the list
-	 * @param force - {@code true} to force refresh, or {@code false} will refresh when it has been changed
 	 */
-	fun refreshList(force: Boolean) {
+	private fun refreshList() {
 		val t = {
-			if(force || (groupOrder.size != groups.size || groups.size != list.childCount)) {
-				// remove all list children
-				list.removeAllViews()
-				
-				// construct children
-				for(groupName in groupOrder) {
-					list.addView(groups[groupName])
-				}
+			// remove all list children
+			list.removeAllViews()
+
+			// construct children
+			for(group in groups) {
+				list.addView(group.second)
 			}
 		}
 		if(this::list.isInitialized) {
-			t()
+			list.post(t)
 		}
 		else {
 			task.add(t)

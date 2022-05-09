@@ -1,6 +1,7 @@
 package org.lf.calendar.calendar
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,12 +13,13 @@ import java.util.*
 /**
  * The format of 24 hour
  */
-const val DATE_NORMAL24 = "HH:mm:ss"
+const val DATE_NORMAL24 = "HH:mm"
+
 
 /**
  * The format of 12 hour
  */
-const val DATE_NORMAL12 = "a hh:mm:ss"
+const val DATE_NORMAL12 = "a hh:mm"
 
 /**
  * The class is contains the plan and its time
@@ -33,6 +35,8 @@ class PlanItem : ConstraintLayout {
 	 * The content of the plan
 	 */
 	private var content = ""
+	
+	private var color = 0
 	
 	/**
 	 * The time format use to show
@@ -70,15 +74,17 @@ class PlanItem : ConstraintLayout {
 	/**
 	 * Set content and time to this plan
 	 */
-	fun setContent(time: Long, content: String) {
+	fun setContent(time: Long, content: String, color: Int = Color.BLACK) {
 		this.time.clear()
 		this.time.time = Date(time)
 		this.content = content
+		this.color = color
 		updateContent()
 	}
 	
 	fun attachSqlItem(sql: SqlCalendar1) {
 		sqlItem = sql
+		setContent(sql.time.time, sql.content, sql.color)
 	}
 	
 	/**
@@ -87,11 +93,13 @@ class PlanItem : ConstraintLayout {
 	private fun updateContent() {
 		if(this::sqlItem.isInitialized) {
 			findViewById<TextView>(R.id.plan_content).text = sqlItem.content
-			findViewById<TextView>(R.id.plan_time).text = SimpleDateFormat.getTimeInstance().format(sqlItem.time)
+			findViewById<TextView>(R.id.plan_time).text = SimpleDateFormat(timeFormat, Locale.CHINESE).format(sqlItem.time)
+			findViewById<TextView>(R.id.plan_content).setTextColor(sqlItem.color)
 		}
 		else {
 			findViewById<TextView>(R.id.plan_content).text = content
-			findViewById<TextView>(R.id.plan_time).text = SimpleDateFormat.getTimeInstance().format(time.time)
+			findViewById<TextView>(R.id.plan_time).text = SimpleDateFormat(timeFormat, Locale.CHINESE).format(time.time)
+			findViewById<TextView>(R.id.plan_content).setTextColor(color)
 		}
 		
 	}

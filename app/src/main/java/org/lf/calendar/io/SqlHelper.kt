@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import androidx.annotation.Nullable
 import org.intellij.lang.annotations.Language
 import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
+import org.lf.calendar.io.sqlitem.color.SqlColor1
 import org.lf.calendar.io.sqlitem.list.SqlList1
 
 /**
@@ -20,6 +21,7 @@ private const val dataBaseName = "org.lf.simple_calendar"
 private const val dataBaseVersion = 1
 private val defaultList = SqlList1()
 private val defaultCalendar = SqlCalendar1()
+private val defaultColor = SqlColor1()
 
 /**
  * The database table name of list
@@ -30,6 +32,11 @@ private const val databaseTableListName = "List"
  * The database table name of calendar
  */
 private const val databaseTableCalendarName = "Calendar"
+
+/**
+ * The database table name of color
+ */
+private const val databaseTableColorName = "Color"
 
 /**
  * The class use to contact to sqlite
@@ -57,6 +64,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 	override fun onCreate(db: SQLiteDatabase?) {
 		db?.execSQL(defaultList.getOnCreateCommand(databaseTableListName))
 		db?.execSQL(defaultCalendar.getOnCreateCommand(databaseTableCalendarName))
+		db?.execSQL(defaultColor.getOnCreateCommand(databaseTableColorName))
 	}
 	
 	/**
@@ -81,6 +89,10 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		return CalendarProcessor(db, limit, orderBy, increase, timeMin, timeMax)
 	}
 	
+	fun getColor(db: SQLiteDatabase): ColorProcessor {
+		return ColorProcessor(db)
+	}
+	
 	/**
 	 * The class contains SqlList item
 	 */
@@ -89,7 +101,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		/**
 		 * The list from database
 		 */
-		private val list = HashMap<String, ArrayList<SqlList1>>()
+		private val list = ArrayList<Pair<String, ArrayList<SqlList1>>>()
 		
 		/**
 		 * The list item need to insert into database
@@ -117,8 +129,9 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			for(i in 0 until c.count) {
 				val l = SqlList1()
 				l.initFromDatabase(c)
-				if(!list.containsKey(l.groupName)) list[l.groupName] = ArrayList()
-				list[l.groupName]!!.add(l)
+				val index = indexAt(l.groupName)
+				if(index < 0) list.add(Pair(l.groupName, ArrayList()))
+				list[indexAt(l.groupName)].second.add(l)
 				c.moveToNext()
 			}
 			c.close()
@@ -131,7 +144,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 */
 		constructor(processor: ListProcessor) {
 			for(item in processor.list) {
-				list[item.key] = ArrayList(item.value)
+				list.add(Pair(item.first, item.second))
 			}
 			for(item in processor.appendList) {
 				appendList.add(item)
@@ -150,9 +163,10 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 * Add list item into database
 		 */
 		fun addListItem(data: SqlList1) {
-			if(list.containsKey(data.groupName) && list[data.groupName]!!.contains(data)) {
-				list[data.groupName]!!.remove(data)
-				list[data.groupName]!!.add(data)
+			val index = indexAt(data.groupName)
+			if(index >= 0 && list[index].second.contains(data)) {
+				list[index].second.remove(data)
+				list[index].second.add(data)
 			}
 			else {
 				appendList.add(data)
@@ -164,8 +178,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 * Delete list item from database
 		 */
 		fun deleteListItem(data: SqlList1) {
-			val r = list[data.groupName]?.remove(data)
-			if(r != null && r) {
+			if(list[indexAt(data.groupName)].second.remove(data)) {
 				deleteList.add(data)
 			}
 			hasChange = true
@@ -179,10 +192,11 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			for(data in deleteList) {
 				db.delete(databaseTableListName, "_id=${data._id}", null)
 			}
+			deleteList.clear()
 			
 			// update
 			for(sqlListPair in list) {
-				for(data in sqlListPair.value) {
+				for(data in sqlListPair.second) {
 					db.update(databaseTableListName, data.getContentValues(), "_id=${data._id}", null)
 				}
 			}
@@ -194,13 +208,24 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			
 			// add append list into map
 			for(data in appendList) {
-				val arr = list[data.groupName] ?: ArrayList<SqlList1>().also { list[data.groupName] = it }
-				
-				arr.add(data)
+				val index = indexAt(data.groupName)
+				if(index < 0) {
+					list.add(Pair(data.groupName, ArrayList()))
+				}
+				list[indexAt(data.groupName)].second.add(data)
 			}
 			appendList.clear()
 			hasChange = false
 			
+		}
+		
+		private fun indexAt(key: String): Int {
+			for((i, it) in list.withIndex()) {
+				if(it.first == key) {
+					return i
+				}
+			}
+			return -1
 		}
 		
 	}
@@ -302,6 +327,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			for(data in deleteCalendar) {
 				db.delete(databaseTableCalendarName, "_id=${data._id}", null)
 			}
+			deleteCalendar.clear()
 			
 			// update
 			for(data in calendar) {
@@ -321,6 +347,69 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		}
 		
 	}
-
+	
+	class ColorProcessor {
+		
+		private val colors = HashMap<Int, SqlColor1>()
+		
+		private val appendColor = ArrayList<SqlColor1>()
+		
+		private val deleteColor = ArrayList<SqlColor1>()
+		
+		@Volatile
+		var hasChange = false
+		
+		constructor(db: SQLiteDatabase) {
+			@Language("SQL")
+			var select = "SELECT * FROM $databaseTableColorName"
+			val c: Cursor = db.rawQuery(select, null)
+			c.moveToFirst()
+			for(i in 0 until c.count) {
+				val l = SqlList1()
+				l.initFromDatabase(c)
+				c.moveToNext()
+			}
+			c.close()
+		}
+		
+		fun getColor() = colors
+		
+		fun addColor(sql: SqlColor1) {
+			if(colors.containsKey(sql.color)) {
+				colors[sql.color] = sql
+			}
+			else {
+				appendColor.add(sql)
+			}
+			hasChange = true
+		}
+		
+		fun deleteColor(sql: SqlColor1) {
+			if(colors.remove(sql.color) != null) {
+				deleteColor.add(sql)
+			}
+			hasChange = true
+		}
+		
+		fun saveSql(db: SQLiteDatabase) {
+			for(it in deleteColor) {
+				db.delete(databaseTableColorName, "color=${it.color}", null)
+			}
+			deleteColor.clear()
+			
+			for(it in colors.values) {
+				db.update(databaseTableColorName, it.getContentValues(), "color=${it.color}", null)
+			}
+			
+			for(it in appendColor) {
+				db.insert(databaseTableColorName, null, it.getContentValues())
+				colors[it.color] = it
+			}
+			appendColor.clear()
+			
+			hasChange = false
+		}
+	}
+	
 }
 

@@ -7,12 +7,12 @@ abstract class SqlCalendarBase : Sqlable {
 	/**
 	 * @return SqlCalendar been upgraded
 	 */
-	abstract fun upgrade(version: Int): SqlCalendarBase
+	abstract fun upgrade(sql: SqlCalendarBase, oldVersion: Int, newVersion: Int): SqlCalendarBase
 	
 	/**
 	 * @return SqlCalendar been downgraded or throw error when it not support downgrade
 	 */
-	fun downgrade(version: Int): SqlCalendarBase {
+	fun downgrade(sql: SqlCalendarBase, oldVersion: Int, newVersion: Int): SqlCalendarBase {
 		throw IllegalStateException("sql downgrade")
 	}
 	

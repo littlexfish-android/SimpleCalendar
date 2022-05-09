@@ -1,5 +1,6 @@
 package org.lf.calendar.widget
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -9,7 +10,11 @@ import android.widget.RemoteViews
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.TestActivity
+import org.lf.calendar.io.SqlHelper
+import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 /**
@@ -36,7 +41,7 @@ private const val MilliOfDay = MilliOfHour * 24
 
 private val WeekOfNames = arrayOf("S", "M", "T", "W", "T", "F", "S")
 
-private const val CalendarRequestCodeOffset = 100
+private const val CalendarRequestCodeOffset = 200
 private const val ToolBarRequestCodeOffset = 0
 
 /**
@@ -78,7 +83,7 @@ class CalendarWidget : AppWidgetProvider() {
 	 * On first widget insert into home screen
 	 */
 	override fun onEnabled(context: Context) {
-		// Enter relevant functionality for when the first widget is created
+		CalendarWidgetInternal.onEnable(context)
 	}
 	
 	/**
@@ -93,11 +98,22 @@ class CalendarWidget : AppWidgetProvider() {
 		super.onReceive(context, intent)
 		if(intent != null && intent.extras != null) {
 			val extra = intent.extras!!
+//			Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+//			Toast.makeText(context, extra.getString("event", "null"), Toast.LENGTH_SHORT).show()
 			when(extra.getString("event")) {
+				"selectCalendar" -> {
+					val id = extra.getInt("widgetId")
+					val i = Intent(context, MainActivity::class.java)
+					i.putExtra("event", "selectCalendar")
+					i.putExtra("time", extra.getLong("time"))
+					i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+					context?.let { CalendarWidgetInternal.updateAppWidget(context, AppWidgetManager.getInstance(context), id) }
+					context?.startActivity(i)
+				}
 				"preMonth" -> {
 					val id = extra.getInt("widgetId")
-					var year = CalendarWidgetInternal.yearForWidget[id]!!
-					var month = CalendarWidgetInternal.monthForWidget[id]!!
+					var year = extra.getInt("year")
+					var month = extra.getInt("month")
 					month--
 					if(month < 0) {
 						year--
@@ -108,8 +124,8 @@ class CalendarWidget : AppWidgetProvider() {
 				}
 				"postMonth" -> {
 					val id = extra.getInt("widgetId")
-					var year = CalendarWidgetInternal.yearForWidget[id]!!
-					var month = CalendarWidgetInternal.monthForWidget[id]!!
+					var year = extra.getInt("year")
+					var month = extra.getInt("month")
 					month++
 					if(month > 11) {
 						year++
@@ -161,16 +177,18 @@ private object CalendarWidgetInternal {
 	 */
 	val daysArrayForWidget = HashMap<Int, Array<Calendar>>()
 	
+	var plans = ArrayList<SqlCalendar1>()
+	
 	/**
 	 * On each widget update
 	 */
+	@SuppressLint("SimpleDateFormat")
 	fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
 		// Construct the RemoteViews object
 		val views = RemoteViews(context.packageName, R.layout.calendar_widget)
 		views.removeAllViews(R.id.calendarWidgetWeek)
 		views.removeAllViews(R.id.calendarWidgetCalendar)
 		views.removeAllViews(R.id.calendarWidgetPlans)
-		
 		
 		// init week names
 		for(i in WeekOfNames) {
@@ -179,9 +197,11 @@ private object CalendarWidgetInternal {
 			views.addView(R.id.calendarWidgetWeek, v)
 		}
 		
-		
 		// init days array
-		initDays(appWidgetId)
+		val y = yearForWidget[appWidgetId] ?: today[Calendar.YEAR].also { yearForWidget[appWidgetId] = it }
+		val m = monthForWidget[appWidgetId] ?: today[Calendar.MONTH].also { monthForWidget[appWidgetId] = it }
+		changeDays(appWidgetId, y, m)
+//		initDays(appWidgetId)
 
 		val daysArray = daysArrayForWidget[appWidgetId]!!
 
@@ -205,26 +225,50 @@ private object CalendarWidgetInternal {
 			
 			views.addView(R.id.calendarWidgetCalendar, it)
 			
-			val intentToStart = Intent(context, MainActivity::class.java)
+			val intentToStart = Intent(context, CalendarWidget::class.java)
 			intentToStart.putExtra("event", "selectCalendar")
 			intentToStart.putExtra("time", daysArray[i].time.time)
-			it.setOnClickPendingIntent(R.id.widgetCalendarViewItemDay, PendingIntent.getActivity(context, CalendarRequestCodeOffset + i, intentToStart, PendingIntent.FLAG_IMMUTABLE))
+			intentToStart.putExtra("widgetId", appWidgetId)
+//			intentToStart.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+			it.setOnClickPendingIntent(R.id.widgetCalendarViewItemDay, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + i, intentToStart, PendingIntent.FLAG_UPDATE_CURRENT))
+		}
+		
+		for(it in plans) {
+			val view = RemoteViews(context.packageName, R.layout.view_plan_item)
+			val time = SimpleDateFormat("HH:mm").format(it.time)
+			view.setTextViewText(R.id.plan_content, it.content)
+			view.setTextViewText(R.id.plan_time, time)
+			views.addView(R.id.calendarWidgetPlans, view)
 		}
 		
 		// register arrow button
 		val preArrowIntent = Intent(context, CalendarWidget::class.java)
 		preArrowIntent.putExtra("event", "preMonth")
 		preArrowIntent.putExtra("widgetId", appWidgetId)
-		views.setOnClickPendingIntent(R.id.calendarWidgetPreMonth, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + 1, preArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+		preArrowIntent.putExtra("year", yearForWidget[appWidgetId])
+		preArrowIntent.putExtra("month", monthForWidget[appWidgetId])
+//		preArrowIntent.flags = Intent.FLAG_RECEIVER_NO_ABORT
+		views.setOnClickPendingIntent(R.id.calendarWidgetPreMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 1, preArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 		
 		val postArrowIntent = Intent(context, CalendarWidget::class.java)
 		postArrowIntent.putExtra("event", "postMonth")
 		postArrowIntent.putExtra("widgetId", appWidgetId)
-		views.setOnClickPendingIntent(R.id.calendarWidgetPostMonth, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + 2, postArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
-		
+		postArrowIntent.putExtra("year", yearForWidget[appWidgetId])
+		postArrowIntent.putExtra("month", monthForWidget[appWidgetId])
+//		preArrowIntent.flags = Intent.FLAG_RECEIVER_NO_ABORT
+		views.setOnClickPendingIntent(R.id.calendarWidgetPostMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 2, postArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
 		
 		// Instruct the widget manager to update the widget
 		appWidgetManager.updateAppWidget(appWidgetId, views)
+	}
+	
+	fun onEnable(context: Context) {
+		val td = Calendar.getInstance()
+		td.set(today[Calendar.YEAR], today[Calendar.MONTH], today[Calendar.DAY_OF_MONTH])
+		val last = td.time.time + (24 * 60 * 60 * 1000)
+		val sql = SqlHelper.getInstance(context)
+		val plan = sql.getCalendar(sql.readableDatabase, null, "createTime", timeMin = td.time.time, timeMax = last)
+		plans = plan.getCalendar()
 	}
 	
 	/**
@@ -244,6 +288,8 @@ private object CalendarWidgetInternal {
 	 */
 	fun onWidgetDelete(appWidgetId: Int) {
 		daysArrayForWidget.remove(appWidgetId)
+		monthForWidget.remove(appWidgetId)
+		yearForWidget.remove(appWidgetId)
 	}
 	
 	/**
@@ -296,7 +342,7 @@ private object CalendarWidgetInternal {
 	private fun initDays(appWidgetId: Int) {
 		val daysArray = daysArrayForWidget[appWidgetId] ?: Array<Calendar>(7 * WEEK_TO_SHOW) { Calendar.getInstance() }.also { daysArrayForWidget[appWidgetId] = it }
 		
-		val date = Calendar.getInstance().also { it.set(yearForWidget[appWidgetId] ?: today[Calendar.YEAR].also { yearForWidget[appWidgetId] = it },
+		val date = Calendar.getInstance().also { oit -> oit.set(yearForWidget[appWidgetId] ?: today[Calendar.YEAR].also { yearForWidget[appWidgetId] = it },
 			(monthForWidget[appWidgetId] ?: today[Calendar.MONTH].also { monthForWidget[appWidgetId] = it }), 0) }
 		val dayWeek = date.get(Calendar.DAY_OF_WEEK) // 1 for Sunday...
 		

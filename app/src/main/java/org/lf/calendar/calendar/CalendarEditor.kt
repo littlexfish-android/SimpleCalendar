@@ -10,6 +10,7 @@ import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
+import org.lf.calendar.view.ColorSpinnerAdapter
 import java.util.*
 
 private const val BEGIN_YEAR = 2000
@@ -39,11 +40,14 @@ class CalendarEditor : Fragment() {
 	private lateinit var spinnerHour: Spinner
 	private lateinit var spinnerMinute: Spinner
 	private lateinit var remark: EditText
+	private lateinit var spinnerColor: Spinner
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
-			day.time = Date(it.getLong(PARAM_TIME))
+			val date = Date(it.getLong(PARAM_TIME))
+			day.clear()
+			day.time = date
 			if(it.containsKey(PARAM_CONTENT)) tmpContent = it.getString(PARAM_CONTENT)!!
 			if(it.containsKey(PARAM_REMARK)) tmpRemark = it.getString(PARAM_REMARK)!!
 		}
@@ -64,11 +68,10 @@ class CalendarEditor : Fragment() {
 		spinnerHour = view.findViewById(R.id.calendarEditorHour)
 		spinnerMinute = view.findViewById(R.id.calendarEditorMinute)
 		remark = view.findViewById(R.id.calendarEditorRemark)
+		spinnerColor = view.findViewById(R.id.calendarEditorColor)
 		
 		view.findViewById<Button>(R.id.calendarEditorConfirm).setOnClickListener { onButtonClick(it) }
 		view.findViewById<Button>(R.id.calendarEditorCancel).setOnClickListener { onButtonClick(it) }
-		
-		spinnerMonth.onItemSelectedListener = OnMonthSelect(spinnerYear, spinnerDay)
 		
 		content.text.append(tmpContent)
 		remark.text.append(tmpRemark)
@@ -83,7 +86,6 @@ class CalendarEditor : Fragment() {
 	private fun onButtonClick(v: View) {
 		when(v.id) {
 			R.id.calendarEditorConfirm -> {
-				// close editor
 				if(activity != null) {
 					if(activity is MainActivity) {
 						val act = activity as MainActivity
@@ -100,14 +102,17 @@ class CalendarEditor : Fragment() {
 							it.set(year, month - 1, day, hour, minute)
 						}
 						
-						val item = SqlCalendar1(contentString, remarkString, time.time)
+						val item = SqlCalendar1(contentString, remarkString, time.time, (spinnerColor.selectedItem as ColorSpinnerAdapter.ColorSpinnerItem).color)
 						
 						sqlCalendar.addCalendarPlan(item)
 						
 						sqlCalendar.saveSql(SqlHelper.getInstance(context).writableDatabase)
 						
-						act.setFragmentToCalendar()
-						act.fragmentCalendar.reloadFromSql(true)
+						// close editor
+						act.setFragmentToCalendar(reload = true)
+						act.setCalendarDay(spinnerYear.selectedItem.toString().toInt(),
+							spinnerMonth.selectedItem.toString().toInt(),
+							spinnerDay.selectedItem.toString().toInt())
 						
 					}
 				}
@@ -132,10 +137,10 @@ class CalendarEditor : Fragment() {
 		val daySelect = day[Calendar.DAY_OF_MONTH] - 1
 		val hourSelect = day[Calendar.HOUR_OF_DAY]
 		val minuteSelect = day[Calendar.MINUTE]
-		val yearArr = (BEGIN_YEAR..END_YEAR).toList().toTypedArray()//.map { it.toString() }
+		val yearArr = (BEGIN_YEAR..END_YEAR).toList().toTypedArray()
 		val monthArr = (1..12).toList().map { it.toString() }
 		val dayArr = (1..day.getActualMaximum(Calendar.DAY_OF_MONTH)).toList().map { it.toString() }
-		val hourArr = (0..24).toList().map { it.toString() }
+		val hourArr = (0..23).toList().map { it.toString() }
 		val minuteArr = (0..59).toList().map { it.toString() }
 		spinnerYear.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, yearArr)
 		spinnerYear.setSelection(yearSelect)
@@ -147,6 +152,10 @@ class CalendarEditor : Fragment() {
 		spinnerHour.setSelection(hourSelect)
 		spinnerMinute.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, minuteArr)
 		spinnerMinute.setSelection(minuteSelect)
+		
+		spinnerColor.adapter = ColorSpinnerAdapter(requireContext(), R.array.defaultColorStringArray, R.array.defaultColorNameArray)
+		
+		spinnerMonth.onItemSelectedListener = OnMonthSelect(spinnerYear, spinnerDay)
 		
 	}
 	
@@ -169,7 +178,13 @@ class CalendarEditor : Fragment() {
 		override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 			val dayMax = Calendar.getInstance().also { it.set(yearSpinner.selectedItem.toString().toInt(), position, 1) }.getActualMaximum(Calendar.DAY_OF_MONTH)
 			val arr = (1..dayMax).toList().toTypedArray()
+			val oriSelect = daySpinner.selectedItemPosition
 			daySpinner.adapter = ArrayAdapter(daySpinner.context, android.R.layout.simple_spinner_item, arr)
+			
+			if(oriSelect < arr.size) {
+				daySpinner.setSelection(oriSelect)
+			}
+			
 		}
 		
 		override fun onNothingSelected(parent: AdapterView<*>?) {

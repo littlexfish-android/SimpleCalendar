@@ -1,10 +1,20 @@
 package org.lf.calendar.list
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
+import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.LinearLayout
+import org.lf.calendar.MainActivity
 import org.lf.calendar.R
+import org.lf.calendar.io.SqlHelper
+import org.lf.calendar.io.sqlitem.list.SqlList1
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * The class use to show on {@link org.lf.calendar.list.ListList}
@@ -17,15 +27,8 @@ class ListItem : LinearLayout {
 	var groupName = ""
 		set(value) {
 			field = value
-			refreshItems(false)
+			refreshItems()
 		}
-	
-	/**
-	 * The items of group
-	 */
-	private val items = HashMap<String, Boolean>()
-	
-	private val itemsOrder = ArrayList<String>()
 	
 	/* view */
 	
@@ -39,7 +42,18 @@ class ListItem : LinearLayout {
 	 */
 	private lateinit var listGroup: LinearLayout
 	
-	private val itemViews = HashMap<String, Boolean>()
+	private lateinit var sqlData: ArrayList<SqlList1>
+	
+	var color = 0
+		set(value) {
+			field = value
+			if(::group.isInitialized) {
+				group.setTextColor(value)
+			}
+			else {
+				refreshItems()
+			}
+		}
 	
 	constructor(context: Context) : super(context) {
 		init(null, 0)
@@ -65,53 +79,78 @@ class ListItem : LinearLayout {
 		
 		listGroup = findViewById(R.id.list_item_items)
 		group = findViewById(R.id.list_item_group)
-		
-		refreshItems(true)
-		
 	}
 	
-	/**
-	 * Add the list item into this group
-	 */
-	fun addItem(str: String, isChecked: Boolean = false, index: Int = -1) {
-		if(items.containsKey(str)) return
-		if(index == -1) itemsOrder.add(str) else itemsOrder.add(index, str)
-		items[str] = isChecked
-		addItemView(str, isChecked, index)
-		refreshItems(false)
+	fun constructItems(sql: ArrayList<SqlList1>) {
+		sqlData = sql
+		refreshItems()
 	}
 	
 	/**
 	 * Refresh the group
-	 * @param force - {@code true} to force it refresh, or {@code false} will refresh when it has been change
 	 */
-	private fun refreshItems(force: Boolean) {
-		if(force || listGroup.childCount != items.size || group.text != groupName) {
-			
+	private fun refreshItems() {
+		if(::sqlData.isInitialized) {
 			// clear children view
 			listGroup.removeAllViews()
-			
+
 			// construct children
-			for((str, check) in items) {
-				addItemView(str, check)
+			for(it in sqlData) {
+				addItemView(it.content, it.isComplete, sql = it)
 			}
-			
-			// refresh group name
-			group.text = groupName
 		}
-		
+
+		// refresh group name
+		group.text = groupName
+		group.setTextColor(color)
 	}
 	
 	/**
 	 * Add item view into list
 	 */
-	private fun addItemView(str: String, isChecked: Boolean = false, index: Int = -1) {
-		val checkbox = CheckBox(context)
-		checkbox.text = str
+	private fun addItemView(str: String, isChecked: Boolean = false, index: Int = -1, sql: SqlList1? = null) {
+		val checkbox = if(str == "") {
+			group
+		}
+		else {
+			val c = CheckBox(context)
+			c.text = str
+			c.textSize = resources.getDimension(R.dimen.listItemItemSize)
+			listGroup.addView(c, index)
+			c
+		}
+		
 		checkbox.isChecked = isChecked
-		checkbox.textSize = resources.getDimension(R.dimen.listItemItemSize)
-		listGroup.addView(checkbox, index)
-		checkbox.isChecked = itemViews[str] ?: false.also { itemViews[str] = it }
+		checkbox.paintFlags = if(isChecked) {
+			checkbox.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+		}
+		else {
+			checkbox.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+		}
+		checkbox.setOnCheckedChangeListener(OnChecked(this, sql))
 	}
+	
+	class OnChecked(val parent: ListItem, var sql: SqlList1?) : CompoundButton.OnCheckedChangeListener {
+		
+		override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+			if(buttonView != null) {
+				val act = buttonView.context.getActivity()
+				if(act is MainActivity) {
+					sql?.let {
+						it.isComplete = isChecked
+						it.completeTime = Date()
+					}
+					act.getList().saveSql(SqlHelper.getInstance(act).writableDatabase)
+					parent.refreshItems()
+				}
+			}
+		}
+		
+		private tailrec fun Context.getActivity(): Activity? = this as? Activity
+			?: (this as? ContextWrapper)?.baseContext?.getActivity()
+		
+	}
+	
+	
 	
 }

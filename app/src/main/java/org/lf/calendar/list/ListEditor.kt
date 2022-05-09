@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.list.SqlList1
+import org.lf.calendar.view.ColorSpinnerAdapter
 
 private const val PARAM_TYPE = "list.editor.type"
 private const val PARAM_GROUP = "list.editor.group"
@@ -37,6 +39,8 @@ class ListEditor : Fragment() {
 	
 	private lateinit var items: LinearLayout
 	
+	private lateinit var spinnerColor: Spinner
+	
 	private val itemViews = ArrayList<EditText>()
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +63,7 @@ class ListEditor : Fragment() {
 		
 		groupView = view.findViewById(R.id.listEditorGroup)
 		items = view.findViewById(R.id.listEditorItems)
+		spinnerColor = view.findViewById(R.id.listEditorColorSpinner)
 		
 		// init group name if input
 		if(tmpType == "new") {
@@ -91,17 +96,19 @@ class ListEditor : Fragment() {
 					val groupName = groupView.text.toString()
 					val sqlList = act.getList()
 					
+					val item = SqlList1(groupName, "", (spinnerColor.selectedItem as ColorSpinnerAdapter.ColorSpinnerItem).color)
+					sqlList.addListItem(item)
 					for(v in itemViews) {
 						val str = v.text.toString()
-						val item = SqlList1(groupName, str)
+						if(str.isBlank()) continue
+						val item = SqlList1(groupName, str, (spinnerColor.selectedItem as ColorSpinnerAdapter.ColorSpinnerItem).color)
 						sqlList.addListItem(item)
 					}
 					
 					sqlList.saveSql(SqlHelper.getInstance(context).writableDatabase)
 					
 					// close editor
-					act.setFragmentToList(true)
-					act.fragmentList.reloadFromSql()
+					act.setFragmentToList(reload = true)
 				}
 			}
 		}
@@ -113,6 +120,9 @@ class ListEditor : Fragment() {
 				}
 			}
 		}
+		
+		spinnerColor.adapter = ColorSpinnerAdapter(requireContext(), R.array.defaultColorStringArray, R.array.defaultColorNameArray)
+		
 	}
 	
 	private fun addItem(initString: String = "") {

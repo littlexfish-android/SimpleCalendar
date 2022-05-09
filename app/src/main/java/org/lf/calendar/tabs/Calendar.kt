@@ -1,7 +1,6 @@
 package org.lf.calendar.tabs
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,8 @@ import org.lf.calendar.calendar.CalendarEditor
 import org.lf.calendar.calendar.CalendarView
 import org.lf.calendar.calendar.CalenderPlanList
 import org.lf.calendar.io.SqlHelper
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * The class is a tab of main activity, use to show calendar
@@ -78,8 +79,11 @@ class Calendar : Fragment() {
 
 
 		}
-
-
+		
+		setDay(calendar.selectDate[java.util.Calendar.YEAR], calendar.selectDate[java.util.Calendar.MONTH], calendar.selectDate[java.util.Calendar.DAY_OF_MONTH]) {reloadFromSql(true)}
+//		reloadFromSql(true)
+		
+		
 		if(task.isNotEmpty()) {
 			for(t in task) {
 				t.run()
@@ -87,19 +91,20 @@ class Calendar : Fragment() {
 			task.clear()
 		}
 		
+		
 	}
 	
 	/**
 	 * Set the day of calendar
 	 */
-	fun setDay(year: Int, month: Int, day: Int) {
+	fun setDay(year: Int, month: Int, day: Int, func: (() -> Unit)? = null) {
 		val t = {
-			calendar.changeDays(year, month, day)
+			calendar.changeDays(year, month, day) { if(func == null) reloadFromSql(false) else func() }
 			yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
-			reloadFromSql(false)
+//			reloadFromSql(false)
 		}
 		if(this::calendar.isInitialized) {
-			t()
+			calendar.post(t)
 		}
 		else {
 			task.add(t)
@@ -144,7 +149,11 @@ class Calendar : Fragment() {
 	
 	private fun onAddPlan() {
 		if(activity is MainActivity) {
-			(activity as MainActivity).setFragmentToOther(CalendarEditor.newInstance())
+			val t = java.util.Calendar.getInstance().also { it.time = Date() }
+			val c = java.util.Calendar.getInstance()
+			val s = calendar.selectDate
+			c.set(s[java.util.Calendar.YEAR], s[java.util.Calendar.MONTH], s[java.util.Calendar.DAY_OF_MONTH], t[java.util.Calendar.HOUR_OF_DAY], t[java.util.Calendar.MINUTE])
+			(activity as MainActivity).setFragmentToOther(CalendarEditor.newInstance(c.time.time))
 		}
 	}
 	
@@ -152,18 +161,25 @@ class Calendar : Fragment() {
 	 * Reload from sqlite using SqlHelper
 	 */
 	fun reloadFromSql(force: Boolean = false) {
-		if(force || !dateEquals(calendar.selectDate, calendarPlans.day)) {
-			val day = calendar.selectDate
-			val end = day.timeInMillis + (24*60*60*1000)
-			val sqlHelper = SqlHelper.getInstance(context)
-			val sqlCalendar = sqlHelper.getCalendar(sqlHelper.writableDatabase, orderBy = "time", timeMin = day.time.time, timeMax = end).getCalendar()
-			Log.e("TAG", sqlCalendar.joinToString(","))
-			calendarPlans.removeAllPlan()
-			for(sql in sqlCalendar) {
-				calendarPlans.addPlan(sql.time.time, sql.content, sqlItem = sql)
+		val t = {
+			if(force || !dateEquals(calendar.selectDate, calendarPlans.day)) {
+				val day = calendar.selectDate
+				val end = day.timeInMillis + (24*60*60*1000)
+				val sqlHelper = SqlHelper.getInstance(context)
+				val sqlCalendar = sqlHelper.getCalendar(sqlHelper.writableDatabase, orderBy = "time", timeMin = day.time.time, timeMax = end).getCalendar()
+				calendarPlans.removeAllPlan()
+				for(sql in sqlCalendar) {
+					calendarPlans.addPlan(sql.time.time, sql.content, sqlItem = sql)
+				}
+				calendarPlans.refreshList()
+				calendarPlans.day.time = calendar.selectDate.time
 			}
-			calendarPlans.refreshList()
-			calendarPlans.day.time = calendar.selectDate.time
+		}
+		if(::calendar.isInitialized) {
+			t()
+		}
+		else {
+			task.add(t)
 		}
 	}
 	
@@ -177,6 +193,7 @@ class Calendar : Fragment() {
 		fun newInstance() =
 			Calendar().apply {
 				arguments = Bundle().apply { }
+				
 			}
 	}
 }

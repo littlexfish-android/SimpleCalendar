@@ -7,12 +7,12 @@ abstract class SqlListBase : Sqlable {
 	/**
 	 * @return SqlList been upgraded
 	 */
-	abstract fun upgrade(version: Int): SqlListBase
+	abstract fun upgrade(sql: SqlListBase, oldVersion: Int, newVersion: Int): SqlListBase
 	
 	/**
 	 * @return SqlList been downgraded or throw error when it not support downgrade
 	 */
-	fun downgrade(version: Int): SqlListBase {
+	fun downgrade(sql: SqlListBase, oldVersion: Int, newVersion: Int): SqlListBase {
 		throw IllegalStateException("sql downgrade")
 	}
 	

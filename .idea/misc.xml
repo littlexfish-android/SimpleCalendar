@@ -3,15 +3,28 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_add.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_calendar.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_close.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_launcher_background.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_list.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_option_list.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_post_arrow.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_post_arrow_d.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_pre_arrow_d.xml" value="0.38229166666666664" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/ic_profile.xml" value="0.38229166666666664" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/round_rect.xml" value="0.1625" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/shadow_round_rect.xml" value="0.38229166666666664" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/drawable/widget_calendar_day_background.xml" value="0.24947916666666667" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/activity_main.xml" value="0.28177083333333336" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/activity_test.xml" value="0.23333333333333334" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/calendar_widget.xml" value="0.25" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/color_sinner_item.xml" value="0.5" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_calendar.xml" value="0.322463768115942" />
-        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_calendar_editor.xml" value="0.67" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_calendar_editor.xml" value="0.33" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_calender_plan_list.xml" value="0.322463768115942" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_list.xml" value="0.11458333333333333" />
-        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_list_editor.xml" value="0.22" />
+        <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_list_editor.xml" value="0.33" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/fragment_list_list.xml" value="0.21" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/view_calendar.xml" value="0.322463768115942" />
         <entry key="..\:/LF/4coding/AndroidProject/SimpleCalendar/app/src/main/res/layout/view_list_item.xml" value="0.13576494427558258" />

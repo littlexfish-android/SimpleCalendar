@@ -111,11 +111,13 @@ class CalendarView : Fragment() {
 		
 		createCalendarItem(false)
 		
-		if(task.isNotEmpty()) {
-			for(t in task) {
-				t.run()
+		table.post {
+			if(task.isNotEmpty()) {
+				for(t in task) {
+					t.run()
+				}
+				task.clear()
 			}
-			task.clear()
 		}
 		
 	}
@@ -150,7 +152,7 @@ class CalendarView : Fragment() {
 	 * @param year - the year of the days
 	 * @param month - the month of the days, 0 to 11
 	 */
-	fun changeDays(year: Int, month: Int, day: Int = selectDate[Calendar.DAY_OF_MONTH]) {
+	fun changeDays(year: Int, month: Int, day: Int = selectDate[Calendar.DAY_OF_MONTH], func: () -> Unit = {}) {
 		val t = {
 			if(selectDate[Calendar.YEAR] != year || selectDate[Calendar.MONTH] != month) {
 				selectDate.clear()
@@ -163,12 +165,22 @@ class CalendarView : Fragment() {
 				selectDate.set(year, month, day)
 				createCalendarItem(true)
 			}
+			func()
 		}
 		if(this::table.isInitialized) {
-			t()
+			table.post(t)
 		}
 		else {
 			task.add(t)
+		}
+	}
+	
+	fun post(r: Runnable) {
+		if(::table.isInitialized) {
+			table.post(r)
+		}
+		else {
+			task.add(r)
 		}
 	}
 	
@@ -186,11 +198,11 @@ class CalendarView : Fragment() {
 			
 			table.removeAllViews()
 			
-			var nowRow = TableRow(requireContext())
+			var nowRow = TableRow(context)
 			
 			for((viewIndex, day) in daysArray.withIndex()) {
 				if(viewIndex % 7 == 0) {
-					nowRow = TableRow(requireContext())
+					nowRow = TableRow(context)
 					table.addView(nowRow)
 				}
 				

@@ -36,9 +36,9 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/shadow"
-        app:layout_constraintBottom_toTopOf="@+id/listEditorConfirm"
+        app:layout_constraintBottom_toTopOf="@+id/listEditorColorSpinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/listEditorGroup">
@@ -91,5 +91,22 @@
         app:backgroundTint="@color/default_theme_color"
         app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout" />
+
+    <Spinner
+        android:id="@+id/listEditorColorSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/listEditorConfirm"
+        app:layout_constraintStart_toStartOf="@+id/listEditorGroup" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/listEditorColor"
+        app:layout_constraintBottom_toBottomOf="@+id/listEditorColorSpinner"
+        app:layout_constraintStart_toStartOf="@+id/listEditorGroupLabel"
+        app:layout_constraintTop_toTopOf="@+id/listEditorColorSpinner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

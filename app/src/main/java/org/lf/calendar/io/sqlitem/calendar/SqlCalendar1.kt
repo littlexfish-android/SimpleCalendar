@@ -2,6 +2,7 @@ package org.lf.calendar.io.sqlitem.calendar
 
 import android.content.ContentValues
 import android.database.Cursor
+import android.graphics.Color
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import org.intellij.lang.annotations.Language
@@ -26,16 +27,18 @@ class SqlCalendar1 : SqlCalendarBase {
 	var content: String = ""
 	var remark: String? = null
 	var time: Date = Date()
+	var color: Int = Color.BLACK
 	var isComplete: Boolean = false
 	var createTime: Date = Date()
 	var completeTime: Date? = null
 	
 	constructor() : super()
 	
-	constructor(content: String, remark: String?, time: Date) : super() {
+	constructor(content: String, remark: String?, time: Date, color: Int = Color.BLACK) : super() {
 		this.content = content
 		this.remark = remark
 		this.time = time
+		this.color = color
 	}
 	
 	override fun initFromDatabase(cursor: Cursor) {
@@ -43,9 +46,10 @@ class SqlCalendar1 : SqlCalendarBase {
 		content = cursor.getString(1)
 		remark = cursor.getStringOrNull(2)
 		time = Date(cursor.getLong(3))
-		isComplete = cursor.getInt(4) != 0
-		createTime = Date(cursor.getLong(5))
-		val tmpTime = cursor.getLongOrNull(6)
+		color = cursor.getInt(4)
+		isComplete = cursor.getInt(5) != 0
+		createTime = Date(cursor.getLong(6))
+		val tmpTime = cursor.getLongOrNull(7)
 		completeTime = if(tmpTime == null) null else Date(tmpTime)
 	}
 	
@@ -54,6 +58,7 @@ class SqlCalendar1 : SqlCalendarBase {
 		contentValue.put("content", content)
 		contentValue.put("remark", remark)
 		contentValue.put("time", time.time)
+		contentValue.put("color", color)
 		contentValue.put("isComplete", if(isComplete) 1 else 0)
 		contentValue.put("createTime", createTime.time)
 		completeTime?.let {
@@ -62,7 +67,7 @@ class SqlCalendar1 : SqlCalendarBase {
 		return contentValue
 	}
 	
-	override fun upgrade(version: Int): SqlCalendarBase {
+	override fun upgrade(sql: SqlCalendarBase, oldVersion: Int, newVersion: Int): SqlCalendarBase {
 		return this
 	}
 	
@@ -73,6 +78,7 @@ class SqlCalendar1 : SqlCalendarBase {
 				"content TEXT NOT NULL, " +
 				"remark TEXT," +
 				"time INTEGER NOT NULL," +
+				"color INTEGER NOT NULL DEFAULT " + Color.BLACK + "," +
 				"isComplete INTEGER NOT NULL DEFAULT 0," +
 				"createTime INTEGER NOT NULL," +
 				"completeTime INTEGER)"
@@ -93,4 +99,7 @@ class SqlCalendar1 : SqlCalendarBase {
 		return result
 	}
 	
+	override fun toString(): String {
+		return "SqlCalendar{_id=$_id,content=$content,remark=$remark,time=$time,color=$color,isComplete=$isComplete,createTime=$createTime,completeTime=$completeTime}"
+	}
 }

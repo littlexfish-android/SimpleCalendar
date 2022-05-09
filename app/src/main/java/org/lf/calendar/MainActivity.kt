@@ -1,16 +1,22 @@
 package org.lf.calendar
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Environment
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import org.lf.calendar.databinding.ActivityMainBinding
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.tabs.Calendar
 import org.lf.calendar.tabs.List
 import org.lf.calendar.tabs.Profile
+import java.io.OutputStream
 import java.util.*
 
 /**
@@ -94,7 +100,6 @@ class MainActivity : AppCompatActivity() {
 		
 		setFragmentToList()
 		// ensure options menu is close
-//		moveOptionsMenu(false)
 		binding.mainOptionsMenu.x = -resources.displayMetrics.widthPixels.toFloat();
 		
 		// process when extra not null
@@ -122,31 +127,35 @@ class MainActivity : AppCompatActivity() {
 	/**
 	 * Switch fragment to fragment of list
 	 */
-	fun setFragmentToList(refresh: Boolean = false) {
+	fun setFragmentToList(reload: Boolean = false) {
 		val t = supportFragmentManager.beginTransaction()
 		t.replace(R.id.main_tab_container, fragmentList)
 		t.setCustomAnimations(R.anim.mv_left_frag_cutin, R.anim.mv_left_frag_cutout)
 		t.commit()
 		nowFrag = fragmentList
-		if(refresh) {
-		
+		if(reload) {
+			fragmentList.reloadFromSql()
 		}
 	}
 	
 	/**
 	 * Switch fragment to fragment of calendar
 	 */
-	fun setFragmentToCalendar(fromLeft: Boolean = true) {
-		val t = supportFragmentManager.beginTransaction()
-		t.replace(R.id.main_tab_container, fragmentCalendar)
-		if(fromLeft) {
-			t.setCustomAnimations(R.anim.mv_right_frag_cutin, R.anim.mv_right_frag_cutout)
-		}
-		else {
-			t.setCustomAnimations(R.anim.mv_left_frag_cutin, R.anim.mv_left_frag_cutout)
-		}
-		t.commit()
-		nowFrag = fragmentCalendar
+	fun setFragmentToCalendar(fromLeft: Boolean = true, reload: Boolean = false) {
+//		findViewById<FragmentContainerView>(R.id.main_tab_container).post {
+			val t = supportFragmentManager.beginTransaction()
+			t.replace(R.id.main_tab_container, fragmentCalendar)
+			if(fromLeft) {
+				t.setCustomAnimations(R.anim.mv_right_frag_cutin, R.anim.mv_right_frag_cutout)
+			} else {
+				t.setCustomAnimations(R.anim.mv_left_frag_cutin, R.anim.mv_left_frag_cutout)
+			}
+			t.commit()
+			nowFrag = fragmentCalendar
+			if(reload) {
+//				fragmentCalendar.reloadFromSql(true)
+			}
+//		}
 	}
 	
 	fun setCalendarDay(year: Int, month: Int, day: Int) {
@@ -158,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 	/**
 	 * Switch fragment to fragment of profile
 	 */
-	fun setFragmentToProfile() {
+	private fun setFragmentToProfile() {
 		val t = supportFragmentManager.beginTransaction()
 		t.replace(R.id.main_tab_container, fragmentProfile)
 		t.setCustomAnimations(R.anim.mv_right_frag_cutin, R.anim.mv_right_frag_cutout)
@@ -167,11 +176,13 @@ class MainActivity : AppCompatActivity() {
 	}
 	
 	fun setFragmentToOther(frag: Fragment) {
-		val t = supportFragmentManager.beginTransaction()
-		t.replace(R.id.main_tab_container, frag)
-		t.setCustomAnimations(R.anim.frag_fade_in, R.anim.frag_fade_out)
-		t.commit()
-		nowFrag = frag
+		findViewById<FragmentContainerView>(R.id.main_tab_container).post {
+			val t = supportFragmentManager.beginTransaction()
+			t.replace(R.id.main_tab_container, frag)
+			t.setCustomAnimations(R.anim.frag_fade_in, R.anim.frag_fade_out)
+			t.commit()
+			nowFrag = frag
+		}
 	}
 	
 	/**
@@ -179,7 +190,7 @@ class MainActivity : AppCompatActivity() {
 	 */
 	fun onListButtonPressed(v: View?) {
 		if(nowFrag == fragmentList) return
-		setFragmentToList()
+		setFragmentToList(true)
 	}
 	
 	/**
@@ -187,7 +198,7 @@ class MainActivity : AppCompatActivity() {
 	 */
 	fun onCalendarButtonPressed(v: View?) {
 		if(nowFrag == fragmentCalendar) return
-		setFragmentToCalendar(nowFrag == fragmentList)
+		setFragmentToCalendar(nowFrag == fragmentList, true)
 	}
 	
 	/**
@@ -238,6 +249,9 @@ class MainActivity : AppCompatActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		if(::lastDataBase.isInitialized) {
+			calendar.saveSql(lastDataBase)
+			list.saveSql(lastDataBase)
+			SqlHelper.getInstance(applicationContext).getColor(lastDataBase).saveSql(lastDataBase)
 			lastDataBase.close()
 		}
 	}

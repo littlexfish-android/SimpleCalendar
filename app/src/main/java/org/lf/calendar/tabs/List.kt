@@ -47,18 +47,10 @@ class List : Fragment() {
 	fun reloadFromSql() {
 		val sqlHelper = SqlHelper.getInstance(context)
 		val sqlList = sqlHelper.getList(sqlHelper.writableDatabase, 50, "createTime").getList()
-		list.clearItems()
-		for(sqlKey in sqlList.keys) {
-			list.addListItem(sqlKey)
-			for(sqlValue in sqlList[sqlKey]!!) {
-				list.addItem(sqlValue.groupName, sqlValue.content, sqlValue.isComplete)
-				refreshList()
-			}
+		list.reset()
+		for(sqlPair in sqlList) {
+			list.constructListItem(sqlPair.first, sqlPair.second) // TODO: change
 		}
-	}
-	
-	fun refreshList() {
-		list.refreshList(false)
 	}
 	
 	companion object {
