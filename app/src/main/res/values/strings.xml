@@ -13,6 +13,8 @@
     <string name="listEditorAddItem">新增項目</string>
     <string name="listEditorRemoveItem">刪除所選</string>
     <string name="listEditorColor">顏色</string>
+    <string name="listEditorAttachCalendar">附加至日曆</string>
+
 
     <!--  calendar editor  -->
     <string name="calendarEditorContent">內容</string>
@@ -20,7 +22,21 @@
     <string name="calendarEditorTime">時間</string>
     <string name="calendarEditorRemark">備註</string>
     <string name="calendarEditorColor">顏色</string>
+    <string name="calendarEditorAddReminder">新增提醒</string>
+    <string name="calendarEditorReminderFormat">提醒: %1$d年%2$d月%3$d日%4$d時%5$d分</string>
 
+
+    <!--  reminder  -->
+    <string name="reminder_5m">5分鐘前</string>
+    <string name="reminder_10m">10分鐘前</string>
+    <string name="reminder_30m">30分鐘前</string>
+    <string name="reminder_1h">1小時前</string>
+    <string name="reminder_2h">2小時前</string>
+    <string name="reminder_12h">12小時前</string>
+    <string name="reminder_1d">1天前</string>
+    <string name="reminder_2d">2天前</string>
+    <string name="reminder_1w">1週前</string>
+    <string name="reminder_custom">自訂</string>
 
 
     <string-array name="defaultColorStringArray">

@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.Spinner
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
@@ -15,6 +12,9 @@ import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.list.SqlList1
 import org.lf.calendar.view.ColorSpinnerAdapter
+import org.lf.calendar.view.Reminder
+import java.util.*
+import kotlin.collections.ArrayList
 
 private const val PARAM_TYPE = "list.editor.type"
 private const val PARAM_GROUP = "list.editor.group"
@@ -101,9 +101,11 @@ class ListEditor : Fragment() {
 					for(v in itemViews) {
 						val str = v.text.toString()
 						if(str.isBlank()) continue
-						val item = SqlList1(groupName, str, (spinnerColor.selectedItem as ColorSpinnerAdapter.ColorSpinnerItem).color)
-						sqlList.addListItem(item)
+						val sqlItem = SqlList1(groupName, str, (spinnerColor.selectedItem as ColorSpinnerAdapter.ColorSpinnerItem).color)
+						sqlList.addListItem(sqlItem)
 					}
+					
+					// TODO: add attach calendar
 					
 					sqlList.saveSql(SqlHelper.getInstance(context).writableDatabase)
 					

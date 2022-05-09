@@ -96,8 +96,8 @@
         android:id="@+id/listEditorColorSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/listEditorConfirm"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/listEditorAttachCalendar"
         app:layout_constraintStart_toStartOf="@+id/listEditorGroup" />
 
     <TextView
@@ -108,5 +108,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/listEditorColorSpinner"
         app:layout_constraintStart_toStartOf="@+id/listEditorGroupLabel"
         app:layout_constraintTop_toTopOf="@+id/listEditorColorSpinner" />
+
+    <CheckBox
+        android:id="@+id/listEditorAttachCalendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/listEditorAttachCalendar"
+        app:layout_constraintBottom_toTopOf="@+id/listEditorConfirm"
+        app:layout_constraintStart_toStartOf="@+id/textView6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
