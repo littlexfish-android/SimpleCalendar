@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
+import org.lf.calendar.calendar.CalendarEditor
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.list.SqlList1
 import org.lf.calendar.view.ColorSpinnerAdapter
@@ -16,6 +17,7 @@ import org.lf.calendar.view.Reminder
 import java.util.*
 import kotlin.collections.ArrayList
 
+private const val PARAM_OLD = "list.editor.old"
 private const val PARAM_TYPE = "list.editor.type"
 private const val PARAM_GROUP = "list.editor.group"
 private const val PARAM_LIST = "list.editor.list"
@@ -27,6 +29,8 @@ private const val PARAM_POSITION = "list.editor.pos"
 class ListEditor : Fragment() {
 	
 	/* data */
+	
+	private var oldData = false
 	
 	private var tmpType: String = ""
 	private var tmpGroup: String? = null
@@ -41,11 +45,14 @@ class ListEditor : Fragment() {
 	
 	private lateinit var spinnerColor: Spinner
 	
+	private lateinit var attachCalendar: CheckBox
+	
 	private val itemViews = ArrayList<EditText>()
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
+			oldData = it.getBoolean(PARAM_OLD)
 			tmpType = it.getString(PARAM_TYPE, "")
 			tmpGroup = it.getString(PARAM_GROUP)
 			if(it.containsKey(PARAM_LIST)) tmpList = it.getStringArray(PARAM_LIST)
@@ -64,6 +71,7 @@ class ListEditor : Fragment() {
 		groupView = view.findViewById(R.id.listEditorGroup)
 		items = view.findViewById(R.id.listEditorItems)
 		spinnerColor = view.findViewById(R.id.listEditorColorSpinner)
+		attachCalendar = view.findViewById(R.id.listEditorAttachCalendar)
 		
 		// init group name if input
 		if(tmpType == "new") {
@@ -105,12 +113,14 @@ class ListEditor : Fragment() {
 						sqlList.addListItem(sqlItem)
 					}
 					
-					// TODO: add attach calendar
-					
 					sqlList.saveSql(SqlHelper.getInstance(context).writableDatabase)
 					
 					// close editor
-					act.setFragmentToList(reload = true)
+					if(attachCalendar.isChecked) {
+						val frag = CalendarEditor.newInstance(initContent = groupName, linkListId = item._id)
+						act.setFragmentToOther(frag)
+					}
+					else act.setFragmentToList(reload = true)
 				}
 			}
 		}
@@ -150,6 +160,7 @@ class ListEditor : Fragment() {
 				arguments = Bundle().apply {
 					this.putString(PARAM_TYPE, "new")
 					this.putString(PARAM_GROUP, initGroup)
+					this.putBoolean(PARAM_OLD, false)
 				}
 			}
 		@JvmStatic
@@ -160,6 +171,7 @@ class ListEditor : Fragment() {
 					this.putString(PARAM_GROUP, group)
 					this.putStringArray(PARAM_LIST, list)
 					this.putInt(PARAM_POSITION, index)
+					this.putBoolean(PARAM_OLD, true)
 				}
 			}
 	}

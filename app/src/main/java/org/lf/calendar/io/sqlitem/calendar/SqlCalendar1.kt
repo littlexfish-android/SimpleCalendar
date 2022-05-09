@@ -3,6 +3,7 @@ package org.lf.calendar.io.sqlitem.calendar
 import android.content.ContentValues
 import android.database.Cursor
 import android.graphics.Color
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import org.intellij.lang.annotations.Language
@@ -18,6 +19,8 @@ import java.util.*
  * isComplete - is this item complete
  * createTime - this item create time
  * completeTime - this item completeTime, if incomplete will got null
+ * remindTime - this item need be remind
+ * listId - the list id this item linked
  *
  * NOTE: complete relative is keep if future need use
  */
@@ -31,14 +34,18 @@ class SqlCalendar1 : SqlCalendarBase {
 	var isComplete: Boolean = false
 	var createTime: Date = Date()
 	var completeTime: Date? = null
+	var remindTime: Date? = null
+	var listId: Int? = null
 	
 	constructor() : super()
 	
-	constructor(content: String, remark: String?, time: Date, color: Int = Color.BLACK) : super() {
+	constructor(content: String, remark: String?, time: Date, color: Int = Color.BLACK, remindTime: Date? = null, listId: Int? = null) : super() {
 		this.content = content
 		this.remark = remark
 		this.time = time
 		this.color = color
+		this.remindTime = remindTime
+		this.listId = listId
 	}
 	
 	override fun initFromDatabase(cursor: Cursor) {
@@ -49,8 +56,11 @@ class SqlCalendar1 : SqlCalendarBase {
 		color = cursor.getInt(4)
 		isComplete = cursor.getInt(5) != 0
 		createTime = Date(cursor.getLong(6))
-		val tmpTime = cursor.getLongOrNull(7)
-		completeTime = if(tmpTime == null) null else Date(tmpTime)
+		var tmpTime = cursor.getLongOrNull(7)
+		if(tmpTime != null) completeTime = Date(tmpTime)
+		tmpTime = cursor.getLongOrNull(8)
+		if(tmpTime != null) remindTime = Date(tmpTime)
+		listId = cursor.getIntOrNull(9)
 	}
 	
 	override fun getContentValues(): ContentValues {
@@ -64,6 +74,8 @@ class SqlCalendar1 : SqlCalendarBase {
 		completeTime?.let {
 			contentValue.put("completeTime", it.time)
 		}
+		remindTime?.let { contentValue.put("remindTime", it.time) }
+		listId?.let { contentValue.put("listId", it) }
 		return contentValue
 	}
 	
@@ -81,7 +93,10 @@ class SqlCalendar1 : SqlCalendarBase {
 				"color INTEGER NOT NULL DEFAULT " + Color.BLACK + "," +
 				"isComplete INTEGER NOT NULL DEFAULT 0," +
 				"createTime INTEGER NOT NULL," +
-				"completeTime INTEGER)"
+				"completeTime INTEGER," +
+				"remindTime INTEGER," +
+				"listId INTEGER," +
+				"CHECK ( isComplete == 0 OR isComplete == 1 ))"
 	
 	
 	override fun equals(other: Any?): Boolean {
@@ -93,13 +108,18 @@ class SqlCalendar1 : SqlCalendarBase {
 		result = 31 * result + content.hashCode()
 		result = 31 * result + remark.hashCode()
 		result = 31 * result + time.hashCode()
+		result = 31 * result + color.hashCode()
 		result = 31 * result + isComplete.hashCode()
 		result = 31 * result + createTime.hashCode()
 		result = 31 * result + (completeTime?.hashCode() ?: 0)
+		result = 31 * result + (remindTime?.hashCode() ?: 0)
+		result = 31 * result + (listId?.hashCode() ?: 0)
 		return result
 	}
 	
 	override fun toString(): String {
-		return "SqlCalendar{_id=$_id,content=$content,remark=$remark,time=$time,color=$color,isComplete=$isComplete,createTime=$createTime,completeTime=$completeTime}"
+		return "SqlCalendar{_id=$_id,content=$content,remark=$remark,time=$time,color=$color," +
+				"isComplete=$isComplete,createTime=$createTime,completeTime=$completeTime," +
+				"remindTime=$remindTime,listId=$listId}"
 	}
 }

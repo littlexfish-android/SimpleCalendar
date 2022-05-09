@@ -3,6 +3,7 @@ package org.lf.calendar.io.sqlitem.list
 import android.content.ContentValues
 import android.database.Cursor
 import android.graphics.Color
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import org.intellij.lang.annotations.Language
 import java.util.*
@@ -16,6 +17,7 @@ import java.util.*
  * isComplete - is this item complete
  * createTime - this item create time
  * completeTime - this item completeTime, if incomplete will got null
+ * attachCalendarId - the id of calendar which attach
  */
 class SqlList1 : SqlListBase {
 	
@@ -26,6 +28,7 @@ class SqlList1 : SqlListBase {
 	var isComplete: Boolean = false
 	var createTime: Date = Date()
 	var completeTime: Date? = null
+	var attachCalendarId: Int? = null
 	
 	constructor() : super()
 	
@@ -44,6 +47,7 @@ class SqlList1 : SqlListBase {
 		createTime = Date(cursor.getLong(5))
 		val tmpTime = cursor.getLongOrNull(6)
 		completeTime = if(tmpTime == null) null else Date(tmpTime)
+		attachCalendarId = cursor.getIntOrNull(7)
 	}
 	
 	override fun getContentValues(): ContentValues {
@@ -56,6 +60,7 @@ class SqlList1 : SqlListBase {
 		completeTime?.let {
 			contentValue.put("completeTime", it.time)
 		}
+		attachCalendarId?.let { contentValue.put("attachCalendarId", it) }
 		return contentValue
 	}
 	
@@ -72,7 +77,9 @@ class SqlList1 : SqlListBase {
 				"color INTEGER NOT NULL DEFAULT " + Color.BLACK + "," +
 				"isComplete INTEGER NOT NULL DEFAULT 0," +
 				"createTime INTEGER NOT NULL," +
-				"completeTime INTEGER)"
+				"completeTime INTEGER," +
+				"attachCalendarId INTEGER," +
+				"CHECK ( isComplete == 0 OR isComplete == 1 ))"
 	
 	override fun equals(other: Any?): Boolean {
 		return other is SqlList1 && other._id == _id
@@ -82,14 +89,17 @@ class SqlList1 : SqlListBase {
 		var result = _id
 		result = 31 * result + groupName.hashCode()
 		result = 31 * result + content.hashCode()
+		result = 31 * result + color.hashCode()
 		result = 31 * result + isComplete.hashCode()
 		result = 31 * result + createTime.hashCode()
 		result = 31 * result + (completeTime?.hashCode() ?: 0)
+		result = 31 * result + (attachCalendarId?.hashCode() ?: 0)
 		return result
 	}
 	
 	override fun toString(): String {
-		return "SqlList{_id=$_id,groupName=$groupName,content=$content,color=$color,isComplete=$isComplete,createTime=$createTime,completeTime=$completeTime}"
+		return "SqlList{_id=$_id,groupName=$groupName,content=$content,color=$color,isComplete=$isComplete," +
+				"createTime=$createTime,completeTime=$completeTime,attachCalendarId=$attachCalendarId}"
 	}
 	
 }

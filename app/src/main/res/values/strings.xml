@@ -24,6 +24,7 @@
     <string name="calendarEditorColor">顏色</string>
     <string name="calendarEditorAddReminder">新增提醒</string>
     <string name="calendarEditorReminderFormat">提醒: %1$d年%2$d月%3$d日%4$d時%5$d分</string>
+    <string name="calendarEditorLinkListItem">連結至代辦Id: %1$s</string>
 
 
     <!--  reminder  -->

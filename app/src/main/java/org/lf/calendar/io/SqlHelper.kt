@@ -24,27 +24,27 @@ private val defaultCalendar = SqlCalendar1()
 private val defaultColor = SqlColor1()
 
 /**
- * The database table name of list
- */
-private const val databaseTableListName = "List"
-
-/**
- * The database table name of calendar
- */
-private const val databaseTableCalendarName = "Calendar"
-
-/**
- * The database table name of color
- */
-private const val databaseTableColorName = "Color"
-
-/**
  * The class use to contact to sqlite
  */
 class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.CursorFactory?) :
 	SQLiteOpenHelper(context, dataBaseName, factory, dataBaseVersion) {
 
 	companion object {
+		/**
+		 * The database table name of list
+		 */
+		const val databaseTableListName = "List"
+		
+		/**
+		 * The database table name of calendar
+		 */
+		const val databaseTableCalendarName = "Calendar"
+		
+		/**
+		 * The database table name of color
+		 */
+		const val databaseTableColorName = "Color"
+		
 		private lateinit var sql: SqlHelper
 		
 		/**
@@ -83,10 +83,24 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 	}
 	
 	/**
+	 * Get list use sql command
+	 */
+	fun getList(db: SQLiteDatabase, whereCommand: String): ListProcessor {
+		return ListProcessor(db, "SELECT * FROM $databaseTableListName $whereCommand")
+	}
+	
+	/**
 	 * Get calendar from database
 	 */
 	fun getCalendar(db: SQLiteDatabase, limit: Int? = null, orderBy: String? = null, increase: Boolean = true, timeMin: Long = -1, timeMax: Long = -1): CalendarProcessor {
 		return CalendarProcessor(db, limit, orderBy, increase, timeMin, timeMax)
+	}
+	
+	/**
+	 * Get calendar use sql command
+	 */
+	fun getCalendar(db: SQLiteDatabase, whereCommand: String): CalendarProcessor {
+		return CalendarProcessor(db, "SELECT * FROM $databaseTableCalendarName $whereCommand")
 	}
 	
 	fun getColor(db: SQLiteDatabase): ColorProcessor {
@@ -125,6 +139,17 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			if(orderBy != null) select += " order by $orderBy ${if(increase) "ASC" else "DESC"}"
 			if(limit != null) select += " limit $limit"
 			val c: Cursor = db.rawQuery(select, null)
+			constructFromCursor(c)
+			c.close()
+		}
+		
+		constructor(db: SQLiteDatabase, command: String) {
+			val c: Cursor = db.rawQuery(command, null)
+			constructFromCursor(c)
+			c.close()
+		}
+		
+		private fun constructFromCursor(c: Cursor) {
 			c.moveToFirst()
 			for(i in 0 until c.count) {
 				val l = SqlList1()
@@ -134,10 +159,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 				list[indexAt(l.groupName)].second.add(l)
 				c.moveToNext()
 			}
-			c.close()
 		}
-		
-		// TODO: add constructor that can construct this by database use time range
 		
 		/**
 		 * Construct by other same class
@@ -265,6 +287,17 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			if(orderBy != null) select += " order by $orderBy ${if(increase) "ASC" else "DESC"}"
 			if(limit != null) select += " limit $limit"
 			val c: Cursor = db.rawQuery(select, null)
+			constructFromCursor(c)
+			c.close()
+		}
+		
+		constructor(db: SQLiteDatabase, command: String) {
+			val c: Cursor = db.rawQuery(command, null)
+			constructFromCursor(c)
+			c.close()
+		}
+		
+		private fun constructFromCursor(c: Cursor) {
 			c.moveToFirst()
 			for(i in 0 until c.count) {
 				val ca = SqlCalendar1()
@@ -272,7 +305,6 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 				calendar.add(ca)
 				c.moveToNext()
 			}
-			c.close()
 		}
 		
 		/**
@@ -348,7 +380,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		
 	}
 	
-	class ColorProcessor {
+	class ColorProcessor(db: SQLiteDatabase) {
 		
 		private val colors = HashMap<Int, SqlColor1>()
 		
@@ -359,7 +391,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		@Volatile
 		var hasChange = false
 		
-		constructor(db: SQLiteDatabase) {
+		init {
 			@Language("SQL")
 			var select = "SELECT * FROM $databaseTableColorName"
 			val c: Cursor = db.rawQuery(select, null)

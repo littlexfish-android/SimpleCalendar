@@ -243,6 +243,14 @@ class MainActivity : AppCompatActivity() {
 	 */
 	fun getList() = list
 	
+	override fun onBackPressed() {
+		super.onBackPressed()
+		nowFrag?.let {
+			val method = it::class.java.methods.find { it2 -> it2.name == "onBackPressed" }
+			method?.invoke(it)
+		} // TODO: test invoke
+	}
+	
 	/**
 	 * On activity been destroy, need close database
 	 */

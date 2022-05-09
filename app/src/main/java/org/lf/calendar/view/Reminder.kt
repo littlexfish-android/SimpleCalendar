@@ -52,7 +52,7 @@ class Reminder : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		binder = FragmentReminderBinding.bind(view)
 		
-		binder.root.visibility = View.GONE
+//		binder.root.visibility = View.GONE
 	}
 	
 	private fun initSpinner() {
@@ -108,12 +108,8 @@ class Reminder : Fragment() {
 	}
 	
 	private fun initView() {
-		binder.reminderCustom.setOnCheckedChangeListener { buttonView, isChecked ->
-			binder.reminderYear.isEnabled = isChecked
-			binder.reminderMonth.isEnabled = isChecked
-			binder.reminderDay.isEnabled = isChecked
-			binder.reminderHour.isEnabled = isChecked
-			binder.reminderMinute.isEnabled = isChecked
+		binder.reminderCustom.setOnCheckedChangeListener { _, isChecked ->
+			binder.reminderCustomGroup.visibility = if(isChecked) View.VISIBLE else View.INVISIBLE
 		}
 		
 		initSpinner()
@@ -121,11 +117,11 @@ class Reminder : Fragment() {
 		binder.reminderConfirm.setOnClickListener {
 			setSelect()
 			onConfirm?.let { it1 -> it1() }
-			binder.root.visibility = View.GONE
+//			binder.root.visibility = View.GONE
 		}
 		binder.reminderCancel.setOnClickListener {
 			onCancel?.let { it1 -> it1() }
-			binder.root.visibility = View.GONE
+//			binder.root.visibility = View.GONE
 		}
 		
 	}

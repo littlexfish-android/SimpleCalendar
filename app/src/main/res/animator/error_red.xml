@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="sequentially">
+
+    <objectAnimator android:duration="500"
+        android:repeatMode="restart"
+        android:valueType="colorType"
+        android:repeatCount="0"
+        android:valueFrom="#767676"
+        android:valueTo="#F55"
+        android:propertyName="backgroundTintList" />
+
+    <objectAnimator android:duration="500"
+        android:repeatMode="restart"
+        android:valueType="colorType"
+        android:repeatCount="0"
+        android:valueFrom="#F55"
+        android:valueTo="#767676"
+        android:propertyName="backgroundTintList" />
+
+</set>
