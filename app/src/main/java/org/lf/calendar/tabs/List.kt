@@ -36,7 +36,7 @@ class List : Fragment() {
 		
 		view.findViewById<FloatingActionButton>(R.id.listAddGroup).setOnClickListener {
 			if(activity != null && activity is MainActivity) {
-				(activity as MainActivity).setFragmentToOther(ListEditor.newInstance())
+				(activity as MainActivity).setFragmentToOther(ListEditor.newInstance(), "新增")
 			}
 		}
 		
@@ -49,7 +49,7 @@ class List : Fragment() {
 		val sqlList = sqlHelper.getList(sqlHelper.writableDatabase, 50, "createTime").getList()
 		list.reset()
 		for(sqlPair in sqlList) {
-			list.constructListItem(sqlPair.first, sqlPair.second) // TODO: change
+			list.constructListItem(sqlPair.first, sqlPair.second)
 		}
 	}
 	

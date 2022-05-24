@@ -1,15 +1,15 @@
 package org.lf.calendar.calendar
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
+import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
-import org.intellij.lang.annotations.Language
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.databinding.FragmentCalendarEditorBinding
@@ -48,6 +48,8 @@ class CalendarEditor : Fragment() {
 	
 	private lateinit var binder: FragmentCalendarEditorBinding
 	private lateinit var reminder: Reminder
+	
+	private lateinit var keyboardListener: ViewTreeObserver.OnGlobalLayoutListener
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -95,8 +97,6 @@ class CalendarEditor : Fragment() {
 		binder.calendarEditorAddReminder.setOnClickListener {
 			binder.calendarEditorConfirm.visibility = View.INVISIBLE
 			binder.calendarEditorCancel.visibility = View.INVISIBLE
-			binder.calendarEditorContent.isFocusable = false
-			binder.calendarEditorRemark.isFocusable = false
 			reminder.openReminder(getTimeOnSelect(), {
 				reminderDay = reminder.getReminderDay()
 				binder.calendarEditorAddReminder.text.clear()
@@ -122,17 +122,50 @@ class CalendarEditor : Fragment() {
 				binder.calendarEditorCancel.visibility = View.VISIBLE
 			}
 			binder.calendarEditorReminder.visibility = View.VISIBLE
+			(requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(view.windowToken, 0)
 		}
 		
-		// on open remark
-		binder.calendarEditorRemark.setOnFocusChangeListener { _, hasFocus ->
-			val flag = if(hasFocus) View.GONE else View.VISIBLE
-			binder.calendarEditorAddReminder.visibility = flag
-			binder.textView5.visibility = flag
-			binder.calendarEditorColor.visibility = flag
-			if(tmpListId != null) binder.calendarEditorLinkList.visibility = flag
-		}
+		if(tmpListId != null) binder.calendarEditorCancel.isEnabled = false
 		
+	}
+	
+	override fun onAttach(context: Context) {
+		super.onAttach(context)
+		// on keyboard close
+		val contentView = requireActivity().findViewById<View>(android.R.id.content)
+		keyboardListener = ViewTreeObserver.OnGlobalLayoutListener {
+			val displayRect = Rect().apply { contentView.getWindowVisibleDisplayFrame(this) }
+			val keypadHeight = contentView.rootView.height - displayRect.bottom
+			if (keypadHeight > 200) {
+				onOpenKeyboard()
+			}
+			else {
+				onCloseKeyboard()
+			}
+		}
+		contentView.viewTreeObserver.addOnGlobalLayoutListener(keyboardListener)
+	}
+	
+	override fun onDetach() {
+		super.onDetach()
+		val contentView = requireActivity().findViewById<View>(android.R.id.content)
+		if(::keyboardListener.isInitialized) {
+			contentView.viewTreeObserver.removeOnGlobalLayoutListener(keyboardListener)
+		}
+	}
+	
+	private fun onOpenKeyboard() {
+		binder.calendarEditorAddReminder.visibility = View.GONE
+		binder.textView5.visibility = View.GONE
+		binder.calendarEditorColor.visibility = View.GONE
+		if(tmpListId != null) binder.calendarEditorLinkList.visibility = View.GONE
+	}
+	
+	private fun onCloseKeyboard() {
+		binder.calendarEditorAddReminder.visibility = View.VISIBLE
+		binder.textView5.visibility = View.VISIBLE
+		binder.calendarEditorColor.visibility = View.VISIBLE
+		if(tmpListId != null) binder.calendarEditorLinkList.visibility = View.VISIBLE
 	}
 	
 	private fun getTimeOnSelect(): Calendar {
@@ -144,15 +177,6 @@ class CalendarEditor : Fragment() {
 		val c = Calendar.getInstance()
 		c.set(year, month - 1, day, hour, minute)
 		return c
-	}
-	
-	fun onBackPressed() {
-		if(binder.calendarEditorAddReminder.visibility == View.GONE && binder.calendarEditorRemark.isFocusable) {
-			binder.calendarEditorAddReminder.visibility = View.VISIBLE
-			binder.textView5.visibility = View.VISIBLE
-			binder.calendarEditorColor.visibility = View.VISIBLE
-			if(tmpListId != null) binder.calendarEditorLinkList.visibility = View.VISIBLE
-		}
 	}
 	
 	/**
@@ -191,13 +215,14 @@ class CalendarEditor : Fragment() {
 							val name = l1[0].first
 							
 							val l2 = sql.getList(sql.writableDatabase,
-								"WHERE groupName == $name")
+								"WHERE groupName == '$name'")
 							val l2l = l2.getList()
 							for(it2 in l2l[0].second) {
 								it2.attachCalendarId = item._id
 								l2.addListItem(it2)
 							}
 							
+							l2.saveSql(sql.writableDatabase)
 						}
 						
 						// close editor
@@ -220,6 +245,14 @@ class CalendarEditor : Fragment() {
 		}
 	}
 	
+	fun onBackPressed(): Boolean {
+		if(tmpListId != null) return true
+		if(activity is MainActivity) {
+			(activity as MainActivity).setFragmentToCalendar()
+			return true
+		}
+		return false
+	}
 	
 	/**
 	 * Initial the time spinners' content list

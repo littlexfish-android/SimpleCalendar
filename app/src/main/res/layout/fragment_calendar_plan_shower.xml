@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".calendar.CalendarPlanShower">
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/calendarShowerTime"
+        app:layout_constraintBottom_toBottomOf="@+id/calendarShowTime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/calendarShowTime" />
+
+    <Button
+        android:id="@+id/calendarShowerClose"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/Close"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/calendarShowerEdit" />
+
+    <Button
+        android:id="@+id/calendarShowerEdit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/Edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/calendarShowerClose"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/calendarShowTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:enabled="false"
+        android:focusable="false"
+        android:inputType="textPersonName"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/calendarShowerContent"
+        app:layout_constraintBottom_toBottomOf="@+id/calendarShowerContent"
+        app:layout_constraintStart_toStartOf="@+id/textView9"
+        app:layout_constraintTop_toTopOf="@+id/calendarShowerContent" />
+
+    <EditText
+        android:id="@+id/calendarShowerContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:enabled="false"
+        android:focusable="false"
+        android:inputType="textPersonName"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintTop_toBottomOf="@+id/calendarShowTime" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/calendarShowerRemark"
+        app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toTopOf="@+id/scrollView4" />
+
+    <EditText
+        android:id="@+id/calendarShowerReminder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:enabled="false"
+        android:focusable="false"
+        android:inputType="textPersonName"
+        android:text="@string/calendarShowerReminder"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/calendarShowerOpenList"
+        app:layout_constraintEnd_toEndOf="@+id/scrollView4"
+        app:layout_constraintStart_toStartOf="@+id/scrollView4" />
+
+    <ScrollView
+        android:id="@+id/scrollView4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/calendarShowerReminder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/calendarShowerContent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/calendarShowerRemark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:enabled="false"
+                android:focusable="false"
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </ScrollView>
+
+    <EditText
+        android:id="@+id/calendarShowerOpenList"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:editable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:inputType="textPersonName"
+        android:text="@string/calendarShowerOpenList"
+        app:layout_constraintBottom_toTopOf="@+id/calendarShowerEdit"
+        app:layout_constraintEnd_toEndOf="@+id/scrollView4"
+        app:layout_constraintStart_toStartOf="@+id/scrollView4" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,13 +7,16 @@
     <string-array name="emptyArray" />
     <string name="Confirm">確定</string>
     <string name="Cancel">取消</string>
+    <string name="Close">關閉</string>
+    <string name="Edit">編輯</string>
 
     <!--  list editor  -->
     <string name="listEditorGroup">名稱</string>
     <string name="listEditorAddItem">新增項目</string>
     <string name="listEditorRemoveItem">刪除所選</string>
     <string name="listEditorColor">顏色</string>
-    <string name="listEditorAttachCalendar">附加至日曆</string>
+    <string name="listEditorAttachCalendar">附加至月曆</string>
+    <string name="listEditorEditCalendar">修改附加的月曆</string>
 
 
     <!--  calendar editor  -->
@@ -27,6 +30,19 @@
     <string name="calendarEditorLinkListItem">連結至代辦Id: %1$s</string>
 
 
+    <!--  calendar viewer  -->
+    <string name="calendarShowerTime">時間</string>
+    <string name="calendarShowerTimeFormat">%1$d年%2$d月%3$d日%4$d時%5$d分</string>
+    <string name="calendarShowerContent">內容</string>
+    <string name="calendarShowerRemark">備註</string>
+    <string name="calendarShowerReminder">提醒</string>
+    <string name="calendarShowerReminderFormat">提醒: %1$d年%2$d月%3$d日%4$d時%5$d分</string>
+    <string name="calendarShowerOpenList">開啟連結的代辦</string>
+
+    <!--  list viewer  -->
+    <string name="listShowerOpenCalendar">開啟連結的日曆</string>
+
+
     <!--  reminder  -->
     <string name="reminder_5m">5分鐘前</string>
     <string name="reminder_10m">10分鐘前</string>
@@ -38,6 +54,10 @@
     <string name="reminder_2d">2天前</string>
     <string name="reminder_1w">1週前</string>
     <string name="reminder_custom">自訂</string>
+
+
+    <!--  notice  -->
+    <string name="noticeChannelName">通知</string>
 
 
     <string-array name="defaultColorStringArray">

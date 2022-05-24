@@ -230,7 +230,7 @@ private object CalendarWidgetInternal {
 			intentToStart.putExtra("time", daysArray[i].time.time)
 			intentToStart.putExtra("widgetId", appWidgetId)
 //			intentToStart.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-			it.setOnClickPendingIntent(R.id.widgetCalendarViewItemDay, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + i, intentToStart, PendingIntent.FLAG_UPDATE_CURRENT))
+			it.setOnClickPendingIntent(R.id.widgetCalendarViewItemDay, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + i, intentToStart, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
 		}
 		
 		for(it in plans) {
@@ -248,7 +248,7 @@ private object CalendarWidgetInternal {
 		preArrowIntent.putExtra("year", yearForWidget[appWidgetId])
 		preArrowIntent.putExtra("month", monthForWidget[appWidgetId])
 //		preArrowIntent.flags = Intent.FLAG_RECEIVER_NO_ABORT
-		views.setOnClickPendingIntent(R.id.calendarWidgetPreMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 1, preArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+		views.setOnClickPendingIntent(R.id.calendarWidgetPreMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 1, preArrowIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
 		
 		val postArrowIntent = Intent(context, CalendarWidget::class.java)
 		postArrowIntent.putExtra("event", "postMonth")
@@ -256,7 +256,7 @@ private object CalendarWidgetInternal {
 		postArrowIntent.putExtra("year", yearForWidget[appWidgetId])
 		postArrowIntent.putExtra("month", monthForWidget[appWidgetId])
 //		preArrowIntent.flags = Intent.FLAG_RECEIVER_NO_ABORT
-		views.setOnClickPendingIntent(R.id.calendarWidgetPostMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 2, postArrowIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+		views.setOnClickPendingIntent(R.id.calendarWidgetPostMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 2, postArrowIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
 		
 		// Instruct the widget manager to update the widget
 		appWidgetManager.updateAppWidget(appWidgetId, views)

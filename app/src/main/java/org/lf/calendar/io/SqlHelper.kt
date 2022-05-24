@@ -162,21 +162,6 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		}
 		
 		/**
-		 * Construct by other same class
-		 */
-		constructor(processor: ListProcessor) {
-			for(item in processor.list) {
-				list.add(Pair(item.first, item.second))
-			}
-			for(item in processor.appendList) {
-				appendList.add(item)
-			}
-			for(item in deleteList) {
-				deleteList.add(item)
-			}
-		}
-		
-		/**
 		 * Get the map of list
 		 */
 		fun getList() = list
@@ -281,7 +266,7 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		constructor(db: SQLiteDatabase, limit: Int? = null, orderBy: String? = null, increase: Boolean = true, timeMin: Long = -1, timeMax: Long = -1) {
 			@Language("SQL")
 			var select = "SELECT * FROM $databaseTableCalendarName"
-			if(timeMin >= 0 && timeMax >= 0) select += " WHERE time BETWEEN $timeMin AND $timeMax";
+			if(timeMin >= 0 && timeMax >= 0) select += " WHERE time BETWEEN $timeMin AND $timeMax"
 			else if(timeMin >= 0 && timeMax < 0) select += " WHERE time >= $timeMin"
 			else if(timeMin < 0 && timeMax >= 0) select += "WHERE time < $timeMax"
 			if(orderBy != null) select += " order by $orderBy ${if(increase) "ASC" else "DESC"}"
@@ -307,20 +292,6 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			}
 		}
 		
-		/**
-		 * Construct by other same class
-		 */
-		constructor(processor: CalendarProcessor) {
-			for(item in processor.calendar) {
-				calendar.add(item)
-			}
-			for(item in processor.appendCalendar) {
-				appendCalendar.add(item)
-			}
-			for(item in deleteCalendar) {
-				deleteCalendar.add(item)
-			}
-		}
 		
 		/**
 		 * Get list of calendar items

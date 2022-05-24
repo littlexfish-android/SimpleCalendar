@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.LinearLayout
+import androidx.core.view.children
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
@@ -128,6 +128,13 @@ class ListItem : LinearLayout {
 			checkbox.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
 		}
 		checkbox.setOnCheckedChangeListener(OnChecked(this, sql))
+	}
+	
+	fun disableAll() {
+		group.isEnabled = false
+		for(it in listGroup.children) {
+			it.isEnabled = false
+		}
 	}
 	
 	class OnChecked(val parent: ListItem, var sql: SqlList1?) : CompoundButton.OnCheckedChangeListener {

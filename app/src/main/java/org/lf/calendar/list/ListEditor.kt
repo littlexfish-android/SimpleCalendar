@@ -13,8 +13,6 @@ import org.lf.calendar.calendar.CalendarEditor
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.list.SqlList1
 import org.lf.calendar.view.ColorSpinnerAdapter
-import org.lf.calendar.view.Reminder
-import java.util.*
 import kotlin.collections.ArrayList
 
 private const val PARAM_OLD = "list.editor.old"
@@ -116,9 +114,9 @@ class ListEditor : Fragment() {
 					sqlList.saveSql(SqlHelper.getInstance(context).writableDatabase)
 					
 					// close editor
-					if(attachCalendar.isChecked) {
+					if(attachCalendar.isChecked) { // TODO: change on edit
 						val frag = CalendarEditor.newInstance(initContent = groupName, linkListId = item._id)
-						act.setFragmentToOther(frag)
+						act.setFragmentToOther(frag, "附加至日曆")
 					}
 					else act.setFragmentToList(reload = true)
 				}
@@ -151,6 +149,14 @@ class ListEditor : Fragment() {
 			true
 		}
 		text.requestFocus()
+	}
+	
+	fun onBackPressed(): Boolean {
+		if(activity is MainActivity) {
+			(activity as MainActivity).setFragmentToList()
+			return true
+		}
+		return false
 	}
 	
 	companion object {

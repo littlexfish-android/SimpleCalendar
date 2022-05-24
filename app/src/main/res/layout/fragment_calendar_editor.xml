@@ -132,8 +132,8 @@
         android:layout_height="wrap_content"
         android:text="@string/Confirm"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/calendarEditorCancel"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/calendarEditorCancel" />
 
     <Button
         android:id="@+id/calendarEditorCancel"
@@ -141,8 +141,8 @@
         android:layout_height="wrap_content"
         android:text="@string/Cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/calendarEditorConfirm" />
+        app:layout_constraintEnd_toStartOf="@+id/calendarEditorConfirm"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
         android:id="@+id/calendarEditorColor"
@@ -171,7 +171,7 @@
         android:enabled="false"
         android:inputType="textPersonName"
         android:text="@string/calendarEditorLinkListItem"
-        app:layout_constraintBottom_toTopOf="@+id/calendarEditorConfirm"
+        app:layout_constraintBottom_toTopOf="@+id/calendarEditorCancel"
         app:layout_constraintEnd_toEndOf="@+id/scrollView3"
         app:layout_constraintStart_toStartOf="@+id/calendarEditorColor"
         tools:editable="false" />

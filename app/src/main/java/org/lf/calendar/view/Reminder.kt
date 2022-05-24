@@ -10,23 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import org.lf.calendar.R
 import org.lf.calendar.databinding.FragmentReminderBinding
-import java.lang.Long.max
 import java.util.*
-
-private const val s = 1000L
-private const val m = 60L * s
-private const val h = 60L * m
-private const val d = 24L * h
-
-private const val r5m = 5 * m
-private const val r10m = 10 * m
-private const val r30m = 30 * m
-private const val r1h = h
-private const val r2h = 2 * h
-private const val r12h = 12 * h
-private const val r1d = d
-private const val r2d = 2 * d
-private const val r1w = 7 * d
 
 class Reminder : Fragment() {
 	
@@ -82,16 +66,16 @@ class Reminder : Fragment() {
 	}
 	
 	private fun setSelect() {
-		val reminderPreTime = when {
-			binder.reminder5m.isChecked -> r5m
-			binder.reminder10m.isChecked -> r10m
-			binder.reminder30m.isChecked -> r30m
-			binder.reminder1h.isChecked -> r1h
-			binder.reminder2h.isChecked -> r2h
-			binder.reminder12h.isChecked -> r12h
-			binder.reminder1d.isChecked -> r1d
-			binder.reminder2d.isChecked -> r2d
-			binder.reminder1w.isChecked -> r1w
+		reminderDay = when {
+			binder.reminder5m.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.MINUTE, it[Calendar.MINUTE] - 5) }
+			binder.reminder10m.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.MINUTE, it[Calendar.MINUTE] - 10) }
+			binder.reminder30m.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.MINUTE, it[Calendar.MINUTE] - 30) }
+			binder.reminder1h.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.HOUR, it[Calendar.HOUR] - 1) }
+			binder.reminder2h.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.HOUR, it[Calendar.HOUR] - 2) }
+			binder.reminder12h.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.HOUR, it[Calendar.HOUR] - 12) }
+			binder.reminder1d.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.DAY_OF_MONTH, it[Calendar.DAY_OF_MONTH] - 1) }
+			binder.reminder2d.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.DAY_OF_MONTH, it[Calendar.DAY_OF_MONTH] - 2) }
+			binder.reminder1w.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.DAY_OF_MONTH, it[Calendar.DAY_OF_MONTH] - 7) }
 			else -> { // binder.reminderCustom.isChecked
 				val year = binder.reminderYear.selectedItem.toString().toInt()
 				val month = binder.reminderMonth.selectedItem.toString().toInt() - 1
@@ -99,12 +83,9 @@ class Reminder : Fragment() {
 				val hour = binder.reminderHour.selectedItem.toString().toInt()
 				val minute = binder.reminderMinute.selectedItem.toString().toInt()
 				
-				val c = Calendar.getInstance().also { it.set(year, month, day, hour, minute) }
-				
-				max(0L, c.timeInMillis - this.day.timeInMillis)
+				Calendar.getInstance().also { it.set(year, month, day, hour, minute) }
 			}
 		}
-		reminderDay = Calendar.getInstance().also { it.time = Date(day.time.time - reminderPreTime) }
 	}
 	
 	private fun initView() {

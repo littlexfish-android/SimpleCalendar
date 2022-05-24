@@ -68,8 +68,8 @@
         android:layout_height="wrap_content"
         android:text="@string/Confirm"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/listEditorCancel"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/listEditorCancel" />
 
     <Button
         android:id="@+id/listEditorCancel"
@@ -77,8 +77,8 @@
         android:layout_height="wrap_content"
         android:text="@string/Cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/listEditorConfirm" />
+        app:layout_constraintEnd_toStartOf="@+id/listEditorConfirm"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/listEditorAddItem"
@@ -113,7 +113,7 @@
         android:id="@+id/listEditorAttachCalendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/listEditorAttachCalendar"
         app:layout_constraintBottom_toTopOf="@+id/listEditorConfirm"
         app:layout_constraintStart_toStartOf="@+id/textView6" />

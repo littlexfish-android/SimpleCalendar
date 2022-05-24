@@ -73,16 +73,7 @@ class Calendar : Fragment() {
 		}
 		view.findViewById<FloatingActionButton>(R.id.calendarAddPlan).setOnClickListener { onAddPlan() }
 		
-		if(savedInstanceState == null) {
-
-
-
-
-		}
-		
 		setDay(calendar.selectDate[java.util.Calendar.YEAR], calendar.selectDate[java.util.Calendar.MONTH], calendar.selectDate[java.util.Calendar.DAY_OF_MONTH]) {reloadFromSql(true)}
-//		reloadFromSql(true)
-		
 		
 		if(task.isNotEmpty()) {
 			for(t in task) {
@@ -109,10 +100,6 @@ class Calendar : Fragment() {
 		else {
 			task.add(t)
 		}
-	}
-	
-	override fun onSaveInstanceState(outState: Bundle) {
-		super.onSaveInstanceState(outState)
 	}
 	
 	/**
@@ -153,7 +140,7 @@ class Calendar : Fragment() {
 			val c = java.util.Calendar.getInstance()
 			val s = calendar.selectDate
 			c.set(s[java.util.Calendar.YEAR], s[java.util.Calendar.MONTH], s[java.util.Calendar.DAY_OF_MONTH], t[java.util.Calendar.HOUR_OF_DAY], t[java.util.Calendar.MINUTE])
-			(activity as MainActivity).setFragmentToOther(CalendarEditor.newInstance(c.time.time))
+			(activity as MainActivity).setFragmentToOther(CalendarEditor.newInstance(c.time.time), "新增")
 		}
 	}
 	

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
 import java.util.*
@@ -72,6 +73,12 @@ class CalenderPlanList : Fragment() {
 		val plan = PlanItem(requireContext())
 		if(sqlItem != null) plan.attachSqlItem(sqlItem)
 		else plan.setContent(time, content)
+		if(sqlItem != null) {
+			plan.setOnClickListener {
+				val act = requireActivity() as MainActivity
+				act.setFragmentToOther(CalendarPlanShower.newInstance(sqlItem._id), sqlItem.content)
+			}
+		}
 		list.addView(plan)
 		planArray.add(plan)
 	}

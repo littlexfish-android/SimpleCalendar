@@ -1,13 +1,10 @@
 package org.lf.calendar
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Environment
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -16,8 +13,8 @@ import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.tabs.Calendar
 import org.lf.calendar.tabs.List
 import org.lf.calendar.tabs.Profile
-import java.io.OutputStream
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * The main activity of this app
@@ -45,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 	 * The last database
 	 */
 	private lateinit var lastDataBase: SQLiteDatabase
+	
+	private val lastBack = AtomicBoolean(false)
+	private val exitTimer = ExitTimer(this)
 	
 	/* view */
 	
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 		
 		setFragmentToList()
 		// ensure options menu is close
-		binding.mainOptionsMenu.x = -resources.displayMetrics.widthPixels.toFloat();
+		binding.mainOptionsMenu.x = -resources.displayMetrics.widthPixels.toFloat()
 		
 		// process when extra not null
 		val extra = intent.extras
@@ -109,9 +109,11 @@ class MainActivity : AppCompatActivity() {
 			if(event != null) {
 				if(event == "selectCalendar") { // select the date
 					val date = java.util.Calendar.getInstance().also { it.time = Date(extra.getLong("time")) }
-//					error("acat ${extra.getLong("time")}")
 					setFragmentToCalendar()
 					fragmentCalendar.setDay(date[java.util.Calendar.YEAR], date[java.util.Calendar.MONTH], date[java.util.Calendar.DAY_OF_MONTH])
+				}
+				if(event == "showPlan") { // show the calendar plan
+				
 				}
 				if(event == "addCalendarPlan") { // add calendar plan
 				
@@ -132,6 +134,7 @@ class MainActivity : AppCompatActivity() {
 		t.replace(R.id.main_tab_container, fragmentList)
 		t.setCustomAnimations(R.anim.mv_left_frag_cutin, R.anim.mv_left_frag_cutout)
 		t.commit()
+		binding.mainTitle.text = "代辦"
 		nowFrag = fragmentList
 		if(reload) {
 			fragmentList.reloadFromSql()
@@ -142,20 +145,16 @@ class MainActivity : AppCompatActivity() {
 	 * Switch fragment to fragment of calendar
 	 */
 	fun setFragmentToCalendar(fromLeft: Boolean = true, reload: Boolean = false) {
-//		findViewById<FragmentContainerView>(R.id.main_tab_container).post {
-			val t = supportFragmentManager.beginTransaction()
-			t.replace(R.id.main_tab_container, fragmentCalendar)
-			if(fromLeft) {
-				t.setCustomAnimations(R.anim.mv_right_frag_cutin, R.anim.mv_right_frag_cutout)
-			} else {
-				t.setCustomAnimations(R.anim.mv_left_frag_cutin, R.anim.mv_left_frag_cutout)
-			}
-			t.commit()
-			nowFrag = fragmentCalendar
-			if(reload) {
-//				fragmentCalendar.reloadFromSql(true)
-			}
-//		}
+		val t = supportFragmentManager.beginTransaction()
+		t.replace(R.id.main_tab_container, fragmentCalendar)
+		if(fromLeft) {
+			t.setCustomAnimations(R.anim.mv_right_frag_cutin, R.anim.mv_right_frag_cutout)
+		} else {
+			t.setCustomAnimations(R.anim.mv_left_frag_cutin, R.anim.mv_left_frag_cutout)
+		}
+		t.commit()
+		binding.mainTitle.text = "月曆"
+		nowFrag = fragmentCalendar
 	}
 	
 	fun setCalendarDay(year: Int, month: Int, day: Int) {
@@ -172,15 +171,17 @@ class MainActivity : AppCompatActivity() {
 		t.replace(R.id.main_tab_container, fragmentProfile)
 		t.setCustomAnimations(R.anim.mv_right_frag_cutin, R.anim.mv_right_frag_cutout)
 		t.commit()
+		binding.mainTitle.text = "資料"
 		nowFrag = fragmentProfile
 	}
 	
-	fun setFragmentToOther(frag: Fragment) {
+	fun setFragmentToOther(frag: Fragment, title: String = "") {
 		findViewById<FragmentContainerView>(R.id.main_tab_container).post {
 			val t = supportFragmentManager.beginTransaction()
 			t.replace(R.id.main_tab_container, frag)
 			t.setCustomAnimations(R.anim.frag_fade_in, R.anim.frag_fade_out)
 			t.commit()
+			binding.mainTitle.text = title
 			nowFrag = frag
 		}
 	}
@@ -244,11 +245,20 @@ class MainActivity : AppCompatActivity() {
 	fun getList() = list
 	
 	override fun onBackPressed() {
-		super.onBackPressed()
-		nowFrag?.let {
-			val method = it::class.java.methods.find { it2 -> it2.name == "onBackPressed" }
-			method?.invoke(it)
-		} // TODO: test invoke
+		val m = nowFrag?.let { it::class.java.methods.find { it2 -> it2.name == "onBackPressed" && it2.returnType == Boolean::class.java } }
+		if(m != null && (m.invoke(nowFrag) as? Boolean == true)) return
+		if(lastBack.get()) {
+			finish()
+		}
+		else {
+			lastBack.set(true)
+			exitTimer.start()
+			Toast.makeText(this, "在按一次退出", Toast.LENGTH_SHORT).show()
+		}
+	}
+	
+	fun resetLastBack() {
+		lastBack.set(false)
 	}
 	
 	/**
@@ -264,20 +274,13 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 	
-	class SaveTimer(private val calendar: SqlHelper.CalendarProcessor, private val list: SqlHelper.ListProcessor) : CountDownTimer(30 * 1000L, 30 * 1000L) {
+	class ExitTimer(private val activity: MainActivity) : CountDownTimer(3 * 1000L, 3 * 1000L) {
 		override fun onTick(millisUntilFinished: Long) {
 			// do nothing
 		}
 		
 		override fun onFinish() {
-			val db = SqlHelper.getInstance(null).writableDatabase
-			if(calendar.hasChange) {
-				calendar.saveSql(db)
-			}
-			if(list.hasChange) {
-				list.saveSql(db)
-			}
-			this.start()
+			activity.resetLastBack()
 		}
 	}
 	

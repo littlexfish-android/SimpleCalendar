@@ -36,6 +36,8 @@ class SqlCalendar1 : SqlCalendarBase {
 	var completeTime: Date? = null
 	var remindTime: Date? = null
 	var listId: Int? = null
+	var isNotice = false // 0b00 && 0b01
+	var isReminderNotice = false // 0b00 && 0b10
 	
 	constructor() : super()
 	
@@ -61,6 +63,9 @@ class SqlCalendar1 : SqlCalendarBase {
 		tmpTime = cursor.getLongOrNull(8)
 		if(tmpTime != null) remindTime = Date(tmpTime)
 		listId = cursor.getIntOrNull(9)
+		val flag = cursor.getInt(10)
+		isNotice = (flag and 0b01) == 0b01
+		isReminderNotice = (flag and 0b10) == 0b10
 	}
 	
 	override fun getContentValues(): ContentValues {
@@ -76,6 +81,7 @@ class SqlCalendar1 : SqlCalendarBase {
 		}
 		remindTime?.let { contentValue.put("remindTime", it.time) }
 		listId?.let { contentValue.put("listId", it) }
+		contentValue.put("notice", (if(isNotice) 0b01 else 0b00) or (if(isReminderNotice) 0b10 else 0b00))
 		return contentValue
 	}
 	
@@ -96,7 +102,8 @@ class SqlCalendar1 : SqlCalendarBase {
 				"completeTime INTEGER," +
 				"remindTime INTEGER," +
 				"listId INTEGER," +
-				"CHECK ( isComplete == 0 OR isComplete == 1 ))"
+				"notice INTEGER," +
+				"CHECK ( isComplete == 0 OR isComplete == 1 OR notice >= 0 AND notice <= 3))"
 	
 	
 	override fun equals(other: Any?): Boolean {
@@ -120,6 +127,6 @@ class SqlCalendar1 : SqlCalendarBase {
 	override fun toString(): String {
 		return "SqlCalendar{_id=$_id,content=$content,remark=$remark,time=$time,color=$color," +
 				"isComplete=$isComplete,createTime=$createTime,completeTime=$completeTime," +
-				"remindTime=$remindTime,listId=$listId}"
+				"remindTime=$remindTime,listId=$listId,isNotice=$isNotice,isReminderNotice=$isReminderNotice}"
 	}
 }
