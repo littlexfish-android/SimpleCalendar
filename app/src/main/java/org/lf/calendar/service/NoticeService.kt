@@ -7,12 +7,15 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.*
+import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
+import java.util.*
 
 const val wait = 30 * 1000L
 const val channelId = "simpleCalendar.notice"
@@ -21,12 +24,12 @@ class NoticeService : Service() {
 	
 	class NoticeThread(private val context: Context) : Thread() {
 		
-		// TODO: test
+		// TODO: test background
 		override fun run() {
 			//init
 			createChannel()
 			val sql = SqlHelper.getInstance(context)
-			var calendar = sql.getCalendar(sql.readableDatabase, "WHERE notice > 0")
+			var calendar = sql.getCalendar(sql.readableDatabase, "WHERE notice < 3")
 			
 			// notice
 			while(true) {
@@ -35,19 +38,25 @@ class NoticeService : Service() {
 				
 				var change = false
 				
+				Log.e("${Date()} TAG", list.joinToString(", ")) // FIXME: remove
+				
 				for(item in list) {
 					// check reminder
 					if(item.remindTime != null && !item.isReminderNotice) {
-						if(item.remindTime!!.time >= now) {
+						if(item.remindTime!!.time < now) {
 							notice(item, true)
 							item.isReminderNotice = true
 							change = true
 						}
 					}
+					else if(item.remindTime == null) {
+						item.isReminderNotice = true
+						change = true
+					}
 					
 					// check notice
 					if(!item.isNotice) {
-						if(item.time.time >= now) {
+						if(item.time.time < now) {
 							notice(item)
 							item.isNotice = true
 							change = true
@@ -60,7 +69,7 @@ class NoticeService : Service() {
 				}
 				
 				//reload
-				calendar = sql.getCalendar(sql.readableDatabase, "WHERE notice > 0")
+				calendar = sql.getCalendar(sql.readableDatabase, "WHERE notice < 3")
 				sleep(wait)
 			}
 		}
@@ -71,10 +80,14 @@ class NoticeService : Service() {
 			
 			val pendingIntent = PendingIntent.getActivity(context, sql._id, intent, PendingIntent.FLAG_IMMUTABLE)
 			
+			val r = sql.remark
+			val remark = if(r != null && r.length > 10) r.substring(0..10) else r
+			
 			val builder = NotificationCompat.Builder(context, channelId)
 				.setSmallIcon(R.mipmap.ic_launcher)
-				.setContentTitle(if(remind) "提醒" else "通知")
-				.setContentText(sql.content)
+				.setContentTitle("${if(remind) "提醒" else "通知"}: ${sql.content}")
+				.setColor(sql.color)
+				.setContentText(remark ?: "")
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 				.setContentIntent(pendingIntent)
 				.setAutoCancel(true)
@@ -99,6 +112,7 @@ class NoticeService : Service() {
 	override fun onCreate() {
 		super.onCreate()
 		thread = NoticeThread(applicationContext)
+		thread.start()
 	}
 	
 	override fun onBind(intent: Intent): IBinder? {
@@ -106,10 +120,7 @@ class NoticeService : Service() {
 	}
 	
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		
-		thread.start()
-		
-		return super.onStartCommand(intent, flags, startId)
+		return START_STICKY
 	}
 	
 }

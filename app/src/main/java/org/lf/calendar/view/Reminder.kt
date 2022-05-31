@@ -41,17 +41,18 @@ class Reminder : Fragment() {
 	
 	private fun initSpinner() {
 		val year = day[Calendar.YEAR]
-		val yRange = (year..(year + 5)).toList()
+		val yRange = ((year - 5)..(year)).toList()
 		val mRange = (1..12).toList()
 		val dRange = (1..31).toList()
 		val hRange = (0..23).toList()
 		val miRange = (0..59).toList()
 		val mSel = day[Calendar.MONTH]
-		val dSel = day[Calendar.DAY_OF_MONTH]
+		val dSel = day[Calendar.DAY_OF_MONTH] - 1
 		val hSel = day[Calendar.HOUR_OF_DAY]
 		val miSel = day[Calendar.MINUTE]
 		
 		binder.reminderYear.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, yRange)
+		binder.reminderYear.setSelection(yRange.lastIndex)
 		binder.reminderMonth.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mRange)
 		binder.reminderMonth.setSelection(mSel)
 		binder.reminderDay.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, dRange)
@@ -86,6 +87,7 @@ class Reminder : Fragment() {
 				Calendar.getInstance().also { it.set(year, month, day, hour, minute) }
 			}
 		}
+		reminderDay?.set(Calendar.SECOND, 0)
 	}
 	
 	private fun initView() {
@@ -98,11 +100,9 @@ class Reminder : Fragment() {
 		binder.reminderConfirm.setOnClickListener {
 			setSelect()
 			onConfirm?.let { it1 -> it1() }
-//			binder.root.visibility = View.GONE
 		}
 		binder.reminderCancel.setOnClickListener {
 			onCancel?.let { it1 -> it1() }
-//			binder.root.visibility = View.GONE
 		}
 		
 	}

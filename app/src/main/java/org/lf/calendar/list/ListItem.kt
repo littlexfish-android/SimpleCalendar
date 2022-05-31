@@ -91,12 +91,16 @@ class ListItem : LinearLayout {
 	 */
 	private fun refreshItems() {
 		if(::sqlData.isInitialized) {
+			val flag = group.isEnabled
 			// clear children view
 			listGroup.removeAllViews()
 
 			// construct children
 			for(it in sqlData) {
 				addItemView(it.content, it.isComplete, sql = it)
+			}
+			if(!flag) {
+				disableAll()
 			}
 		}
 

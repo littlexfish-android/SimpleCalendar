@@ -1,8 +1,12 @@
 package org.lf.calendar
 
+import android.app.ActivityManager
+import android.content.Context
+import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import org.lf.calendar.databinding.ActivityMainBinding
 import org.lf.calendar.io.SqlHelper
+import org.lf.calendar.service.NoticeService
 import org.lf.calendar.tabs.Calendar
 import org.lf.calendar.tabs.List
 import org.lf.calendar.tabs.Profile
@@ -109,8 +114,7 @@ class MainActivity : AppCompatActivity() {
 			if(event != null) {
 				if(event == "selectCalendar") { // select the date
 					val date = java.util.Calendar.getInstance().also { it.time = Date(extra.getLong("time")) }
-					setFragmentToCalendar()
-					fragmentCalendar.setDay(date[java.util.Calendar.YEAR], date[java.util.Calendar.MONTH], date[java.util.Calendar.DAY_OF_MONTH])
+					setFragmentToCalendar(day = date)
 				}
 				if(event == "showPlan") { // show the calendar plan
 				
@@ -124,6 +128,8 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 		
+		val service = Intent(this, NoticeService::class.java)
+		startService(service) // ensure service is on
 	}
 	
 	/**
@@ -144,7 +150,7 @@ class MainActivity : AppCompatActivity() {
 	/**
 	 * Switch fragment to fragment of calendar
 	 */
-	fun setFragmentToCalendar(fromLeft: Boolean = true, reload: Boolean = false) {
+	fun setFragmentToCalendar(fromLeft: Boolean = true, reload: Boolean = false, day: java.util.Calendar? = null) {
 		val t = supportFragmentManager.beginTransaction()
 		t.replace(R.id.main_tab_container, fragmentCalendar)
 		if(fromLeft) {
@@ -155,6 +161,9 @@ class MainActivity : AppCompatActivity() {
 		t.commit()
 		binding.mainTitle.text = "月曆"
 		nowFrag = fragmentCalendar
+		if(day != null) {
+			fragmentCalendar.setDay(day[java.util.Calendar.YEAR], day[java.util.Calendar.MONTH], day[java.util.Calendar.DAY_OF_MONTH])
+		}
 	}
 	
 	fun setCalendarDay(year: Int, month: Int, day: Int) {
@@ -270,7 +279,6 @@ class MainActivity : AppCompatActivity() {
 			calendar.saveSql(lastDataBase)
 			list.saveSql(lastDataBase)
 			SqlHelper.getInstance(applicationContext).getColor(lastDataBase).saveSql(lastDataBase)
-			lastDataBase.close()
 		}
 	}
 	

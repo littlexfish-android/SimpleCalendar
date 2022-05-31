@@ -62,13 +62,19 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
         android:columnCount="7"
-        android:orientation="horizontal" />
+        android:orientation="horizontal">
+
+    </GridLayout>
 
     <LinearLayout
         android:id="@+id/calendarWidgetPlans"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
-        android:orientation="vertical" />
+        android:isScrollContainer="true"
+        android:orientation="vertical"
+        android:scrollbars="vertical">
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -82,7 +82,6 @@ class Calendar : Fragment() {
 			task.clear()
 		}
 		
-		
 	}
 	
 	/**

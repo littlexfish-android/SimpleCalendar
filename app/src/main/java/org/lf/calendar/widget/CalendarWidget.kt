@@ -177,8 +177,6 @@ private object CalendarWidgetInternal {
 	 */
 	val daysArrayForWidget = HashMap<Int, Array<Calendar>>()
 	
-	var plans = ArrayList<SqlCalendar1>()
-	
 	/**
 	 * On each widget update
 	 */
@@ -233,6 +231,13 @@ private object CalendarWidgetInternal {
 			it.setOnClickPendingIntent(R.id.widgetCalendarViewItemDay, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + i, intentToStart, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
 		}
 		
+		val td = Calendar.getInstance()
+		td.set(today[Calendar.YEAR], today[Calendar.MONTH], today[Calendar.DAY_OF_MONTH], 0, 0, 0)
+		val last = td.time.time + (24 * 60 * 60 * 1000)
+		val sql = SqlHelper.getInstance(context)
+		val plan = sql.getCalendar(sql.readableDatabase, "WHERE time > ${td.time.time} AND time < $last")
+		val plans = plan.getCalendar()
+		
 		for(it in plans) {
 			val view = RemoteViews(context.packageName, R.layout.view_plan_item)
 			val time = SimpleDateFormat("HH:mm").format(it.time)
@@ -247,7 +252,6 @@ private object CalendarWidgetInternal {
 		preArrowIntent.putExtra("widgetId", appWidgetId)
 		preArrowIntent.putExtra("year", yearForWidget[appWidgetId])
 		preArrowIntent.putExtra("month", monthForWidget[appWidgetId])
-//		preArrowIntent.flags = Intent.FLAG_RECEIVER_NO_ABORT
 		views.setOnClickPendingIntent(R.id.calendarWidgetPreMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 1, preArrowIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
 		
 		val postArrowIntent = Intent(context, CalendarWidget::class.java)
@@ -255,7 +259,6 @@ private object CalendarWidgetInternal {
 		postArrowIntent.putExtra("widgetId", appWidgetId)
 		postArrowIntent.putExtra("year", yearForWidget[appWidgetId])
 		postArrowIntent.putExtra("month", monthForWidget[appWidgetId])
-//		preArrowIntent.flags = Intent.FLAG_RECEIVER_NO_ABORT
 		views.setOnClickPendingIntent(R.id.calendarWidgetPostMonth, PendingIntent.getBroadcast(context, ToolBarRequestCodeOffset + 2, postArrowIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
 		
 		// Instruct the widget manager to update the widget
@@ -263,12 +266,7 @@ private object CalendarWidgetInternal {
 	}
 	
 	fun onEnable(context: Context) {
-		val td = Calendar.getInstance()
-		td.set(today[Calendar.YEAR], today[Calendar.MONTH], today[Calendar.DAY_OF_MONTH])
-		val last = td.time.time + (24 * 60 * 60 * 1000)
-		val sql = SqlHelper.getInstance(context)
-		val plan = sql.getCalendar(sql.readableDatabase, null, "createTime", timeMin = td.time.time, timeMax = last)
-		plans = plan.getCalendar()
+	
 	}
 	
 	/**

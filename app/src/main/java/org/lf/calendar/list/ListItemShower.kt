@@ -40,6 +40,7 @@ class ListItemShower : Fragment() {
 		
 		binder.listShowerItems.constructItems(sqlItems)
 		binder.listShowerItems.disableAll()
+		binder.listShowerItems
 		
 		if(sqlItems[0].attachCalendarId != null) {
 			binder.listShowerAttach.visibility = View.VISIBLE

@@ -1,11 +1,13 @@
 package org.lf.calendar.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.sqlitem.list.SqlList1
 
@@ -75,6 +77,17 @@ class ListList : Fragment() {
 			item.groupName = group
 			item.constructItems(list)
 			groups.add(Pair(group, item))
+			// FIXME: can not direct to item shower, it will check and uncheck the checkbox
+			for(it2 in list) {
+				if(it2.content.isEmpty()) {
+					item.setOnLongClickListener {
+						val act = activity as MainActivity
+						act.setFragmentToOther(ListItemShower.newInstance(it2._id))
+						true
+					}
+					break
+				}
+			}
 			this.list.addView(item)
 			item.color = list[0].color
 			refreshList()
