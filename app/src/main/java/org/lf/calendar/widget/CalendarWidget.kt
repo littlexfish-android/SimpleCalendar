@@ -11,10 +11,8 @@ import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.TestActivity
 import org.lf.calendar.io.SqlHelper
-import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 /**
@@ -39,6 +37,9 @@ private const val MilliOfHour = MilliOfMinute * 60
  */
 private const val MilliOfDay = MilliOfHour * 24
 
+/**
+ * week name show on widget
+ */
 private val WeekOfNames = arrayOf("S", "M", "T", "W", "T", "F", "S")
 
 private const val CalendarRequestCodeOffset = 200
@@ -98,8 +99,6 @@ class CalendarWidget : AppWidgetProvider() {
 		super.onReceive(context, intent)
 		if(intent != null && intent.extras != null) {
 			val extra = intent.extras!!
-//			Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
-//			Toast.makeText(context, extra.getString("event", "null"), Toast.LENGTH_SHORT).show()
 			when(extra.getString("event")) {
 				"selectCalendar" -> {
 					val id = extra.getInt("widgetId")
@@ -138,6 +137,9 @@ class CalendarWidget : AppWidgetProvider() {
 		}
 	}
 	
+	/**
+	 * for test
+	 */
 	fun openTest(context: Context?, str: String) {
 		val i = Intent(context, TestActivity::class.java)
 		i.putExtra("test", str)
@@ -149,6 +151,7 @@ class CalendarWidget : AppWidgetProvider() {
 
 /**
  * The main function of the calendar widget
+ * **NOTE**: field will not store if code run finish, *I mean ALL FIELD*
  */
 private object CalendarWidgetInternal {
 	
@@ -227,7 +230,6 @@ private object CalendarWidgetInternal {
 			intentToStart.putExtra("event", "selectCalendar")
 			intentToStart.putExtra("time", daysArray[i].time.time)
 			intentToStart.putExtra("widgetId", appWidgetId)
-//			intentToStart.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 			it.setOnClickPendingIntent(R.id.widgetCalendarViewItemDay, PendingIntent.getBroadcast(context, CalendarRequestCodeOffset + i, intentToStart, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
 		}
 		
@@ -265,8 +267,11 @@ private object CalendarWidgetInternal {
 		appWidgetManager.updateAppWidget(appWidgetId, views)
 	}
 	
+	/**
+	 * on first widget enter
+	 */
 	fun onEnable(context: Context) {
-	
+		// now do nothing
 	}
 	
 	/**

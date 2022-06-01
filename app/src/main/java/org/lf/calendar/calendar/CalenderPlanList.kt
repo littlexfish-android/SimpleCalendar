@@ -32,6 +32,9 @@ class CalenderPlanList : Fragment() {
 	 */
 	private var planArray = ArrayList<PlanItem>()
 	
+	/**
+	 * the task will run on view created
+	 */
 	private val task = ArrayList<Runnable>()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +71,9 @@ class CalenderPlanList : Fragment() {
 		}
 	}
 	
+	/**
+	 * add plan item view
+	 */
 	private fun addPlanItem(time: Long, content: String, sqlItem: SqlCalendar1? = null) {
 		if(context == null) return
 		val plan = PlanItem(requireContext())
@@ -96,6 +102,9 @@ class CalenderPlanList : Fragment() {
 		}
 	}
 	
+	/**
+	 * remove all plan view and data
+	 */
 	fun removeAllPlan() {
 		if(::list.isInitialized) {
 			list.removeAllViews()

@@ -26,6 +26,9 @@ class ListList : Fragment() {
 	 */
 	lateinit var list: LinearLayout
 	
+	/**
+	 * the task list will run on view created
+	 */
 	private val task = ArrayList<Runnable>()
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,10 +57,11 @@ class ListList : Fragment() {
 			task.clear()
 		}
 		
-//		refreshList(true)
-		
 	}
 	
+	/**
+	 * reset the group view
+	 */
 	fun reset() {
 		val t = {
 			groups.clear()
@@ -71,6 +75,9 @@ class ListList : Fragment() {
 		}
 	}
 	
+	/**
+	 * construct list item from sql data
+	 */
 	fun constructListItem(group: String, list: ArrayList<SqlList1>) {
 		task.add {
 			val item = ListItem(requireContext())

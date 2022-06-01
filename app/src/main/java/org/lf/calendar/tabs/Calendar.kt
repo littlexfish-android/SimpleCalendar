@@ -133,6 +133,9 @@ class Calendar : Fragment() {
 		yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
 	}
 	
+	/**
+	 * on add plan button click
+	 */
 	private fun onAddPlan() {
 		if(activity is MainActivity) {
 			val t = java.util.Calendar.getInstance().also { it.time = Date() }

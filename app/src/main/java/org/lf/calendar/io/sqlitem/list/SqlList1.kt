@@ -6,6 +6,7 @@ import android.graphics.Color
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import org.intellij.lang.annotations.Language
+import org.lf.calendar.annotation.Range
 import java.util.*
 
 /**
@@ -21,6 +22,7 @@ import java.util.*
  */
 class SqlList1 : SqlListBase {
 	
+	@Range.IntRange(from = 1)
 	var _id: Int = -1
 	var groupName: String = ""
 	var content: String = ""
@@ -28,6 +30,7 @@ class SqlList1 : SqlListBase {
 	var isComplete: Boolean = false
 	var createTime: Date = Date()
 	var completeTime: Date? = null
+	@Range.IntRange(from = 1, nullable = true)
 	var attachCalendarId: Int? = null
 	
 	constructor() : super()

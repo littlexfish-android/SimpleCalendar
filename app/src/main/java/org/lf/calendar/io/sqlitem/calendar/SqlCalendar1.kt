@@ -7,6 +7,7 @@ import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import org.intellij.lang.annotations.Language
+import org.lf.calendar.annotation.Range
 import java.util.*
 
 /**
@@ -26,6 +27,7 @@ import java.util.*
  */
 class SqlCalendar1 : SqlCalendarBase {
 	
+	@Range.IntRange(from = 1)
 	var _id: Int = -1
 	var content: String = ""
 	var remark: String? = null
@@ -35,6 +37,7 @@ class SqlCalendar1 : SqlCalendarBase {
 	var createTime: Date = Date()
 	var completeTime: Date? = null
 	var remindTime: Date? = null
+	@Range.IntRange(from = 1, nullable = true)
 	var listId: Int? = null
 	var isNotice = false // 0b00 && 0b01
 	var isReminderNotice = false // 0b00 && 0b10
@@ -63,6 +66,7 @@ class SqlCalendar1 : SqlCalendarBase {
 		tmpTime = cursor.getLongOrNull(8)
 		if(tmpTime != null) remindTime = Date(tmpTime)
 		listId = cursor.getIntOrNull(9)
+		@Range.IntRange(from = 0b00, to = 0b11)
 		val flag = cursor.getInt(10)
 		isNotice = (flag and 0b01) == 0b01
 		isReminderNotice = (flag and 0b10) == 0b10

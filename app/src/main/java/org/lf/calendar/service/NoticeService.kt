@@ -7,24 +7,23 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.*
-import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
-import java.util.*
 
 const val wait = 30 * 1000L
 const val channelId = "simpleCalendar.notice"
 
 class NoticeService : Service() {
 	
+	/**
+	 * the notice thread run on background
+	 */
 	class NoticeThread(private val context: Context) : Thread() {
 		
-		// TODO: test background
 		override fun run() {
 			//init
 			createChannel()
@@ -37,8 +36,6 @@ class NoticeService : Service() {
 				val list = calendar.getCalendar()
 				
 				var change = false
-				
-				Log.e("${Date()} TAG", list.joinToString(", ")) // FIXME: remove
 				
 				for(item in list) {
 					// check reminder
@@ -74,6 +71,9 @@ class NoticeService : Service() {
 			}
 		}
 		
+		/**
+		 * throw notice to system
+		 */
 		private fun notice(sql: SqlCalendar1, remind: Boolean = false) {
 			val intent = Intent(context, MainActivity::class.java)
 			intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -96,6 +96,9 @@ class NoticeService : Service() {
 			
 		}
 		
+		/**
+		 * need create notice channel if sdk version > 26(OREO)
+		 */
 		private fun createChannel() {
 			if(Build.VERSION.SDK_INT >= 26) {
 				val name = context.resources.getString(R.string.noticeChannelName)
@@ -115,10 +118,16 @@ class NoticeService : Service() {
 		thread.start()
 	}
 	
+	/**
+	 * on any app bind this service
+	 */
 	override fun onBind(intent: Intent): IBinder? {
-		return null
+		return null // will not provide to any app
 	}
 	
+	/**
+	 * start service and will restart if it crash
+	 */
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		return START_STICKY
 	}

@@ -103,6 +103,9 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		return CalendarProcessor(db, "SELECT * FROM $databaseTableCalendarName $whereCommand")
 	}
 	
+	/**
+	 * Get color
+	 */
 	fun getColor(db: SQLiteDatabase): ColorProcessor {
 		return ColorProcessor(db)
 	}
@@ -143,6 +146,9 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			c.close()
 		}
 		
+		/**
+		 * Construct by database use command
+		 */
 		constructor(db: SQLiteDatabase, command: String) {
 			val c: Cursor = db.rawQuery(command, null)
 			constructFromCursor(c)
@@ -276,6 +282,9 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 			c.close()
 		}
 		
+		/**
+		 * Construct by database use command
+		 */
 		constructor(db: SQLiteDatabase, command: String) {
 			val c: Cursor = db.rawQuery(command, null)
 			constructFromCursor(c)
@@ -353,15 +362,27 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 	
 	class ColorProcessor(db: SQLiteDatabase) {
 		
+		/**
+		 * Color code ->  sql color data
+		 */
 		private val colors = HashMap<Int, SqlColor1>()
 		
+		/**
+		 * color data need append
+		 */
 		private val appendColor = ArrayList<SqlColor1>()
 		
+		/**
+		 * color data need delete
+		 */
 		private val deleteColor = ArrayList<SqlColor1>()
 		
 		@Volatile
 		var hasChange = false
 		
+		/**
+		 * only can construct all of data
+		 */
 		init {
 			@Language("SQL")
 			var select = "SELECT * FROM $databaseTableColorName"

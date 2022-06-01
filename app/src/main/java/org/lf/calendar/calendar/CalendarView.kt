@@ -175,6 +175,9 @@ class CalendarView : Fragment() {
 		}
 	}
 	
+	/**
+	 * make this fragment can use post
+	 */
 	fun post(r: Runnable) {
 		if(::table.isInitialized) {
 			table.post(r)
@@ -184,6 +187,9 @@ class CalendarView : Fragment() {
 		}
 	}
 	
+	/**
+	 * make select day change to today
+	 */
 	fun changeToToday() {
 		changeDays(today[Calendar.YEAR], today[Calendar.MONTH], today[Calendar.DAY_OF_MONTH])
 	}
@@ -254,6 +260,9 @@ class CalendarView : Fragment() {
 			}
 	}
 	
+	/**
+	 * on day be click
+	 */
 	class OnItemSelected(private val c: CalendarView) : View.OnClickListener {
 		
 		override fun onClick(v: View?) { // v always calendar item day

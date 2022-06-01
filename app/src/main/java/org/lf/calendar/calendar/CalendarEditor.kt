@@ -35,13 +35,32 @@ class CalendarEditor : Fragment() {
 	
 	/* data */
 	
+	/**
+	 * is use old data
+	 */
 	private var oldData = false
 	
+	/**
+	 * the calendar day
+	 */
 	private val day = Calendar.getInstance()
+	
+	/**
+	 * content that init
+	 */
 	private var tmpContent = ""
+	/**
+	 * remark that init
+	 */
 	private var tmpRemark = ""
+	/**
+	 * list id that has been linked
+	 */
 	private var tmpListId: Int? = null
 	
+	/**
+	 * the day need remind
+	 */
 	private var reminderDay: Calendar? = null
 	
 	/* view */
@@ -49,6 +68,9 @@ class CalendarEditor : Fragment() {
 	private lateinit var binder: FragmentCalendarEditorBinding
 	private lateinit var reminder: Reminder
 	
+	/**
+	 * keyboard listener listen keyboard is open or close
+	 */
 	private lateinit var keyboardListener: ViewTreeObserver.OnGlobalLayoutListener
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +119,7 @@ class CalendarEditor : Fragment() {
 		binder.calendarEditorAddReminder.setOnClickListener {
 			binder.calendarEditorConfirm.visibility = View.INVISIBLE
 			binder.calendarEditorCancel.visibility = View.INVISIBLE
-			reminder.openReminder(getTimeOnSelect(), {
+			reminder.openReminder(getTimeOnSelect(), /* click confirm */{
 				reminderDay = reminder.getReminderDay()
 				binder.calendarEditorAddReminder.text.clear()
 				if(reminderDay != null) {
@@ -113,7 +135,7 @@ class CalendarEditor : Fragment() {
 				binder.calendarEditorReminder.visibility = View.GONE
 				binder.calendarEditorConfirm.visibility = View.VISIBLE
 				binder.calendarEditorCancel.visibility = View.VISIBLE
-			}) {
+			}) /* click cancel */ {
 				reminderDay = null
 				binder.calendarEditorAddReminder.text.clear()
 				binder.calendarEditorAddReminder.text.append(resources.getString(R.string.calendarEditorAddReminder))
@@ -168,6 +190,9 @@ class CalendarEditor : Fragment() {
 		if(tmpListId != null) binder.calendarEditorLinkList.visibility = View.VISIBLE
 	}
 	
+	/**
+	 * get time that spinners are choose
+	 */
 	private fun getTimeOnSelect(): Calendar {
 		val year = binder.calendarEditorYear.selectedItem.toString().toInt()
 		val month = binder.calendarEditorMonth.selectedItem.toString().toInt()
@@ -193,7 +218,7 @@ class CalendarEditor : Fragment() {
 						}
 						val act = activity as MainActivity
 						val contentString = binder.calendarEditorContent.text.toString()
-						val remarkString = binder.calendarEditorRemark.text.toString().let { if(it.isEmpty()) null else it }
+						val remarkString = binder.calendarEditorRemark.text.toString().let { it.ifEmpty { null } }
 						val sqlCalendar = act.getCalendar()
 						
 						val time = getTimeOnSelect()
@@ -245,6 +270,10 @@ class CalendarEditor : Fragment() {
 		}
 	}
 	
+	/**
+	 * call from main activity use reflect
+	 * @return {@code true} if back has been process
+	 */
 	fun onBackPressed(): Boolean {
 		if(tmpListId != null) return true
 		if(activity is MainActivity) {
@@ -298,6 +327,9 @@ class CalendarEditor : Fragment() {
 			}
 	}
 	
+	/**
+	 * The class use to check the max day of month
+	 */
 	class OnMonthSelect(private val yearSpinner: Spinner, private val daySpinner: Spinner) : AdapterView.OnItemSelectedListener {
 		
 		/**

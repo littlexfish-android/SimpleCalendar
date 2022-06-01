@@ -166,6 +166,9 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 	
+	/**
+	 * @deprecated use {@link #setFragmentToCalendar(java.util.Calendar) to set day}
+	 */
 	fun setCalendarDay(year: Int, month: Int, day: Int) {
 		if(nowFrag == fragmentCalendar) {
 			fragmentCalendar.setDay(year, month, day)
@@ -184,6 +187,9 @@ class MainActivity : AppCompatActivity() {
 		nowFrag = fragmentProfile
 	}
 	
+	/**
+	 * set fragment to non tab fragment
+	 */
 	fun setFragmentToOther(frag: Fragment, title: String = "") {
 		findViewById<FragmentContainerView>(R.id.main_tab_container).post {
 			val t = supportFragmentManager.beginTransaction()
@@ -253,6 +259,9 @@ class MainActivity : AppCompatActivity() {
 	 */
 	fun getList() = list
 	
+	/**
+	 * call on use click back, this function will process fragment onBackPressed first
+	 */
 	override fun onBackPressed() {
 		val m = nowFrag?.let { it::class.java.methods.find { it2 -> it2.name == "onBackPressed" && it2.returnType == Boolean::class.java } }
 		if(m != null && (m.invoke(nowFrag) as? Boolean == true)) return
@@ -266,6 +275,9 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 	
+	/**
+	 * use to click twice back to exit
+	 */
 	fun resetLastBack() {
 		lastBack.set(false)
 	}
@@ -282,11 +294,17 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 	
+	/**
+	 * use to click twice back to exit, need click twice in 3 seconds
+	 */
 	class ExitTimer(private val activity: MainActivity) : CountDownTimer(3 * 1000L, 3 * 1000L) {
 		override fun onTick(millisUntilFinished: Long) {
 			// do nothing
 		}
 		
+		/**
+		 * if not click back second time in 3 seconds
+		 */
 		override fun onFinish() {
 			activity.resetLastBack()
 		}

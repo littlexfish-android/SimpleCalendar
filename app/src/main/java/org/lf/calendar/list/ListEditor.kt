@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
+import org.lf.calendar.annotation.Range
 import org.lf.calendar.calendar.CalendarEditor
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.list.SqlList1
@@ -28,11 +29,25 @@ class ListEditor : Fragment() {
 	
 	/* data */
 	
+	/**
+	 * is old data
+	 */
 	private var oldData = false
 	
+	/**
+	 * type of editor, new or edit
+	 */
 	private var tmpType: String = ""
+	/**
+	 * init group name
+	 */
 	private var tmpGroup: String? = null
+	/**
+	 * init list
+	 */
 	private var tmpList: Array<String>? = null
+	
+	@Range.IntRange(from = -1)
 	private var tmpPos: Int = -1
 	
 	/* view */
@@ -135,6 +150,9 @@ class ListEditor : Fragment() {
 		
 	}
 	
+	/**
+	 * add list item
+	 */
 	private fun addItem(initString: String = "") {
 		val text = EditText(context)
 		itemViews.add(text)
@@ -151,6 +169,9 @@ class ListEditor : Fragment() {
 		text.requestFocus()
 	}
 	
+	/**
+	 * call from main activity when click back, use reflect
+	 */
 	fun onBackPressed(): Boolean {
 		if(activity is MainActivity) {
 			(activity as MainActivity).setFragmentToList()

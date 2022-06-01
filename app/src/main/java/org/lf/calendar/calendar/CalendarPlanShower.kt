@@ -1,13 +1,13 @@
 package org.lf.calendar.calendar
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
+import org.lf.calendar.annotation.Range
 import org.lf.calendar.databinding.FragmentCalendarPlanShowerBinding
 import org.lf.calendar.io.SqlHelper
 import org.lf.calendar.io.sqlitem.calendar.SqlCalendar1
@@ -19,7 +19,15 @@ const val PARAM_ID = "calendar.viewer.id"
 class CalendarPlanShower : Fragment() {
 	
 	private lateinit var binder: FragmentCalendarPlanShowerBinding
+	
+	/**
+	 * the calendar plan id bound
+	 */
+	@Range.IntRange(from = 1)
 	private var planId: Int = 0
+	/**
+	 * the item need show
+	 */
 	private lateinit var sqlItem: SqlCalendar1
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +46,6 @@ class CalendarPlanShower : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		val sql = SqlHelper.getInstance(context)
 		
-		Log.e("TAG", planId.toString()) // FIXME: remove
 		sqlItem = sql.getCalendar(sql.readableDatabase, "WHERE _id==$planId").getCalendar()[0]
 		
 		val cal = Calendar.getInstance().also { it.time = sqlItem.time }
@@ -73,8 +80,7 @@ class CalendarPlanShower : Fragment() {
 		}
 		binder.calendarShowerClose.setOnClickListener {
 			val act = requireActivity() as MainActivity
-			act.setFragmentToCalendar(reload = false)
-			act.setCalendarDay(cal[Calendar.YEAR], cal[Calendar.MONTH] + 1, cal[Calendar.DAY_OF_MONTH]) // FIXME: not switch
+			act.setFragmentToCalendar(reload = false, day = cal)
 		}
 	}
 	

@@ -13,8 +13,7 @@ class ColorSpinnerAdapter : ArrayAdapter<ColorSpinnerAdapter.ColorSpinnerItem> {
 	
 	private val list = ArrayList<ColorSpinnerItem>()
 	
-	constructor(context: Context) : super(context, 0) {
-	}
+	constructor(context: Context) : super(context, 0)
 	
 	constructor(context: Context, @ArrayRes color: Int, @ArrayRes name: Int) : this(context) {
 		context.let {
@@ -50,6 +49,9 @@ class ColorSpinnerAdapter : ArrayAdapter<ColorSpinnerAdapter.ColorSpinnerItem> {
 		return initView(position, parent)
 	}
 	
+	/**
+	 * get view show on spinner
+	 */
 	fun initView(position: Int, parent: ViewGroup?): View {
 		val view = LayoutInflater.from(context).inflate(R.layout.color_sinner_item, parent, false)
 		val item = getItem(position) as ColorSpinnerItem
@@ -58,6 +60,9 @@ class ColorSpinnerAdapter : ArrayAdapter<ColorSpinnerAdapter.ColorSpinnerItem> {
 		return view
 	}
 	
+	/**
+	 * data in spinner to show color
+	 */
 	data class ColorSpinnerItem(val color: Int, val name: String) {
 		
 		override fun toString(): String {

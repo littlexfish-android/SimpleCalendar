@@ -44,6 +44,9 @@ class ListItem : LinearLayout {
 	
 	private lateinit var sqlData: ArrayList<SqlList1>
 	
+	/**
+	 * the color of group
+	 */
 	var color = 0
 		set(value) {
 			field = value
@@ -81,6 +84,9 @@ class ListItem : LinearLayout {
 		group = findViewById(R.id.list_item_group)
 	}
 	
+	/**
+	 * construct by sql data
+	 */
 	fun constructItems(sql: ArrayList<SqlList1>) {
 		sqlData = sql
 		refreshItems()
@@ -134,6 +140,9 @@ class ListItem : LinearLayout {
 		checkbox.setOnCheckedChangeListener(OnChecked(this, sql))
 	}
 	
+	/**
+	 * disable list item, make user can't check checkbox
+	 */
 	fun disableAll() {
 		group.isEnabled = false
 		for(it in listGroup.children) {
@@ -141,6 +150,9 @@ class ListItem : LinearLayout {
 		}
 	}
 	
+	/**
+	 * on check box check change
+	 */
 	class OnChecked(val parent: ListItem, var sql: SqlList1?) : CompoundButton.OnCheckedChangeListener {
 		
 		override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
@@ -157,6 +169,10 @@ class ListItem : LinearLayout {
 			}
 		}
 		
+		/**
+		 * find activity from context
+		 * @return {@link MainActivity} if it find activity
+		 */
 		private tailrec fun Context.getActivity(): Activity? = this as? Activity
 			?: (this as? ContextWrapper)?.baseContext?.getActivity()
 		

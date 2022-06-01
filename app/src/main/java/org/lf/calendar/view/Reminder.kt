@@ -18,7 +18,13 @@ class Reminder : Fragment() {
 	private lateinit var day: Calendar
 	private var reminderDay: Calendar? = null
 	
+	/**
+	 * call on click confirm
+	 */
 	private var onConfirm: (() -> Unit)? = null
+	/**
+	 * call on click cancel
+	 */
 	private var onCancel: (() -> Unit)? = null
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +41,11 @@ class Reminder : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binder = FragmentReminderBinding.bind(view)
-		
-//		binder.root.visibility = View.GONE
 	}
 	
+	/**
+	 * init spinner data
+	 */
 	private fun initSpinner() {
 		val year = day[Calendar.YEAR]
 		val yRange = ((year - 5)..(year)).toList()
@@ -66,6 +73,9 @@ class Reminder : Fragment() {
 		
 	}
 	
+	/**
+	 * change reminderDay to select day
+	 */
 	private fun setSelect() {
 		reminderDay = when {
 			binder.reminder5m.isChecked -> (day.clone() as Calendar).also { it.set(Calendar.MINUTE, it[Calendar.MINUTE] - 5) }
@@ -90,6 +100,9 @@ class Reminder : Fragment() {
 		reminderDay?.set(Calendar.SECOND, 0)
 	}
 	
+	/**
+	 * init all view
+	 */
 	private fun initView() {
 		binder.reminderCustom.setOnCheckedChangeListener { _, isChecked ->
 			binder.reminderCustomGroup.visibility = if(isChecked) View.VISIBLE else View.INVISIBLE
@@ -107,6 +120,9 @@ class Reminder : Fragment() {
 		
 	}
 	
+	/**
+	 * open the reminder and insert callback
+	 */
 	fun openReminder(day: Calendar, confirmCallback: (() -> Unit)?, cancelCallback: (() -> Unit)?) {
 		this.day = day
 		onConfirm = confirmCallback

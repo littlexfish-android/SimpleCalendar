@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import org.lf.calendar.R
 
+/**
+ * use to construct not shown fragment
+ */
 class EmptyFragment : Fragment() {
 	
 	override fun onCreate(savedInstanceState: Bundle?) {

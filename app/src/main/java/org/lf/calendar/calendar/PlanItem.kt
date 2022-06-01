@@ -36,6 +36,9 @@ class PlanItem : ConstraintLayout {
 	 */
 	private var content = ""
 	
+	/**
+	 * the color of plan
+	 */
 	private var color = 0
 	
 	/**
@@ -43,6 +46,9 @@ class PlanItem : ConstraintLayout {
 	 */
 	var timeFormat = DATE_NORMAL24
 	
+	/**
+	 * the sql data
+	 */
 	lateinit var sqlItem: SqlCalendar1
 
 	constructor(context: Context) : super(context) {
@@ -82,6 +88,9 @@ class PlanItem : ConstraintLayout {
 		updateContent()
 	}
 	
+	/**
+	 * set sql data
+	 */
 	fun attachSqlItem(sql: SqlCalendar1) {
 		sqlItem = sql
 		setContent(sql.time.time, sql.content, sql.color)

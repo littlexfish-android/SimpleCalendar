@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.lf.calendar.MainActivity
+import org.lf.calendar.annotation.Range
 import org.lf.calendar.calendar.CalendarPlanShower
 import org.lf.calendar.databinding.FragmentListItemShowerBinding
 import org.lf.calendar.io.SqlHelper
@@ -15,6 +16,7 @@ const val PARAM_ID = "list.viewer.id"
 
 class ListItemShower : Fragment() {
 	
+	@Range.IntRange(from = 1)
 	private var itemId: Int = 0
 	private lateinit var binder: FragmentListItemShowerBinding
 	private lateinit var sqlItems: ArrayList<SqlList1>
