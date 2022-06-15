@@ -38,7 +38,7 @@
         android:layout_marginBottom="5dp"
         android:background="@color/none"
         app:cardBackgroundColor="@color/none"
-        app:cardCornerRadius="50dp"
+        app:cardCornerRadius="25dp"
         app:cardElevation="0dp"
         app:cardUseCompatPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
