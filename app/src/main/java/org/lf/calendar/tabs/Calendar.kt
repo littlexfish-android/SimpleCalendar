@@ -73,8 +73,6 @@ class Calendar : Fragment() {
 		}
 		view.findViewById<FloatingActionButton>(R.id.calendarAddPlan).setOnClickListener { onAddPlan() }
 		
-		setDay(calendar.selectDate[java.util.Calendar.YEAR], calendar.selectDate[java.util.Calendar.MONTH], calendar.selectDate[java.util.Calendar.DAY_OF_MONTH]) {reloadFromSql(true)}
-		
 		if(task.isNotEmpty()) {
 			for(t in task) {
 				t.run()
@@ -89,7 +87,7 @@ class Calendar : Fragment() {
 	 */
 	fun setDay(year: Int, month: Int, day: Int, func: (() -> Unit)? = null) {
 		val t = {
-			calendar.changeDays(year, month, day) { if(func == null) reloadFromSql(false) else func() }
+			calendar.changeDays(year, month, day) { if(func == null) reloadFromSql(true) else func() }
 			yearMonth.text = resources.getString(R.string.calendarYearMonth, calendar.year, calendar.month + 1)
 //			reloadFromSql(false)
 		}
