@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.lf.calendar.MainActivity
@@ -147,6 +148,12 @@ class ListEditor : Fragment() {
 		}
 		
 		spinnerColor.adapter = ColorSpinnerAdapter(requireContext(), R.array.defaultColorStringArray, R.array.defaultColorNameArray)
+		// use reflect to change max height
+		val popup = spinnerColor::class.java.getDeclaredField("mPopup")
+		popup.isAccessible = true
+		
+		val window = popup[spinnerColor] as ListPopupWindow
+		window.height = resources.getDimensionPixelSize(R.dimen.colorListHeight)
 		
 	}
 	

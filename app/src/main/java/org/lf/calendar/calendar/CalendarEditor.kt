@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.Fragment
 import org.lf.calendar.MainActivity
 import org.lf.calendar.R
@@ -148,6 +149,12 @@ class CalendarEditor : Fragment() {
 		}
 		
 		if(tmpListId != null) binder.calendarEditorCancel.isEnabled = false
+		
+		val popup = binder.calendarEditorColor::class.java.getDeclaredField("mPopup")
+		popup.isAccessible = true
+		
+		val window = popup[binder.calendarEditorColor] as ListPopupWindow
+		window.height = resources.getDimensionPixelSize(R.dimen.colorListHeight)
 		
 	}
 	

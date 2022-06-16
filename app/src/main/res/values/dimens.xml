@@ -20,4 +20,5 @@
     <!--  list item  -->
     <dimen name="listItemItemSize">5dp</dimen>
 
+    <dimen name="colorListHeight">200dp</dimen>
 </resources>

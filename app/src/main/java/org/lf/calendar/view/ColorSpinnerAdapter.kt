@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.ArrayRes
 import org.lf.calendar.R
+import org.lf.calendar.io.SqlHelper
 
 class ColorSpinnerAdapter : ArrayAdapter<ColorSpinnerAdapter.ColorSpinnerItem> {
 	
@@ -24,10 +25,15 @@ class ColorSpinnerAdapter : ArrayAdapter<ColorSpinnerAdapter.ColorSpinnerItem> {
 				val c = Color.parseColor(colors[i])
 				registerColor(c, if(i < names.size) names[i] else "")
 			}
+			
+			val sql = SqlHelper.getInstance(it)
+			for(i in sql.getColor(sql.readableDatabase).getColor().values) {
+				registerColor(i.color, i.name ?: "")
+			}
 		}
 	}
 	
-	fun registerColor(color: Int, name: String) {
+	private fun registerColor(color: Int, name: String) {
 		val item = ColorSpinnerItem(color, name)
 		val index = list.indexOf(item)
 		if(index != -1) {
