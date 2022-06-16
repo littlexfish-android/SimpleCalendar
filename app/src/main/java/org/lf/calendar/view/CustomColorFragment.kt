@@ -18,14 +18,11 @@ class CustomColorFragment : Fragment() {
 	
 	private lateinit var binder: FragmentCustomColorBinding
 	
-	private var colors = ArrayList<SqlColor1>()
-	private val task = ArrayList<Runnable>()
-	private val loadSql = {
+	private val buildView = {
 		val sql = SqlHelper.getInstance(context)
 		val sqlColor = sql.getColor(sql.readableDatabase)
-		colors.addAll(sqlColor.getColor().values)
-	}
-	private val buildView = {
+		val colors = sqlColor.getColor().values
+		
 		binder.customColorList.removeAllViews()
 		for(it in colors) {
 			val v = ColorComponent(requireContext())
@@ -36,7 +33,8 @@ class CustomColorFragment : Fragment() {
 				AlertDialog.Builder(requireContext())
 					.setPositiveButton(R.string.Confirm) { _, _ ->
 						binder.customColorList.removeView(v)
-						deleteData(it)
+						sqlColor.deleteColor(it)
+						sqlColor.saveSql(sql.writableDatabase)
 					}
 					.setCancelable(true)
 					.setTitle(R.string.Delete)
@@ -73,24 +71,16 @@ class CustomColorFragment : Fragment() {
 			}
 		}
 		
-		if(task.isNotEmpty()) for(it in task) it.run()
-		if(colors.isNotEmpty()) {
+		if(context != null) {
 			buildView()
-		}
-		else {
-			task.add { buildView() }
 		}
 		
 	}
 	
 	override fun onAttach(context: Context) {
 		super.onAttach(context)
-		loadSql()
 		if(::binder.isInitialized) {
-			if(task.isNotEmpty()) {
-				for(it in task) it.run()
-			}
-			else buildView()
+			buildView()
 		}
 	}
 	
