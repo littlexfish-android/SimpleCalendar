@@ -9,6 +9,8 @@
     <string name="Cancel">取消</string>
     <string name="Close">關閉</string>
     <string name="Edit">編輯</string>
+    <string name="Delete">刪除</string>
+    <string name="DeleteConfirm">確定要刪除嗎?</string>
 
     <!--  list editor  -->
     <string name="listEditorGroup">名稱</string>
@@ -54,6 +56,15 @@
     <string name="reminder_2d">2天前</string>
     <string name="reminder_1w">1週前</string>
     <string name="reminder_custom">自訂</string>
+
+
+    <!--  color editor  -->
+    <string name="colorEditorName">名稱</string>
+    <string name="colorEditorColor">顏色</string>
+
+
+    <!--  option menu  -->
+    <string name="optionMenuColor">自訂顏色</string>
 
 
     <!--  notice  -->

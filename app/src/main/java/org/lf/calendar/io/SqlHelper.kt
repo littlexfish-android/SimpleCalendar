@@ -385,12 +385,13 @@ class SqlHelper(@Nullable context: Context?, @Nullable factory: SQLiteDatabase.C
 		 */
 		init {
 			@Language("SQL")
-			var select = "SELECT * FROM $databaseTableColorName"
+			val select = "SELECT * FROM $databaseTableColorName"
 			val c: Cursor = db.rawQuery(select, null)
 			c.moveToFirst()
 			for(i in 0 until c.count) {
-				val l = SqlList1()
+				val l = SqlColor1()
 				l.initFromDatabase(c)
+				colors[l.color] = l
 				c.moveToNext()
 			}
 			c.close()

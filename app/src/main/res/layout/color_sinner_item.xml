@@ -10,8 +10,9 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_margin="5dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
+        app:cardPreventCornerOverlap="true"
         tools:layout_editor_absoluteX="5dp">
 
         <ImageView

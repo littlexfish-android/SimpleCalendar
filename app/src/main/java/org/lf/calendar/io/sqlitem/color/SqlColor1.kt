@@ -6,10 +6,7 @@ import androidx.core.database.getStringOrNull
 import org.intellij.lang.annotations.Language
 import java.util.Objects
 
-class SqlColor1 : SqlColorBase() {
-	
-	var color: Int = -1
-	var name: String? = null
+class SqlColor1(var color: Int = 0, var name: String? = null) : SqlColorBase() {
 	
 	override fun upgrade(sql: SqlColorBase, oldVersion: Int, newVersion: Int): SqlColorBase = this
 	

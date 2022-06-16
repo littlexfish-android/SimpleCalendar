@@ -3,4 +3,5 @@
     <declare-styleable name="CalendarItemDay" />
     <declare-styleable name="PlanItem" />
     <declare-styleable name="ListItem" />
+    <declare-styleable name="ColorComponent" />
 </resources>

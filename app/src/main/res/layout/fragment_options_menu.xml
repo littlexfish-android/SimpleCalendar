@@ -33,5 +33,15 @@
         android:layout_marginTop="@dimen/main_tool_bar_height"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/menuColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/default_theme_color_dark"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/optionMenuColor"
+            android:textAlignment="textStart" />
+
     </LinearLayout>
 </FrameLayout>
